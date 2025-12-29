@@ -282,9 +282,6 @@
     </div>
     <!-- END wrapper -->
 
-    <div class="rightbar-overlay"></div>
-    <!-- /End-bar -->
-
     <!-- bundle -->
     <script src="{{ asset('hyper/assets/js/vendor.min.js') }}"></script>
     <script src="{{ asset('hyper/assets/js/app.min.js') }}"></script>

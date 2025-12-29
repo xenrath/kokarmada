@@ -3,7 +3,6 @@
 namespace Database\Seeders;
 
 use App\Models\User;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class UserSeeder extends Seeder
@@ -12,63 +11,63 @@ class UserSeeder extends Seeder
     {
         $users = [
             [
-                'nama' => 'Admin',
-                'email' => 'admin@gmail.com',
+                'telp' => '08000',
                 'password' => bcrypt('bhamada'),
+                'nama' => 'Admin',
                 'gender' => 'L',
                 'role' => 'admin',
                 'spesial' => 'normal',
                 'status' => 'aktif',
             ],
             [
-                'nama' => 'Ketua',
-                'email' => 'ketua@gmail.com',
+                'telp' => '08111',
                 'password' => bcrypt('bhamada'),
+                'nama' => 'Ketua',
                 'gender' => 'L',
                 'role' => 'anggota',
                 'spesial' => 'ketua',
                 'status' => 'aktif',
             ],
             [
-                'nama' => 'Sekretaris',
-                'email' => 'sekretaris@gmail.com',
+                'telp' => '08222',
                 'password' => bcrypt('bhamada'),
+                'nama' => 'Sekretaris',
                 'gender' => 'L',
                 'role' => 'anggota',
                 'spesial' => 'sekretaris',
                 'status' => 'aktif',
             ],
             [
-                'nama' => 'Bendahara',
-                'email' => 'bendahara@gmail.com',
+                'telp' => '08333',
                 'password' => bcrypt('bhamada'),
+                'nama' => 'Bendahara',
                 'gender' => 'L',
                 'role' => 'anggota',
                 'spesial' => 'bendahara',
                 'status' => 'aktif',
             ],
             [
-                'nama' => 'Manajer Analis',
-                'email' => 'manajer@gmail.com',
+                'telp' => '08444',
                 'password' => bcrypt('bhamada'),
+                'nama' => 'Manajer Analis',
                 'gender' => 'L',
                 'role' => 'anggota',
                 'spesial' => 'manajer',
                 'status' => 'aktif',
             ],
             [
-                'nama' => 'Petugas',
-                'email' => 'petugas@gmail.com',
+                'telp' => '08555',
                 'password' => bcrypt('bhamada'),
+                'nama' => 'Petugas',
                 'gender' => 'L',
                 'role' => 'anggota',
                 'spesial' => 'petugas',
                 'status' => 'aktif',
             ],
             [
-                'nama' => 'Anggota',
-                'email' => 'anggota@gmail.com',
+                'telp' => '08666',
                 'password' => bcrypt('bhamada'),
+                'nama' => 'Anggota',
                 'gender' => 'L',
                 'role' => 'anggota',
                 'spesial' => 'normal',

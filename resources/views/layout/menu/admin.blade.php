@@ -12,3 +12,15 @@
         <span>Data Anggota</span>
     </a>
 </li>
+<li class="side-nav-item">
+    <a href="{{ url('admin/simpanan') }}" class="side-nav-link {{ request()->is('admin/simpanan*') ? 'active' : '' }}">
+        <i class="uil-money-bill"></i>
+        <span>Data Simpanan</span>
+    </a>
+</li>
+<li class="side-nav-item">
+    <a href="{{ url('admin/pinjaman') }}" class="side-nav-link {{ request()->is('admin/pinjaman*') ? 'active' : '' }}">
+        <i class="uil-money-withdraw"></i>
+        <span>Data Pinjaman</span>
+    </a>
+</li>

@@ -13,6 +13,25 @@ class HomeController extends Controller
             ->select('nama', 'email', 'gender', 'role', 'spesial')
             ->first();
 
-        return view('user.index', compact('user'));
+        return view('anggota.index', compact('user'));
+    }
+
+    public function profile()
+    {
+        $user = User::where('id', auth()->user()->id)
+            ->select('nama', 'email', 'gender', 'role', 'spesial')
+            ->first();
+
+        return view('anggota.profile', compact('user'));
+    }
+
+    public function profile_proses()
+    {
+        $user = User::where('id', auth()->user()->id)->first();
+        $user->nama = request('nama');
+        $user->email = request('email');
+        $user->gender = request('gender');
+        $user->save();
+        return redirect('anggota/profile')->with('success', 'Profile updated successfully');;
     }
 }
