@@ -38,10 +38,10 @@ class AuthController extends Controller
     public function login_proses(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'email' => 'required',
+            'telp' => 'required',
             'password' => 'required',
         ], [
-            'email.required' => 'Email harus diisi!',
+            'telp.required' => 'Nomor Telepon harus diisi!',
             'password.required' => 'Password harus diisi!',
         ]);
 
@@ -53,7 +53,7 @@ class AuthController extends Controller
         }
 
         if (Auth::attempt([
-            'email' => $request->email,
+            'telp' => $request->telp,
             'password' => $request->password,
             'status' => 'aktif'
         ])) {

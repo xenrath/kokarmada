@@ -21,10 +21,11 @@ Route::post('logout', [\App\Http\Controllers\AuthController::class, 'logout'])->
 Route::middleware('admin')->prefix('admin')->group(function () {
     Route::get('/', [\App\Http\Controllers\Admin\HomeController::class, 'index']);
 
+    Route::post('anggota/reset_password/{id}', [\App\Http\Controllers\Admin\AnggotaController::class, 'reset_password']);
     Route::resource('anggota', \App\Http\Controllers\Admin\AnggotaController::class);
-    
+
     Route::resource('simpanan', \App\Http\Controllers\Admin\SimpananController::class);
-    
+
     Route::resource('pinjaman', \App\Http\Controllers\Admin\PinjamanController::class);
 });
 

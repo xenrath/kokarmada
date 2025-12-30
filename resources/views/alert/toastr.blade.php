@@ -1,3 +1,12 @@
+<style>
+    #toast-container>.toast-success,
+    #toast-container>.toast-error,
+    #toast-container>.toast-info,
+    #toast-container>.toast-warning {
+        border-radius: 0 !important;
+    }
+</style>
+
 <script>
     toastr.options = {
         "closeButton": true,

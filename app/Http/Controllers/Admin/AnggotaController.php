@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Models\UserDetail;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -26,11 +27,12 @@ class AnggotaController extends Controller
             })
             ->select(
                 'id',
+                'telp',
                 'nama',
-                'email',
+                'panggilan',
+                'gender',
                 'role',
-                'spesial',
-                'status',
+                'spesial'
             )
             ->orderBy('status')
             ->orderBy('nama')
@@ -48,13 +50,15 @@ class AnggotaController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'nama' => 'required',
-            'email' => 'required|unique:users,email',
+            'panggilan' => 'required',
             'gender' => 'required',
+            'telp' => 'required|unique:users,telp',
         ], [
             'nama.required' => 'Nama Lengkap harus diisi!',
-            'email.required' => 'Email harus diisi!',
-            'email.unique' => 'Email sudah digunakan!',
+            'panggilan.required' => 'Nama Panggilan harus diisi!',
             'gender.required' => 'Jenis Kelamin harus dipilih!',
+            'telp.required' => 'No. HP / WhatsApp harus diisi!',
+            'telp.unique' => 'No. HP / WhatsApp sudah digunakan!',
         ]);
 
         if ($validator->fails()) {
@@ -63,7 +67,8 @@ class AnggotaController extends Controller
 
         $create = User::create([
             'nama' => $request->nama,
-            'email' => $request->email,
+            'panggilan' => $request->panggilan,
+            'telp' => $request->telp,
             'password' => bcrypt('bhamada'),
             'gender' => $request->gender,
             'role' => 'anggota',
@@ -79,15 +84,46 @@ class AnggotaController extends Controller
 
     public function show($id)
     {
-        $user = User::where('id', $id)->first();
+        $user = User::where('id', $id)
+            ->select(
+                'telp',
+                'nama',
+                'panggilan',
+                'gender',
+                'role',
+                'spesial'
+            )
+            ->first();
 
-        return view('admin.anggota.show', compact('user'));
+        $user_detail = UserDetail::where('user_id', $id)
+            ->select(
+                'file_ktp',
+                'file_kk',
+                'tempat_lahir',
+                'tanggal_lahir',
+                'alamat',
+                'kode_pos',
+                'pekerjaan',
+                'no_npwp',
+                'nama_ibu',
+                'tinggal_bersama',
+            )
+            ->first();
+
+        return view('admin.anggota.show', compact('user', 'user_detail'));
     }
 
     public function edit($id)
     {
         $user = User::where('id', $id)
-            ->select('id', 'nama', 'email', 'gender', 'spesial')
+            ->select(
+                'id',
+                'telp',
+                'nama',
+                'panggilan',
+                'gender',
+                'spesial'
+            )
             ->first();
 
         return view('admin.anggota.edit', compact('user'));
@@ -97,13 +133,15 @@ class AnggotaController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'nama' => 'required',
-            'email' => 'required|unique:users,email,' . $id . ',id',
+            'panggilan' => 'required',
             'gender' => 'required',
+            'telp' => 'required|unique:users,telp,' . $id,
         ], [
             'nama.required' => 'Nama Lengkap harus diisi!',
-            'email.required' => 'Email harus diisi!',
-            'email.unique' => 'Email sudah digunakan!',
+            'panggilan.required' => 'Nama Panggilan harus diisi!',
             'gender.required' => 'Jenis Kelamin harus dipilih!',
+            'telp.required' => 'No. HP / WhatsApp harus diisi!',
+            'telp.unique' => 'No. HP / WhatsApp sudah digunakan!',
         ]);
 
         if ($validator->fails()) {
@@ -112,7 +150,8 @@ class AnggotaController extends Controller
 
         $create = User::where('id', $id)->update([
             'nama' => $request->nama,
-            'email' => $request->email,
+            'panggilan' => $request->panggilan,
+            'telp' => $request->telp,
             'gender' => $request->gender,
             'spesial' => $request->spesial ?? 'normal',
         ]);
@@ -141,5 +180,14 @@ class AnggotaController extends Controller
         ]);
 
         return redirect('admin/anggota')->with('success', 'Berhasil ' . $message . ' Pengguna');
+    }
+
+    public function reset_password($id)
+    {
+        User::where('id', $id)->update([
+            'password' => bcrypt('bhamada'),
+        ]);
+
+        return redirect('admin/anggota')->with('success', 'Berhasil mereset password Pengguna');
     }
 }

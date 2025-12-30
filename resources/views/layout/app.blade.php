@@ -184,22 +184,33 @@
                                 </span>
                                 <span>
                                     <span class="account-user-name">{{ auth()->user()->nama }}</span>
-                                    <span class="account-position">{{ ucfirst(auth()->user()->role) }}</span>
+                                    <span class="account-position">
+                                        @if (auth()->user()->role == 'anggota')
+                                            @if (auth()->user()->spesial == 'normal')
+                                                Anggota
+                                            @else
+                                                {{ ucfirst(auth()->user()->spesial) }}
+                                            @endif
+                                        @else
+                                            {{ ucfirst(auth()->user()->role) }}
+                                        @endif
+                                    </span>
                                 </span>
                             </a>
                             <div
                                 class="dropdown-menu dropdown-menu-end dropdown-menu-animated topbar-dropdown-menu profile-dropdown rounded-0">
                                 <!-- item-->
-                                <a href="javascript:void(0);" class="dropdown-item notify-item">
+                                <a href="{{ url(auth()->user()->role . '/profile') }}"
+                                    class="dropdown-item notify-item">
                                     <i class="mdi mdi-account-circle me-1"></i>
                                     <span>Profile Saya</span>
                                 </a>
 
                                 <!-- item-->
-                                {{-- <a href="javascript:void(0);" class="dropdown-item notify-item">
-                                    <i class="mdi mdi-account-edit me-1"></i>
-                                    <span>Settings</span>
-                                </a> --}}
+                                <a href="{{ url(auth()->user()->role . '/password') }}" class="dropdown-item notify-item">
+                                    <i class="mdi mdi-lock-reset me-1"></i>
+                                    <span>Ubah Password</span>
+                                </a>
 
                                 <!-- item-->
                                 <a href="#" class="dropdown-item notify-item" data-bs-toggle="modal"
@@ -223,21 +234,14 @@
 
             <!-- Footer Start -->
             <footer class="footer">
-                <div class="container-fluid">
-                    <div class="row">
-                        <div class="col-md-6">
-                            <script>
-                                document.write(new Date().getFullYear())
-                            </script> © Hyper - Coderthemes.com
-                        </div>
-                        <div class="col-md-6">
-                            <div class="text-md-end footer-links d-none d-md-block">
-                                <a href="javascript: void(0);">About</a>
-                                <a href="javascript: void(0);">Support</a>
-                                <a href="javascript: void(0);">Contact Us</a>
-                            </div>
-                        </div>
-                    </div>
+                <div class="container-fluid text-end">
+                    <script>
+                        document.write(new Date().getFullYear())
+                    </script>
+                    ©
+                    <a href="https://it.bhamada.ac.id/" target="_blank">
+                        <strong>IT BHAMADA</strong>
+                    </a>
                 </div>
             </footer>
             <!-- end Footer -->
@@ -300,7 +304,7 @@
             $('#form-logout').submit();
         }
     </script>
-    
+
     @yield('script')
 
 

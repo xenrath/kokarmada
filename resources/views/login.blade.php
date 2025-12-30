@@ -41,16 +41,22 @@
 
                     <!-- title-->
                     <h4 class="mt-0">LOGIN</h4>
-                    <p class="text-muted mb-4">Masukan Email dan Password Anda</p>
+                    <p class="text-muted mb-4">Masukan Nomor Telepon dan Password Anda</p>
 
                     <!-- form -->
                     <form action="{{ url('login') }}" method="POST" id="form-submit">
                         @csrf
                         <div class="mb-2">
-                            <label for="email" class="form-label">Email</label>
-                            <input class="form-control rounded-0 @error('email') is-invalid @enderror" type="email"
-                                id="email" name="email" value="{{ old('email') }}" autofocus>
-                            @error('email')
+                            <label for="telp"
+                                class="form-label d-flex flex-column flex-md-row align-items-md-center">
+                                Nomor Telepon
+                                <small class="text-muted ms-md-2">
+                                    (08xxxxxxxxxxx)
+                                </small>
+                            </label>
+                            <input class="form-control rounded-0 @error('telp') is-invalid @enderror" type="telp"
+                                id="telp" name="telp" value="{{ old('telp') }}" autofocus>
+                            @error('telp')
                                 <div class="invalid-feedback">
                                     {{ $message }}
                                 </div>
@@ -128,7 +134,7 @@
     <!-- bundle -->
     <script src="{{ asset('hyper/assets/js/vendor.min.js') }}"></script>
     <script src="{{ asset('hyper/assets/js/app.min.js') }}"></script>
-    
+
     <!-- Toastr alert -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>

@@ -19,75 +19,101 @@
             <form action="{{ url('admin/anggota') }}" method="POST" autocomplete="off" id="form-submit">
                 @csrf
                 <div class="card-body">
-                    <div class="mb-2">
-                        <label for="nama" class="form-label">Nama Lengkap *</label>
-                        <input type="text" id="nama" name="nama"
-                            class="form-control rounded-0 @error('nama') is-invalid @enderror" value="{{ old('nama') }}">
-                        @error('nama')
-                            <div class="invalid-feedback">
-                                {{ $message }}
-                            </div>
-                        @enderror
+                    <div class="row">
+                        <div class="col-md-6 mb-2">
+                            <label for="nama" class="form-label">Nama Lengkap *</label>
+                            <input type="text" id="nama" name="nama"
+                                class="form-control rounded-0 @error('nama') is-invalid @enderror"
+                                value="{{ old('nama') }}">
+                            @error('nama')
+                                <div class="invalid-feedback">
+                                    {{ $message }}
+                                </div>
+                            @enderror
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <label for="panggilan" class="form-label">Nama Panggilan *</label>
+                            <input type="text" id="panggilan" name="panggilan"
+                                class="form-control rounded-0 @error('panggilan') is-invalid @enderror"
+                                value="{{ old('panggilan') }}">
+                            @error('panggilan')
+                                <div class="invalid-feedback">
+                                    {{ $message }}
+                                </div>
+                            @enderror
+                        </div>
                     </div>
-                    <div class="mb-2">
-                        <label for="email" class="form-label">Email *</label>
-                        <input type="text" id="email" name="email"
-                            class="form-control rounded-0 @error('email') is-invalid @enderror" value="{{ old('email') }}">
-                        @error('email')
-                            <div class="invalid-feedback">
-                                {{ $message }}
-                            </div>
-                        @enderror
+                    <div class="row">
+                        <div class="col-md-6 mb-2">
+                            <label for="gender" class="form-label">Jenis Kelamin *</label>
+                            <select class="form-select rounded-0 @error('gender') is-invalid @enderror" id="gender"
+                                name="gender">
+                                <option value="">- Pilih -</option>
+                                <option value="L" {{ old('gender') == 'L' ? 'selected' : '' }}>
+                                    Laki-laki
+                                </option>
+                                <option value="P" {{ old('gender') == 'P' ? 'selected' : '' }}>
+                                    Perempuan
+                                </option>
+                            </select>
+                            @error('gender')
+                                <div class="invalid-feedback">
+                                    {{ $message }}
+                                </div>
+                            @enderror
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <label for="telp" class="form-label d-flex flex-column flex-md-row align-items-md-center">
+                                No. HP / WhatsApp *
+                                <small class="text-muted ms-md-2">
+                                    (08xxxxxxxxxx)
+                                </small>
+                            </label>
+                            <input type="tel" id="telp" name="telp"
+                                class="form-control rounded-0 @error('telp') is-invalid @enderror"
+                                value="{{ old('telp') }}">
+                            @error('telp')
+                                <div class="invalid-feedback">
+                                    {{ $message }}
+                                </div>
+                            @enderror
+                        </div>
                     </div>
-                    <div class="mb-2">
-                        <label for="gender" class="form-label">Jenis Kelamin *</label>
-                        <select class="form-select rounded-0 @error('gender') is-invalid @enderror" id="gender"
-                            name="gender">
-                            <option value="">- Pilih -</option>
-                            <option value="L" {{ old('gender') == 'L' ? 'selected' : '' }}>
-                                Laki-laki
-                            </option>
-                            <option value="P" {{ old('gender') == 'P' ? 'selected' : '' }}>
-                                Perempuan
-                            </option>
-                        </select>
-                        @error('gender')
-                            <div class="invalid-feedback">
-                                {{ $message }}
-                            </div>
-                        @enderror
+                    <div class="row">
+                        <div class="col-md-6 mb-2">
+                            <label for="spesial" class="form-label d-flex flex-column flex-md-row align-items-md-center">
+                                Jadikan Sebagai
+                                <small class="text-muted ms-md-2">
+                                    (kosongkan saja jika hanya menjadi anggota)
+                                </small>
+                            </label>
+                            <select class="form-select rounded-0 @error('spesial') is-invalid @enderror" id="spesial"
+                                name="spesial">
+                                <option value="">- Pilih -</option>
+                                <option value="ketua" {{ old('spesial') == 'ketua' ? 'selected' : '' }}>
+                                    Ketua
+                                </option>
+                                <option value="sekretaris" {{ old('spesial') == 'sekretaris' ? 'selected' : '' }}>
+                                    Sekretaris
+                                </option>
+                                <option value="bendahara" {{ old('spesial') == 'bendahara' ? 'selected' : '' }}>
+                                    Bendahara
+                                </option>
+                                <option value="manajer" {{ old('spesial') == 'manajer' ? 'selected' : '' }}>
+                                    Manajer Analis
+                                </option>
+                                <option value="petugas" {{ old('spesial') == 'petugas' ? 'selected' : '' }}>
+                                    Petugas
+                                </option>
+                            </select>
+                            @error('spesial')
+                                <div class="invalid-feedback">
+                                    {{ $message }}
+                                </div>
+                            @enderror
+                        </div>
                     </div>
-                    <div class="mb-2">
-                        <label for="spesial" class="form-label">
-                            Jadikan Sebagai
-                            <span class="text-muted">(kosongkan saja jika hanya menjadi anggota)</span>
-                        </label>
-                        <select class="form-select rounded-0 @error('spesial') is-invalid @enderror" id="spesial"
-                            name="spesial">
-                            <option value="">- Pilih -</option>
-                            <option value="ketua" {{ old('spesial') == 'ketua' ? 'selected' : '' }}>
-                                Ketua
-                            </option>
-                            <option value="sekretaris" {{ old('spesial') == 'sekretaris' ? 'selected' : '' }}>
-                                Sekretaris
-                            </option>
-                            <option value="bendahara" {{ old('spesial') == 'bendahara' ? 'selected' : '' }}>
-                                Bendahara
-                            </option>
-                            <option value="manajer" {{ old('spesial') == 'manajer' ? 'selected' : '' }}>
-                                Manajer Analis
-                            </option>
-                            <option value="petugas" {{ old('spesial') == 'petugas' ? 'selected' : '' }}>
-                                Petugas
-                            </option>
-                        </select>
-                        @error('spesial')
-                            <div class="invalid-feedback">
-                                {{ $message }}
-                            </div>
-                        @enderror
-                    </div>
-                    <div class="mt-4 mb-2">
+                    <div class="mt-2 mb-2">
                         <span>
                             Password default
                             <strong>bhamada</strong>

@@ -55,7 +55,7 @@
                     </div>
                     <div class="col-xl-4">
                         <div class="text-xl-end mt-xl-0 mt-2">
-                            <a href="{{ url('admin/anggota/create') }}" class="btn btn-primary rounded-0 mb-2 me-2">
+                            <a href="{{ url('admin/anggota/create') }}" class="btn btn-primary rounded-0 mb-2">
                                 <i class="mdi mdi-account-plus me-1"></i>
                                 Tambah Anggota
                             </a>
@@ -71,7 +71,7 @@
                             <tr>
                                 <th class="text-center" style="width: 10px">No</th>
                                 <th>Nama</th>
-                                <th>Email</th>
+                                <th>No. HP / WhatsApp</th>
                                 <th>Sebagai</th>
                                 <th style="width: 120px">Action</th>
                             </tr>
@@ -88,7 +88,7 @@
                                             </span>
                                         @endif
                                     </td>
-                                    <td>{{ $user->email }}</td>
+                                    <td>{{ $user->telp }}</td>
                                     <td>
                                         <h5>
                                             @if ($user->spesial != 'normal')
