@@ -19,7 +19,8 @@
     </a>
 </li>
 <li class="side-nav-item {{ request()->is('admin/pinjaman*') ? 'menuitem-active' : '' }}">
-    <a href="{{ url('admin/pinjaman') }}" class="side-nav-link {{ request()->is('admin/pinjaman*') ? 'active' : '' }}">
+    <a href="{{ url('admin/pinjaman') }}"
+        class="side-nav-link {{ request()->is('admin/pinjaman*') ? 'active' : '' }}">
         <i class="uil-money-withdraw"></i>
         <span>Data Pinjaman</span>
     </a>
