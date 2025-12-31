@@ -13,4 +13,20 @@ class HomeController extends Controller
 
         return view('admin.index', compact('user'));
     }
+
+    public function anggota_set($id)
+    {
+        $anggota = User::where('role', 'anggota')
+            ->where('id', $id)
+            ->select('id', 'nama')
+            ->first();
+
+        if (!$anggota) {
+            return response()->json([
+                'message' => 'Anggota tidak ditemukan'
+            ], 404);
+        }
+
+        return response()->json($anggota);
+    }
 }

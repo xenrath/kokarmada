@@ -70,6 +70,9 @@ class HomeController extends Controller
         if ($user_detail_exists) {
             $validator_detail_file_ktp = 'nullable';
             $validator_detail_file_kk = 'nullable';
+        } else {
+            $validator_detail_file_ktp = 'required';
+            $validator_detail_file_kk = 'required';
         }
 
         $validator = Validator::make($request->all(), [
@@ -141,7 +144,7 @@ class HomeController extends Controller
             $detail_file_ktp = 'anggota/' . $detail_file_ktp_waktu . $detail_file_ktp_random . '.' . $request->detail_file_ktp->getClientOriginalExtension();
             $request->detail_file_ktp->storeAs('public/uploads/', $detail_file_ktp);
         } else {
-            $detail_file_ktp = UserDetail::where('user_id', auth()->user()->id)->value('file_ktp');
+            $detail_file_ktp = $user_detail_exists ? UserDetail::where('user_id', auth()->user()->id)->value('file_ktp') : null;
         }
 
         if ($request->detail_file_kk) {
@@ -150,7 +153,7 @@ class HomeController extends Controller
             $detail_file_kk = 'anggota/' . $detail_file_kk_waktu . $detail_file_kk_random . '.' . $request->detail_file_kk->getClientOriginalExtension();
             $request->detail_file_kk->storeAs('public/uploads/', $detail_file_kk);
         } else {
-            $detail_file_kk = UserDetail::where('user_id', auth()->user()->id)->value('file_kk');
+            $detail_file_kk = $user_detail_exists ? UserDetail::where('user_id', auth()->user()->id)->value('file_kk') : null;
         }
 
         $tanggal_lahir = sprintf(

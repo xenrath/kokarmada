@@ -139,6 +139,32 @@
                         {{ $user_detail->tinggal_bersama ?? '-' }}
                     </div>
                 </div>
+                <div class="row">
+                    <div class="col-md-6 mb-2">
+                        <strong>
+                            Nama
+                            @if ($user->gender == 'L')
+                                Istri
+                            @else
+                                Suami
+                            @endif
+                        </strong>
+                        <br>
+                        {{ $user_detail->nama_pasangan ?? '-' }}
+                    </div>
+                    <div class="col-md-6 mb-2">
+                        <strong>
+                            Pekerjaan
+                            @if ($user->gender == 'L')
+                                Istri
+                            @else
+                                Suami
+                            @endif
+                        </strong>
+                        <br>
+                        {{ $user_detail->pekerjaan_pasangan ?? '-' }}
+                    </div>
+                </div>
             </div>
         </div>
     </div>

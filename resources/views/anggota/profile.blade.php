@@ -120,7 +120,8 @@
                                 </small>
                             </label>
                             <input type="file" id="detail_file_kk" name="detail_file_kk"
-                                class="form-control rounded-0 @error('detail_file_kk') is-invalid @enderror">
+                                class="form-control rounded-0 @error('detail_file_kk') is-invalid @enderror"
+                                accept=".pdf,image/*">
                             @error('detail_file_kk')
                                 <div class="invalid-feedback">
                                     {{ $message }}

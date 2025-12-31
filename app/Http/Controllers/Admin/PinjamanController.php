@@ -16,7 +16,12 @@ class PinjamanController extends Controller
 
     public function create()
     {
-        return view('admin.pinjaman.create');
+        $users = User::where('role', 'anggota')
+            ->select('id', 'nama')
+            ->take(10)
+            ->get();
+
+        return view('admin.pinjaman.create', compact('users'));
     }
 
     public function store(Request $request)

@@ -1,13 +1,13 @@
 @extends('layout.app')
 
-@section('title', 'Data Pengguna')
+@section('title', 'Data Anggota')
 
 @section('content')
     <!-- Start Content-->
     <div class="container-fluid">
         <!-- start page title -->
         <div class="page-title-box">
-            <h4 class="page-title">Data Pengguna</h4>
+            <h4 class="page-title">Data Anggota</h4>
         </div>
         <!-- end page title -->
         <div class="card mb-2 rounded-0">
@@ -46,7 +46,7 @@
                                 <div class="input-group">
                                     <input type="search" class="form-control rounded-0" id="keyword" name="keyword"
                                         placeholder="Cari..." value="{{ request()->get('keyword') }}">
-                                    <button class="btn btn-primary rounded-0" type="submit">
+                                    <button class="btn btn-info rounded-0" type="submit">
                                         <i class="mdi mdi-magnify"></i>
                                     </button>
                                 </div>
@@ -144,7 +144,7 @@
                 <div class="modal-dialog">
                     <div class="modal-content rounded-0">
                         <div class="modal-header">
-                            <h4 class="modal-title" id="modal-nonaktif-label-{{ $user->id }}">Status Pengguna</h4>
+                            <h4 class="modal-title" id="modal-nonaktif-label-{{ $user->id }}">Status Anggota</h4>
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-hidden="true"></button>
                         </div>
                         <div class="modal-body">
@@ -178,7 +178,7 @@
                 <div class="modal-dialog">
                     <div class="modal-content rounded-0">
                         <div class="modal-header">
-                            <h4 class="modal-title" id="modal-aktif-label-{{ $user->id }}">Status Pengguna</h4>
+                            <h4 class="modal-title" id="modal-aktif-label-{{ $user->id }}">Status Anggota</h4>
                             <button type="button" class="btn-close" data-bs-dismiss="modal"
                                 aria-hidden="true"></button>
                         </div>

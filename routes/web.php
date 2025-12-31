@@ -20,6 +20,7 @@ Route::post('logout', [\App\Http\Controllers\AuthController::class, 'logout'])->
 
 Route::middleware('admin')->prefix('admin')->group(function () {
     Route::get('/', [\App\Http\Controllers\Admin\HomeController::class, 'index']);
+    Route::get('anggota-set', [\App\Http\Controllers\Admin\HomeController::class, 'anggota_set']);
 
     Route::post('anggota/reset_password/{id}', [\App\Http\Controllers\Admin\AnggotaController::class, 'reset_password']);
     Route::resource('anggota', \App\Http\Controllers\Admin\AnggotaController::class);
