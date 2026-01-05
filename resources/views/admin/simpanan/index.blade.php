@@ -18,27 +18,19 @@
                             class="row gy-2 gx-2 align-items-center justify-content-xl-start justify-content-between">
                             <div class="col-auto">
                                 <div class="d-flex align-items-center">
-                                    <select class="form-select rounded-0" name="spesial" id="spesial"
+                                    <select class="form-select rounded-0" name="status"
                                         onchange="$('#form-filter').submit();">
                                         <option value="">- Pilih Role -</option>
-                                        <option value="ketua" {{ request()->get('spesial') == 'ketua' ? 'selected' : '' }}>
-                                            Ketua
+                                        <option value="menunggu"
+                                            {{ request()->get('status') == 'menunggu' ? 'selected' : '' }}>
+                                            Menunggu
                                         </option>
-                                        <option value="sekretaris"
-                                            {{ request()->get('spesial') == 'sekretaris' ? 'selected' : '' }}>
-                                            Sekretaris
+                                        <option value="proses" {{ request()->get('status') == 'proses' ? 'selected' : '' }}>
+                                            Proses
                                         </option>
-                                        <option value="bendahara"
-                                            {{ request()->get('spesial') == 'bendahara' ? 'selected' : '' }}>
-                                            Bendahara
-                                        </option>
-                                        <option value="manajer"
-                                            {{ request()->get('spesial') == 'manajer' ? 'selected' : '' }}>
-                                            Manajer Analis
-                                        </option>
-                                        <option value="petugas"
-                                            {{ request()->get('spesial') == 'petugas' ? 'selected' : '' }}>
-                                            Petugas
+                                        <option value="selesai"
+                                            {{ request()->get('status') == 'selesai' ? 'selected' : '' }}>
+                                            Selesai
                                         </option>
                                     </select>
                                 </div>
@@ -79,7 +71,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @forelse ($users as $user)
+                            {{-- @forelse ($users as $user)
                                 <tr>
                                     <td class="text-center">{{ $loop->iteration }}</td>
                                     <td>
@@ -125,12 +117,12 @@
                                     </td>
                                 </tr>
                             @empty
-                                <tr>
-                                    <td colspan="5" class="text-center">
-                                        <span class="text-muted">- Data tidak ditemukan -</span>
-                                    </td>
-                                </tr>
-                            @endforelse
+                            @endforelse --}}
+                            <tr>
+                                <td colspan="5" class="text-center">
+                                    <span class="text-muted">- Data tidak ditemukan -</span>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                 </div>

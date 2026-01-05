@@ -1,5 +1,4 @@
 <li class="side-nav-title side-nav-item">Menu</li>
-
 <li class="side-nav-item {{ request()->is('admin') ? 'menuitem-active' : '' }}">
     <a href="{{ url('admin') }}" class="side-nav-link {{ request()->is('admin') ? 'active' : '' }}">
         <i class="uil-home-alt"></i>
@@ -23,5 +22,13 @@
         class="side-nav-link {{ request()->is('admin/pinjaman*') ? 'active' : '' }}">
         <i class="uil-money-withdraw"></i>
         <span>Data Pinjaman</span>
+    </a>
+</li>
+<li class="side-nav-title side-nav-item">Lainnya</li>
+<li class="side-nav-item {{ request()->is('admin/pengaturan*') ? 'menuitem-active' : '' }}">
+    <a href="{{ url('admin/pengaturan') }}"
+        class="side-nav-link {{ request()->is('admin/pengaturan*') ? 'active' : '' }}">
+        <i class="uil-cog"></i>
+        <span>Pengaturan Pinjaman</span>
     </a>
 </li>

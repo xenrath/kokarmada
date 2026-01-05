@@ -26,10 +26,25 @@ class PinjamanController extends Controller
 
     public function store(Request $request)
     {
+        if ($request->usaha == 'lainnya') {
+            $validator_usaha_lainnya = 'required';
+        } else {
+            $validator_usaha_lainnya = 'nullable';
+        }
+
+        return $request->nominal;
+
+        if ($request->nominal) {
+        }
+
         $validator = Validator::make($request->all(), [
-            'nama' => 'required',
-            'email' => 'required|unique:users,email',
-            'gender' => 'required',
+            'nominal' => 'required',
+            'tujuan' => 'required',
+            'usaha' => 'required',
+            'usaha_lainnya' => $validator_usaha_lainnya,
+            'jangka_waktu' => 'required',
+            'tipe_angsuran' => 'required',
+            'tipe_angsuran' => 'required',
         ], [
             'nama.required' => 'Nama Lengkap harus diisi!',
             'email.required' => 'Email harus diisi!',
