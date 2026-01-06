@@ -16,8 +16,7 @@
         </div>
         <!-- end page title -->
         <div class="card mb-4 rounded-0">
-            <form action="{{ url('anggota/pinjaman') }}" method="POST" autocomplete="off" id="form-submit"
-                enctype="multipart/form-data">
+            <form action="{{ url('anggota/pinjaman') }}" method="POST" autocomplete="off" id="form-submit">
                 @csrf
                 <div class="card-body">
                     <div class="row">
@@ -152,6 +151,7 @@
                             <label for="tipe_angsuran" class="form-label">Tipe Angsuran *</label>
                             <select class="form-select rounded-0 @error('tipe_angsuran') is-invalid @enderror"
                                 id="tipe_angsuran" name="tipe_angsuran">
+                                <option value="">- Pilih -</option>
                                 <option value="bulanan" {{ old('tipe_angsuran') == 'bulanan' ? 'selected' : '' }}>
                                     Tiap Bulan
                                 </option>
@@ -170,43 +170,36 @@
                 <div class="card-body border-top d-none" id="layout-agunan">
                     <div class="row">
                         <div class="col-md-6">
-                            <div class="form-group">
-                                <div class="">
-                                    <label for="jenis_agunan" class="form-label">Jenis Agunan Tambahan *</label>
-                                    <select class="form-select rounded-0 @error('jenis_agunan') is-invalid @enderror"
-                                        id="jenis_agunan" name="jenis_agunan" onchange="jenis_agunan_check()">
-                                        <option value="">- Pilih -</option>
-                                        <option value="kendaraan" {{ old('jenis_agunan') == 'kendaraan' ? 'selected' : '' }}>
-                                            Kendaraan
-                                        </option>
-                                        <option value="tanah_bangunan"
-                                            {{ old('jenis_agunan') == 'tanah_bangunan' ? 'selected' : '' }}>
-                                            Tanah & Bangunan
-                                        </option>
-                                        <option value="pekarangan"
-                                            {{ old('jenis_agunan') == 'pekarangan' ? 'selected' : '' }}>
-                                            Pekarangan
-                                        </option>
-                                        <option value="sawah" {{ old('jenis_agunan') == 'sawah' ? 'selected' : '' }}>
-                                            Sawah
-                                        </option>
-                                        <option value="lainnya" {{ old('jenis_agunan') == 'lainnya' ? 'selected' : '' }}>
-                                            Lainnya
-                                        </option>
-                                    </select>
-                                </div>
-                                <div class="mt-1" id="jenis-agunan-lainnya-div"
-                                    style="display: {{ old('jenis_agunan') == 'lainnya' ? 'block' : 'none' }};">
-                                    <input type="text" id="jenis_agunan_lainnya" name="jenis_agunan_lainnya"
-                                        class="form-control rounded-0 @error('jenis_agunan_lainnya') is-invalid @enderror"
-                                        value="{{ old('jenis_agunan_lainnya') }}"
-                                        placeholder="sebutkan jenis agunan lainnya">
-                                </div>
-                                @error('jenis_agunan')
-                                    <div class="invalid-feedback">
-                                        {{ $message }}
-                                    </div>
-                                @enderror
+                            <div class="form-group mb-2">
+                                <label for="jenis_agunan" class="form-label">Jenis Agunan Tambahan *</label>
+                                <select class="form-select rounded-0 @error('jenis_agunan') is-invalid @enderror"
+                                    id="jenis_agunan" name="jenis_agunan" onchange="jenis_agunan_check()">
+                                    <option value="">- Pilih -</option>
+                                    <option value="kendaraan" {{ old('jenis_agunan') == 'kendaraan' ? 'selected' : '' }}>
+                                        Kendaraan
+                                    </option>
+                                    <option value="tanah_bangunan"
+                                        {{ old('jenis_agunan') == 'tanah_bangunan' ? 'selected' : '' }}>
+                                        Tanah & Bangunan
+                                    </option>
+                                    <option value="pekarangan"
+                                        {{ old('jenis_agunan') == 'pekarangan' ? 'selected' : '' }}>
+                                        Pekarangan
+                                    </option>
+                                    <option value="sawah" {{ old('jenis_agunan') == 'sawah' ? 'selected' : '' }}>
+                                        Sawah
+                                    </option>
+                                    <option value="lainnya" {{ old('jenis_agunan') == 'lainnya' ? 'selected' : '' }}>
+                                        Lainnya
+                                    </option>
+                                </select>
+                            </div>
+                            <div class="form-group mb-2" id="jenis-agunan-lainnya-div"
+                                style="display: {{ old('jenis_agunan') == 'lainnya' ? 'block' : 'none' }};">
+                                <input type="text" id="jenis_agunan_lainnya" name="jenis_agunan_lainnya"
+                                    class="form-control rounded-0 @error('jenis_agunan_lainnya') is-invalid @enderror"
+                                    value="{{ old('jenis_agunan_lainnya') }}"
+                                    placeholder="sebutkan jenis agunan lainnya">
                                 @error('jenis_agunan_lainnya')
                                     <div class="invalid-feedback">
                                         {{ $message }}
@@ -220,19 +213,19 @@
                                 <select class="form-select rounded-0 @error('bukti_agunan') is-invalid @enderror"
                                     id="bukti_agunan" name="bukti_agunan">
                                     <option value="">- Pilih -</option>
-                                    <option value="shm" {{ old('bukti_agunan') == 'shm' ? 'selected' : '' }}>
+                                    <option value="shm" {{ old('usaha') == 'shm' ? 'selected' : '' }}>
                                         SHM
                                     </option>
-                                    <option value="hgb" {{ old('bukti_agunan') == 'hgb' ? 'selected' : '' }}>
+                                    <option value="hgb" {{ old('usaha') == 'hgb' ? 'selected' : '' }}>
                                         HGB
                                     </option>
-                                    <option value="hgu" {{ old('bukti_agunan') == 'hgu' ? 'selected' : '' }}>
+                                    <option value="hgu" {{ old('usaha') == 'hgu' ? 'selected' : '' }}>
                                         HGU
                                     </option>
-                                    <option value="hak_pakai" {{ old('bukti_agunan') == 'hak_pakai' ? 'selected' : '' }}>
+                                    <option value="hak_pakai" {{ old('usaha') == 'hak_pakai' ? 'selected' : '' }}>
                                         Hak Pakai
                                     </option>
-                                    <option value="bpkb" {{ old('bukti_agunan') == 'bpkb' ? 'selected' : '' }}>
+                                    <option value="bpkb" {{ old('usaha') == 'bpkb' ? 'selected' : '' }}>
                                         BPKB
                                     </option>
                                 </select>
@@ -251,12 +244,11 @@
                                 <select class="form-select rounded-0 @error('bukti_kepemilikan') is-invalid @enderror"
                                     id="bukti_kepemilikan" name="bukti_kepemilikan">
                                     <option value="">- Pilih -</option>
-                                    <option value="milik_nasabah"
-                                        {{ old('bukti_kepemilikan') == 'milik_nasabah' ? 'selected' : '' }}>
+                                    <option value="milik_nasabah" {{ old('usaha') == 'milik_nasabah' ? 'selected' : '' }}>
                                         Milik Nasabah
                                     </option>
                                     <option value="bukan_milik_nasabah"
-                                        {{ old('bukti_kepemilikan') == 'bukan_milik_nasabah' ? 'selected' : '' }}>
+                                        {{ old('usaha') == 'bukan_milik_nasabah' ? 'selected' : '' }}>
                                         Bukan Milik Nasabah
                                     </option>
                                 </select>
@@ -369,16 +361,9 @@
                         </div>
                         <div class="col-md-6">
                             <div class="form-group mb-2">
-                                <label for="slip_gaji"
-                                    class="form-label d-flex flex-column flex-md-row align-items-md-center">
-                                    File Slip Gaji Terakhir *
-                                    <small class="text-muted ms-md-2">
-                                        (format file: pdf, jpg, png. maksimal 2 mb)
-                                    </small>
-                                </label>
+                                <label for="slip_gaji" class="form-label">File Slip Gaji Terakhir *</label>
                                 <input type="file" id="slip_gaji" name="slip_gaji"
-                                    class="form-control rounded-0 @error('slip_gaji') is-invalid @enderror"
-                                    accept=".pdf,image/*">
+                                    class="form-control rounded-0 @error('slip_gaji') is-invalid @enderror">
                                 @error('slip_gaji')
                                     <div class="invalid-feedback">
                                         {{ $message }}

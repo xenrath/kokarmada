@@ -22,8 +22,7 @@ class AnggotaController extends Controller
             })
             ->when($keyword, function ($query) use ($keyword) {
                 $query->where(function ($q) use ($keyword) {
-                    $q->where('nama', 'like', "%{$keyword}%")
-                        ->orWhere('email', 'like', "%{$keyword}%");
+                    $q->where('nama', 'like', "%{$keyword}%");
                 });
             })
             ->select(

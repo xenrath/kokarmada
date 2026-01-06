@@ -64,14 +64,28 @@
                     @method('PUT')
                     <div class="modal-body">
                         <div class="form-group mb-2">
-                            <label for="bunga_pinjaman" class="form-label">Bunga Pinjaman *</label>
+                            <label for="bunga_pinjaman_pertahun" class="form-label">Bunga Pinjaman *</label>
                             <div class="input-group">
-                                <input type="text" id="bunga_pinjaman" name="bunga_pinjaman"
-                                    class="form-control rounded-0 @error('bunga_pinjaman') is-invalid @enderror"
-                                    value="{{ old('bunga_pinjaman', $pengaturan->bunga_pinjaman) }}">
+                                <input type="text" id="bunga_pinjaman_pertahun" name="bunga_pinjaman_pertahun"
+                                    class="form-control rounded-0 @error('bunga_pinjaman_pertahun') is-invalid @enderror"
+                                    value="{{ old('bunga_pinjaman_pertahun', $pengaturan->bunga_pinjaman_pertahun) }}">
+                                <span class="input-group-text rounded-0">% / Tahun</span>
+                            </div>
+                            @error('bunga_pinjaman_pertahun')
+                                <div class="invalid-feedback">
+                                    {{ $message }}
+                                </div>
+                            @enderror
+                        </div>
+                        <div class="form-group mb-2">
+                            <label for="bunga_pinjaman_perbulan" class="form-label">Bunga Pinjaman *</label>
+                            <div class="input-group">
+                                <input type="text" id="bunga_pinjaman_perbulan" name="bunga_pinjaman_perbulan"
+                                    class="form-control rounded-0 @error('bunga_pinjaman_perbulan') is-invalid @enderror"
+                                    value="{{ old('bunga_pinjaman_perbulan', $pengaturan->bunga_pinjaman_perbulan) }}">
                                 <span class="input-group-text rounded-0">% / Bulan</span>
                             </div>
-                            @error('bunga_pinjaman')
+                            @error('bunga_pinjaman_perbulan')
                                 <div class="invalid-feedback">
                                     {{ $message }}
                                 </div>

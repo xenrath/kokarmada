@@ -20,9 +20,9 @@ class User extends Authenticatable
         'status'
     ];
 
-    public function anggota()
+    public function detail()
     {
-        return $this->hasOne(Anggota::class);
+        return $this->hasOne(UserDetail::class);
     }
 
     public function isDev()
@@ -91,6 +91,15 @@ class User extends Authenticatable
     public function isPetugas()
     {
         if ($this->spesial == 'petugas') {
+            return true;
+        } else {
+            return false;
+        }
+    }
+    
+    public function isNormal()
+    {
+        if ($this->spesial == 'normal') {
             return true;
         } else {
             return false;

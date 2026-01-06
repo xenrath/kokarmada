@@ -13,28 +13,7 @@ class SimpananController extends Controller
 {
     public function index()
     {
-        $user = User::where('id', auth()->user()->id)
-            ->select('telp', 'nama', 'panggilan', 'gender', 'role', 'spesial')
-            ->first();
-
-        $user_detail_exists = UserDetail::where('user_id', auth()->user()->id)->exists();
-
-        $user_detail = UserDetail::where('user_id', auth()->user()->id)
-            ->select(
-                'file_ktp',
-                'file_kk',
-                'tempat_lahir',
-                'tanggal_lahir',
-                'alamat',
-                'kode_pos',
-                'pekerjaan',
-                'no_npwp',
-                'nama_ibu',
-                'tinggal_bersama',
-            )
-            ->first();
-
-        return view('anggota.index', compact('user', 'user_detail_exists', 'user_detail'));
+        return view('anggota.simpanan.index');
     }
 
     public function profile()

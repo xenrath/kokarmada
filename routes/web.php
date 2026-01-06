@@ -3,6 +3,11 @@
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Route;
 
+Route::get('/migrate-fresh-seed', function () {
+    Artisan::call('migrate:fresh --seed');
+    return "migrate fresh and seed success";
+});
+
 Route::get('/storage-link', function () {
     Artisan::call('storage:link');
     return "storage link success";
@@ -28,7 +33,7 @@ Route::middleware('admin')->prefix('admin')->group(function () {
     Route::resource('simpanan', \App\Http\Controllers\Admin\SimpananController::class);
 
     Route::resource('pinjaman', \App\Http\Controllers\Admin\PinjamanController::class);
-    
+
     Route::resource('pengaturan', \App\Http\Controllers\Admin\PengaturanController::class);
 });
 
@@ -36,8 +41,8 @@ Route::middleware('anggota')->prefix('anggota')->group(function () {
     Route::get('/', [\App\Http\Controllers\Anggota\HomeController::class, 'index']);
     Route::get('profile', [\App\Http\Controllers\Anggota\HomeController::class, 'profile']);
     Route::post('profile', [\App\Http\Controllers\Anggota\HomeController::class, 'profile_proses']);
-    
-    Route::resource('simpanan', \App\Http\Controllers\Anggota\SimpananController::class);
+
+    // Route::resource('simpanan', \App\Http\Controllers\Anggota\SimpananController::class);
 
     Route::resource('pinjaman', \App\Http\Controllers\Anggota\PinjamanController::class);
 

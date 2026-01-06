@@ -1,4 +1,4 @@
-<li class="side-nav-title side-nav-item">Menu</li>
+<li class="side-nav-title side-nav-item">Menu Utama</li>
 <li class="side-nav-item {{ request()->is('admin') ? 'menuitem-active' : '' }}">
     <a href="{{ url('admin') }}" class="side-nav-link {{ request()->is('admin') ? 'active' : '' }}">
         <i class="uil-home-alt"></i>

@@ -25,10 +25,12 @@ class PengaturanController extends Controller
     public function update(Request $request, $id)
     {
         $validator = Validator::make($request->all(), [
-            'bunga_pinjaman' => 'required',
+            'bunga_pinjaman_pertahun' => 'required',
+            'bunga_pinjaman_perbulan' => 'required',
             'jangka_waktu_pinjaman' => 'required',
         ], [
-            'bunga_pinjaman.required' => 'Bunga Pinjaman harus diisi!',
+            'bunga_pinjaman_pertahun.required' => 'Bunga Pinjaman harus diisi!',
+            'bunga_pinjaman_perbulan.required' => 'Bunga Pinjaman harus diisi!',
             'jangka_waktu_pinjaman.required' => 'Jangka Waktu Pinjaman harus diisi!',
         ]);
 
@@ -37,7 +39,8 @@ class PengaturanController extends Controller
         }
 
         $update = Pengaturan::where('id', $id)->update([
-            'bunga_pinjaman' => $request->bunga_pinjaman,
+            'bunga_pinjaman_pertahun' => $request->bunga_pinjaman_pertahun,
+            'bunga_pinjaman_perbulan' => $request->bunga_pinjaman_perbulan,
             'jangka_waktu_pinjaman' => $request->jangka_waktu_pinjaman,
         ]);
 
