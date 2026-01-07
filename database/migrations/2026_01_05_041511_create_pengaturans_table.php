@@ -10,8 +10,7 @@ return new class extends Migration
     {
         Schema::create('pengaturans', function (Blueprint $table) {
             $table->id();
-            $table->float('bunga_pinjaman_pertahun');
-            $table->float('bunga_pinjaman_perbulan');
+            $table->float('bunga_pinjaman');
             $table->integer('jangka_waktu_pinjaman');
             $table->timestamps();
         });

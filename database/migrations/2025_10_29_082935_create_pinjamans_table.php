@@ -12,10 +12,11 @@ return new class extends Migration
             $table->id();
             $table->integer('urutan');
             $table->string('kode')->unique();
-            $table->foreignId('anggota_id')->constrained('anggotas')->onDelete('restrict');
+            $table->foreignId('user_id')->constrained('users')->onDelete('restrict');
             $table->date('tanggal_pengajuan');
             $table->date('tanggal_disetujui')->nullable();
             $table->bigInteger('nominal');
+            $table->text('tujuan');
             $table->enum('usaha', ['perdagangan', 'pertanian', 'jasa', 'lainnya']);
             $table->string('usaha_lainnya');
             $table->integer('jangka_waktu'); // tahun
@@ -23,8 +24,8 @@ return new class extends Migration
             $table->string('tempat_kerja');
             $table->string('jabatan_terakhir');
             $table->integer('lama_kerja');
-            $table->integer('pendapata_kotor');
-            $table->integer('pendapata_bersih');
+            $table->integer('pendapatan_kotor');
+            $table->integer('pendapatan_bersih');
             $table->string('slip_gaji');
             $table->decimal('bunga_persen', 5, 2);
             $table->bigInteger('total_pinjaman');
@@ -42,6 +43,6 @@ return new class extends Migration
 
     public function down(): void
     {
-        Schema::dropIfExists('pinjamen');
+        Schema::dropIfExists('pinjamans');
     }
 };

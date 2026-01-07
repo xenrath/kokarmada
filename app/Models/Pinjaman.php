@@ -9,26 +9,34 @@ class Pinjaman extends Model
 {
     use HasFactory;
 
+    protected $table = 'pinjamans';
+
     protected $fillable = [
         'urutan',
         'kode',
-        'anggota_id',
+        'user_id',
         'tanggal_pengajuan',
         'tanggal_disetujui',
         'nominal',
+        'tujuan',
         'usaha',
         'usaha_lainnya',
         'jangka_waktu',
-        'jangka_waktu',
         'tipe_angsuran',
+        'tempat_kerja',
+        'jabatan_terakhir',
+        'lama_kerja',
+        'pendapatan_kotor',
+        'pendapatan_bersih',
+        'slip_gaji',
+        'bunga_persen',
         'total_pinjaman',
         'status',
-        'keterangan'
     ];
 
-    public function anggota()
+    public function user()
     {
-        return $this->belongsTo(Anggota::class);
+        return $this->belongsTo(User::class);
     }
 
     public function angsuran()

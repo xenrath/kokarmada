@@ -1,17 +1,17 @@
 @extends('layout.app')
 
-@section('title', 'Detail User')
+@section('title', 'Detail Pinjaman')
 
 @section('content')
     <!-- Start Content-->
     <div class="container-fluid">
         <!-- start page title -->
         <div class="d-flex align-items-center gap-2">
-            <a href="{{ url('admin/user') }}" class="btn btn-secondary rounded-0">
+            <a href="{{ url('anggota/pinjaman') }}" class="btn btn-secondary rounded-0">
                 <i class="mdi mdi-arrow-left"></i>
             </a>
             <div class="page-title-box">
-                <h4 class="page-title">Detail User</h4>
+                <h4 class="page-title">Detail Pinjaman</h4>
             </div>
         </div>
         <!-- end page title -->

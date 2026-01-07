@@ -66,18 +66,57 @@
                             <tr>
                                 <th class="text-center" style="width: 10px">No</th>
                                 <th>Nama Anggota</th>
-                                <th>Jumlah</th>
-                                <th>Waktu</th>
+                                <th>Nominal</th>
+                                <th>Jangka Waktu</th>
                                 <th>Status</th>
                                 <th style="width: 120px">Action</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td colspan="6" class="text-center">
-                                    <span class="text-muted">- Data tidak ditemukan -</span>
-                                </td>
-                            </tr>
+                            @forelse ($pinjamans as $pinjaman)
+                                <tr>
+                                    <td class="text-center">{{ $loop->iteration }}</td>
+                                    <td>{{ $pinjaman->user->nama }}</td>
+                                    <td>@rupiah($pinjaman->nominal)</td>
+                                    <td>
+                                        @if ($pinjaman->tipe_angsuran == 'bulanan')
+                                            {{ $pinjaman->jangka_waktu * 12 }} Bulan
+                                        @else
+                                            {{ $pinjaman->jangka_waktu }} Tahun
+                                        @endif
+                                    </td>
+                                    <td>
+                                        <span class="badge badge-info-lighten rounded-0">
+                                            {{ ucfirst($pinjaman->status) }}
+                                        </span>
+                                    </td>
+                                    <td class="text-center">
+                                        <a href="{{ url('anggota/pinjaman/' . $pinjaman->id) }}" class="action-icon">
+                                            <i class="mdi mdi-eye"></i>
+                                        </a>
+                                        <a href="{{ url('admin/anggota/' . $user->id . '/edit') }}" class="action-icon">
+                                            <i class="mdi mdi-square-edit-outline"></i>
+                                        </a>
+                                        @if ($user->status == 'aktif')
+                                            <a href="#" class="action-icon" data-bs-toggle="modal"
+                                                data-bs-target="#modal-nonaktif-{{ $user->id }}">
+                                                <i class="mdi mdi-cancel"></i>
+                                            </a>
+                                        @else
+                                            <a href="#" class="action-icon" data-bs-toggle="modal"
+                                                data-bs-target="#modal-aktif-{{ $user->id }}">
+                                                <i class="mdi mdi-check-circle"></i>
+                                            </a>
+                                        @endif
+                                    </td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="6" class="text-center">
+                                        <span class="text-muted">- Data tidak ditemukan -</span>
+                                    </td>
+                                </tr>
+                            @endforelse
                         </tbody>
                     </table>
                 </div>
@@ -261,8 +300,12 @@
                 <div class="modal-footer justify-content-between">
                     <button type="button" class="btn btn-light rounded-0" data-bs-dismiss="modal">Batal</button>
                     @if ($user_detail_exists)
-                        <button type="button" class="btn btn-primary rounded-0" id="btn-lanjutkan" disabled>
-                            Lanjutkan
+                        <button type="button" class="btn btn-primary rounded-0" id="btn-lanjutkan"
+                            onclick="form_lanjutkan()" disabled>
+                            <span id="btn-lanjutkan-text">Lanjutkan</span>
+                            <span id="btn-lanjutkan-load" style="display:none;">
+                                <i class="mdi mdi-spin mdi-loading"></i>
+                            </span>
                         </button>
                     @endif
                 </div>
@@ -281,5 +324,12 @@
                 $('#btn-lanjutkan').prop('disabled', !this.checked);
             });
         });
+
+        function form_lanjutkan() {
+            $('#btn-lanjutkan').prop('disabled', true);
+            $('#btn-lanjutkan-text').hide();
+            $('#btn-lanjutkan-load').show();
+            window.location.href = "{{ url('anggota/pinjaman/create') }}";
+        }
     </script>
 @endsection

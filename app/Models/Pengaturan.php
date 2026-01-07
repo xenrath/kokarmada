@@ -10,8 +10,7 @@ class Pengaturan extends Model
     use HasFactory;
 
     protected $fillable = [
-        'bunga_pinjaman_pertahun',
-        'bunga_pinjaman_perbulan',
+        'bunga_pinjaman',
         'jangka_waktu_pinjaman',
     ];
 }

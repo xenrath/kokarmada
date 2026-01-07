@@ -7,7 +7,7 @@
     <div class="container-fluid">
         <!-- start page title -->
         <div class="d-flex align-items-center gap-2">
-            <a href="{{ url('admin/pinjaman') }}" class="btn btn-secondary rounded-0">
+            <a href="{{ url('anggota/pinjaman') }}" class="btn btn-secondary rounded-0">
                 <i class="mdi mdi-arrow-left"></i>
             </a>
             <div class="page-title-box">
@@ -43,7 +43,7 @@
                                     </small>
                                 </label>
                                 <input type="text" class="form-control rounded-0"
-                                    value="{{ $pengaturan->bunga_pinjaman_pertahun }}" readonly>
+                                    value="{{ $pengaturan->bunga_pinjaman }}" readonly>
                             </div>
                         </div>
                         <div class="col-md-4">
@@ -170,8 +170,8 @@
                 <div class="card-body border-top d-none" id="layout-agunan">
                     <div class="row">
                         <div class="col-md-6">
-                            <div class="form-group">
-                                <div class="">
+                            <div class="form-group mb-2">
+                                <div>
                                     <label for="jenis_agunan" class="form-label">Jenis Agunan Tambahan *</label>
                                     <select class="form-select rounded-0 @error('jenis_agunan') is-invalid @enderror"
                                         id="jenis_agunan" name="jenis_agunan" onchange="jenis_agunan_check()">
@@ -433,7 +433,7 @@
     <script>
         $(document).ready(function() {
 
-            const bunga_tahun = {{ $pengaturan->bunga_pinjaman_pertahun / 100 }};
+            const bunga_tahun = {{ $pengaturan->bunga_pinjaman / 100 }};
 
             function format_rupiah(angka) {
                 return new Intl.NumberFormat('id-ID').format(angka);
