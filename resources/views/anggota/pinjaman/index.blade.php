@@ -65,7 +65,7 @@
                         <thead class="table-light">
                             <tr>
                                 <th class="text-center" style="width: 10px">No</th>
-                                <th>Nama Anggota</th>
+                                <th>Tanggal Pinjaman</th>
                                 <th>Nominal</th>
                                 <th>Jangka Waktu</th>
                                 <th>Status</th>
@@ -76,7 +76,7 @@
                             @forelse ($pinjamans as $pinjaman)
                                 <tr>
                                     <td class="text-center">{{ $loop->iteration }}</td>
-                                    <td>{{ $pinjaman->user->nama }}</td>
+                                    <td>{{ Carbon\Carbon::parse($pinjaman->tanggal_pengajuan)->translatedFormat('d F Y') }}</td>
                                     <td>@rupiah($pinjaman->nominal)</td>
                                     <td>
                                         @if ($pinjaman->tipe_angsuran == 'bulanan')

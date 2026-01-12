@@ -41,12 +41,17 @@ Route::middleware('anggota')->prefix('anggota')->group(function () {
     Route::get('/', [\App\Http\Controllers\Anggota\HomeController::class, 'index']);
     Route::get('profile', [\App\Http\Controllers\Anggota\HomeController::class, 'profile']);
     Route::post('profile', [\App\Http\Controllers\Anggota\HomeController::class, 'profile_proses']);
-
+    
     // Route::resource('simpanan', \App\Http\Controllers\Anggota\SimpananController::class);
-
+    
     Route::resource('pinjaman', \App\Http\Controllers\Anggota\PinjamanController::class);
-
+    
     Route::middleware('ketua')->prefix('ketua')->group(function () {
         // Route::resource('user', \App\Http\Controllers\Anggota\UserController::class);
+    });
+    
+    Route::middleware('manajer')->prefix('manajer')->group(function () {
+        Route::get('pinjaman/print/{id}', [\App\Http\Controllers\Anggota\Manajer\PinjamanController::class, 'print']);
+        Route::resource('pinjaman', \App\Http\Controllers\Anggota\Manajer\PinjamanController::class);
     });
 });

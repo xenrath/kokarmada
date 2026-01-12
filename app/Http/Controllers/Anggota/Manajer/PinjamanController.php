@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Anggota;
+namespace App\Http\Controllers\Anggota\Manajer;
 
 use App\Http\Controllers\Controller;
 use App\Models\Pengaturan;
@@ -9,6 +9,7 @@ use App\Models\PinjamanAgunan;
 use App\Models\PinjamanUser;
 use App\Models\User;
 use App\Models\UserDetail;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -18,28 +19,7 @@ class PinjamanController extends Controller
 {
     public function index()
     {
-        $user = User::where('id', auth()->user()->id)
-            ->select('telp', 'nama', 'panggilan', 'gender', 'role', 'spesial')
-            ->first();
-
-        $user_detail_exists = UserDetail::where('user_id', auth()->user()->id)->exists();
-
-        $user_detail = UserDetail::where('user_id', auth()->user()->id)
-            ->select(
-                'file_ktp',
-                'file_kk',
-                'tempat_lahir',
-                'tanggal_lahir',
-                'alamat',
-                'kode_pos',
-                'pekerjaan',
-                'no_npwp',
-                'nama_ibu',
-                'tinggal_bersama',
-            )
-            ->first();
-
-        $pinjamans = Pinjaman::where('user_id', auth()->user()->id)
+        $pinjamans = Pinjaman::where('status', 'diajukan')
             ->select(
                 'id',
                 'tanggal_pengajuan',
@@ -51,7 +31,7 @@ class PinjamanController extends Controller
             ->with('user:id,nama')
             ->get();
 
-        return view('anggota.pinjaman.index', compact('user', 'user_detail_exists', 'user_detail', 'pinjamans'));
+        return view('anggota.manajer.pinjaman.index', compact('pinjamans'));
     }
 
     public function create()
@@ -281,5 +261,83 @@ class PinjamanController extends Controller
         ];
 
         return $romawi[$bulan] ?? '';
+    }
+
+    public function print($id)
+    {
+        $pinjaman = Pinjaman::where('id', $id)
+            ->select(
+                'id',
+                'kode',
+                'nominal',
+                'tujuan',
+                'usaha',
+                'usaha_lainnya',
+                'jangka_waktu',
+                'tipe_angsuran',
+                'tempat_kerja',
+                'jabatan_terakhir',
+                'lama_kerja',
+                'pendapatan_kotor',
+                'pendapatan_bersih',
+            )
+            ->with('pinjaman_user', function ($query) {
+                $query->select(
+                    'pinjaman_id',
+                    'nama',
+                    'panggilan',
+                    'gender',
+                    'telp',
+                    'alamat',
+                    'kode_pos',
+                    'tempat_lahir',
+                    'tanggal_lahir',
+                    'pekerjaan',
+                    'nama_pasangan',
+                    'pekerjaan_pasangan',
+                    'nama_ibu',
+                    'tinggal_bersama',
+                    'no_npwp',
+                );
+            })
+            ->with('pinjaman_agunan', function ($query) {
+                $query->select(
+                    'pinjaman_id',
+                    'jenis_agunan',
+                    'jenis_agunan_lainnya',
+                    'bukti_agunan',
+                    'bukti_kepemilikan',
+                );
+            })
+            ->first();
+
+        $dana_terbilang = $this->terbilang($pinjaman->nominal) . 'rupiah';
+
+        $pdf = Pdf::loadview('anggota.manajer.pinjaman.print', compact('pinjaman', 'dana_terbilang'));
+        return $pdf->stream('Formulir Pengajuan Pinjaman Koperasi');
+    }
+
+    public function terbilang($value)
+    {
+        $angka = ["", "satu", "dua", "tiga", "empat", "lima", "enam", "tujuh", "delapan", "sembilan", "sepuluh", "sebelas"];
+        $space = $value > 0 ? " " : null;
+
+        if ($value < 12) {
+            return $angka[$value] . $space;
+        } elseif ($value < 20) {
+            return $this->terbilang($value - 10) . "belas" . $space;
+        } elseif ($value < 100) {
+            return $this->terbilang($value / 10) . "puluh" . $space . $this->terbilang($value % 10);
+        } elseif ($value < 200) {
+            return "seratus" . $this->terbilang($value - 100);
+        } elseif ($value < 1000) {
+            return $this->terbilang($value / 100) . "ratus" . $space . $this->terbilang($value % 100);
+        } elseif ($value < 2000) {
+            return "seribu" . $this->terbilang($value - 1000);
+        } elseif ($value < 1000000) {
+            return $this->terbilang($value / 1000) . "ribu" . $space . $this->terbilang($value % 1000);
+        } elseif ($value < 1000000000) {
+            return $this->terbilang($value / 1000000) . "juta" . $space . $this->terbilang($value % 1000000);
+        }
     }
 }

@@ -39,6 +39,16 @@ class Pinjaman extends Model
         return $this->belongsTo(User::class);
     }
 
+    public function pinjaman_user()
+    {
+        return $this->hasOne(PinjamanUser::class, 'pinjaman_id', 'id');
+    }
+
+    public function pinjaman_agunan()
+    {
+        return $this->hasOne(PinjamanAgunan::class, 'pinjaman_id', 'id');
+    }
+
     public function angsuran()
     {
         return $this->hasMany(Angsuran::class);
