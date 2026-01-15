@@ -22,6 +22,7 @@ class PinjamanController extends Controller
         $pinjamans = Pinjaman::where('status', 'diajukan')
             ->select(
                 'id',
+                'user_id',
                 'tanggal_pengajuan',
                 'nominal',
                 'jangka_waktu',
@@ -226,12 +227,40 @@ class PinjamanController extends Controller
                 'slip_gaji',
                 'status',
             )
-            ->with('user:id,nama')
             ->with('pinjaman_user:pinjaman_id,telp')
             ->with('pinjaman_agunan:pinjaman_id,jenis_agunan,jenis_agunan_lainnya,bukti_agunan,bukti_kepemilikan,bukti_file')
             ->first();
 
-        return view('anggota.pinjaman.show', compact('pinjaman'));
+        $user = User::where('id', $pinjaman->user_id)
+            ->select(
+                'telp',
+                'nama',
+                'panggilan',
+                'gender',
+            )
+            ->first();
+
+        $user_detail = UserDetail::where('user_id', $pinjaman->user_id)
+            ->select(
+                'foto_diri',
+                'no_ktp',
+                'masa_berlaku_ktp',
+                'file_ktp',
+                'file_kk',
+                'tempat_lahir',
+                'tanggal_lahir',
+                'alamat',
+                'kode_pos',
+                'pekerjaan',
+                'no_npwp',
+                'nama_ibu',
+                'tinggal_bersama',
+                'nama_pasangan',
+                'pekerjaan_pasangan',
+            )
+            ->first();
+
+        return view('anggota.manajer.pinjaman.show', compact('pinjaman', 'user', 'user_detail'));
     }
 
     public function generate_kode($nomor_urut)
@@ -268,6 +297,7 @@ class PinjamanController extends Controller
         $pinjaman = Pinjaman::where('id', $id)
             ->select(
                 'id',
+                'user_id',
                 'kode',
                 'nominal',
                 'tujuan',
@@ -281,25 +311,6 @@ class PinjamanController extends Controller
                 'pendapatan_kotor',
                 'pendapatan_bersih',
             )
-            ->with('pinjaman_user', function ($query) {
-                $query->select(
-                    'pinjaman_id',
-                    'nama',
-                    'panggilan',
-                    'gender',
-                    'telp',
-                    'alamat',
-                    'kode_pos',
-                    'tempat_lahir',
-                    'tanggal_lahir',
-                    'pekerjaan',
-                    'nama_pasangan',
-                    'pekerjaan_pasangan',
-                    'nama_ibu',
-                    'tinggal_bersama',
-                    'no_npwp',
-                );
-            })
             ->with('pinjaman_agunan', function ($query) {
                 $query->select(
                     'pinjaman_id',
@@ -311,9 +322,37 @@ class PinjamanController extends Controller
             })
             ->first();
 
+        $user = User::where('id', $pinjaman->user_id)
+            ->select(
+                'telp',
+                'nama',
+                'panggilan',
+                'gender',
+            )
+            ->first();
+
+        $user_detail = UserDetail::where('user_id', $pinjaman->user_id)
+            ->select(
+                'no_ktp',
+                'masa_berlaku_ktp',
+                'file_ktp',
+                'file_kk',
+                'tempat_lahir',
+                'tanggal_lahir',
+                'alamat',
+                'kode_pos',
+                'pekerjaan',
+                'no_npwp',
+                'nama_ibu',
+                'tinggal_bersama',
+                'nama_pasangan',
+                'pekerjaan_pasangan',
+            )
+            ->first();
+
         $dana_terbilang = $this->terbilang($pinjaman->nominal) . 'rupiah';
 
-        $pdf = Pdf::loadview('anggota.manajer.pinjaman.print', compact('pinjaman', 'dana_terbilang'));
+        $pdf = Pdf::loadview('anggota.manajer.pinjaman.print', compact('pinjaman', 'dana_terbilang', 'user', 'user_detail'));
         return $pdf->stream('Formulir Pengajuan Pinjaman Koperasi');
     }
 

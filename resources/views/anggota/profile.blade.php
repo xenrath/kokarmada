@@ -82,6 +82,70 @@
                     </div>
                     <div class="row">
                         <div class="col-md-6 mb-2">
+                            <label for="detail_pekerjaan" class="form-label">Pekerjaan *</label>
+                            <input type="text" id="detail_pekerjaan" name="detail_pekerjaan"
+                                class="form-control rounded-0 @error('detail_pekerjaan') is-invalid @enderror"
+                                value="{{ old('detail_pekerjaan', $user_detail->pekerjaan ?? null) }}">
+                            @error('detail_pekerjaan')
+                                <div class="invalid-feedback">
+                                    {{ $message }}
+                                </div>
+                            @enderror
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <label for="detail_foto_diri"
+                                class="form-label d-flex flex-column flex-md-row align-items-md-center">
+                                Foto Diri
+                                @if (!($user_detail->foto_diri ?? null))
+                                    *
+                                @endif
+                                <small class="text-muted ms-md-2">
+                                    (format file: jpg, png. maksimal 2 mb)
+                                </small>
+                            </label>
+                            <input type="file" id="detail_foto_diri" name="detail_foto_diri"
+                                class="form-control rounded-0 @error('detail_foto_diri') is-invalid @enderror"
+                                accept="image/*">
+                            @error('detail_foto_diri')
+                                <div class="invalid-feedback">
+                                    {{ $message }}
+                                </div>
+                            @enderror
+                            @if ($user_detail->foto_diri ?? null)
+                                <a href="{{ asset('storage/uploads/' . $user_detail->foto_diri) }}"
+                                    class="btn btn-sm btn-outline-secondary float-end rounded-0 mt-2" target="_blank"
+                                    rel="noopener noreferrer">
+                                    Lihat Foto Diri
+                                </a>
+                            @endif
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-2">
+                            <label for="detail_no_ktp" class="form-label">No. KTP *</label>
+                            <input type="text" id="detail_no_ktp" name="detail_no_ktp"
+                                class="form-control rounded-0 @error('detail_no_ktp') is-invalid @enderror"
+                                value="{{ old('detail_no_ktp', $user_detail->no_ktp ?? null) }}">
+                            @error('detail_no_ktp')
+                                <div class="invalid-feedback">
+                                    {{ $message }}
+                                </div>
+                            @enderror
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <label for="detail_masa_berlaku_ktp" class="form-label">Masa Berlaku KTP *</label>
+                            <input type="text" id="detail_masa_berlaku_ktp" name="detail_masa_berlaku_ktp"
+                                class="form-control rounded-0 @error('detail_masa_berlaku_ktp') is-invalid @enderror"
+                                value="{{ old('detail_masa_berlaku_ktp', $user_detail->masa_berlaku_ktp ?? 'Seumur Hidup') }}">
+                            @error('detail_masa_berlaku_ktp')
+                                <div class="invalid-feedback">
+                                    {{ $message }}
+                                </div>
+                            @enderror
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-2">
                             <label for="detail_file_ktp"
                                 class="form-label d-flex flex-column flex-md-row align-items-md-center">
                                 File KTP
@@ -175,7 +239,8 @@
                                     @enderror
                                 </div>
                                 <div class="col-4 mb-2">
-                                    <select class="form-select rounded-0 @error('detail_bulan_lahir') is-invalid @enderror"
+                                    <select
+                                        class="form-select rounded-0 @error('detail_bulan_lahir') is-invalid @enderror"
                                         id="detail_bulan_lahir" name="detail_bulan_lahir">
                                         <option value="">Bulan</option>
                                         <option value="1"
@@ -327,19 +392,6 @@
                                 class="form-control rounded-0 @error('detail_kode_pos') is-invalid @enderror"
                                 value="{{ old('detail_kode_pos', $user_detail->kode_pos ?? null) }}">
                             @error('detail_kode_pos')
-                                <div class="invalid-feedback">
-                                    {{ $message }}
-                                </div>
-                            @enderror
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-6 mb-2">
-                            <label for="detail_pekerjaan" class="form-label">Pekerjaan *</label>
-                            <input type="text" id="detail_pekerjaan" name="detail_pekerjaan"
-                                class="form-control rounded-0 @error('detail_pekerjaan') is-invalid @enderror"
-                                value="{{ old('detail_pekerjaan', $user_detail->pekerjaan ?? null) }}">
-                            @error('detail_pekerjaan')
                                 <div class="invalid-feedback">
                                     {{ $message }}
                                 </div>

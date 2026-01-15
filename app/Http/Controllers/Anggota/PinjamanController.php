@@ -26,6 +26,9 @@ class PinjamanController extends Controller
 
         $user_detail = UserDetail::where('user_id', auth()->user()->id)
             ->select(
+                'foto_diri',
+                'no_ktp',
+                'masa_berlaku_ktp',
                 'file_ktp',
                 'file_kk',
                 'tempat_lahir',
@@ -66,18 +69,31 @@ class PinjamanController extends Controller
 
     public function store(Request $request)
     {
-        $user_detail_exists = UserDetail::where('user_id', auth()->user()->id)->exists();
-        if (!$user_detail_exists) {
+        // ===============================
+        // CEK DATA DIRI
+        // ===============================
+
+        if (!UserDetail::where('user_id', auth()->id())->exists()) {
             return redirect('anggota/pinjaman')->with('error', 'Anda belum melengkapi Data Diri!');
         }
 
-        if ($request->usaha == 'lainnya') {
-            $validator_usaha_lainnya = 'required';
-        } else {
-            $validator_usaha_lainnya = 'nullable';
-        }
+        // ===============================
+        // NORMALISASI ANGKA
+        // ===============================
+        $nominal = (int) str_replace('.', '', $request->input('nominal'));
 
-        $nominal = (int) str_replace('.', '', $request->nominal);
+        // ===============================
+        // VALIDATOR DINAMIS
+        // ===============================
+        $validator_usaha_lainnya = $request->input('usaha') === 'lainnya'
+            ? 'required'
+            : 'nullable';
+
+        $validator_jenis_agunan = 'nullable';
+        $validator_jenis_agunan_lainnya = 'nullable';
+        $validator_bukti_agunan = 'nullable';
+        $validator_bukti_kepemilikan = 'nullable';
+        $validator_bukti_file = 'nullable';
 
         if ($nominal > 25000000) {
             $validator_jenis_agunan = 'required';
@@ -85,19 +101,14 @@ class PinjamanController extends Controller
             $validator_bukti_kepemilikan = 'required';
             $validator_bukti_file = 'required';
 
-            if ($request->jenis_agunan == 'lainnya') {
+            if ($request->input('jenis_agunan') === 'lainnya') {
                 $validator_jenis_agunan_lainnya = 'required';
-            } else {
-                $validator_jenis_agunan_lainnya = 'nullable';
             }
-        } else {
-            $validator_jenis_agunan = 'nullable';
-            $validator_jenis_agunan_lainnya = 'nullable';
-            $validator_bukti_agunan = 'nullable';
-            $validator_bukti_kepemilikan = 'nullable';
-            $validator_bukti_file = 'nullable';
         }
 
+        // ===============================
+        // VALIDASI
+        // ===============================
         $validator = Validator::make($request->all(), [
             'nominal' => 'required',
             'tujuan' => 'required',
@@ -143,42 +154,53 @@ class PinjamanController extends Controller
                 ->with('error', 'Gagal membuat Pinjaman!');
         }
 
-        DB::transaction(function () use ($request) {
+        // ===============================
+        // TRANSAKSI DATABASE
+        // ===============================
+        DB::transaction(function () use ($request, $nominal) {
+
             $last = Pinjaman::lockForUpdate()
                 ->orderBy('urutan', 'desc')
                 ->first();
+
             $urutan = $last ? $last->urutan + 1 : 100;
             $kode = $this->generate_kode($urutan);
 
-            $nominal = (int) str_replace('.', '', $request->nominal);
-            $pendapatan_kotor = (int) str_replace('.', '', $request->pendapatan_kotor);
-            $pendapatan_bersih = (int) str_replace('.', '', $request->pendapatan_bersih);
+            $pendapatan_kotor = (int) str_replace('.', '', $request->input('pendapatan_kotor'));
+            $pendapatan_bersih = (int) str_replace('.', '', $request->input('pendapatan_bersih'));
 
             $bunga = Pengaturan::where('id', 1)->value('bunga_pinjaman');
-            $bunga_tahun = $bunga / 100;
-            $total = $nominal + ($nominal * $bunga_tahun * $request->jangka_waktu);
+            $total = $nominal + ($nominal * ($bunga / 100) * $request->input('jangka_waktu'));
 
             $waktu = Carbon::now()->format('ymdhis');
-            $slip_gaji = 'slip_gaji/' . $urutan . '-' . $waktu . '.' . $request->slip_gaji->getClientOriginalExtension();
-            $bukti_file = 'bukti_agunan/' . $urutan . '-' . $waktu . '.' . $request->bukti_file->getClientOriginalExtension();
+
+            $slip_gaji_path = 'slip_gaji/' . $urutan . '-' . $waktu . '.' .
+                $request->file('slip_gaji')->getClientOriginalExtension();
+
+            $bukti_file_path = null;
+
+            if ($nominal > 25000000) {
+                $bukti_file_path = 'bukti_agunan/' . $urutan . '-' . $waktu . '.' .
+                    $request->file('bukti_file')->getClientOriginalExtension();
+            }
 
             $pinjaman = Pinjaman::create([
                 'urutan' => $urutan,
                 'kode' => $kode,
-                'user_id' => auth()->user()->id,
-                'tanggal_pengajuan' => Carbon::now()->format('Y-m-d'),
+                'user_id' => auth()->id(),
+                'tanggal_pengajuan' => now()->format('Y-m-d'),
                 'nominal' => $nominal,
-                'tujuan' => $request->tujuan,
-                'usaha' => $request->usaha,
-                'usaha_lainnya' => $request->usaha_lainnya,
-                'jangka_waktu' => $request->jangka_waktu,
-                'tipe_angsuran' => $request->tipe_angsuran,
-                'tempat_kerja' => $request->tempat_kerja,
-                'jabatan_terakhir' => $request->jabatan_terakhir,
-                'lama_kerja' => $request->lama_kerja,
+                'tujuan' => $request->input('tujuan'),
+                'usaha' => $request->input('usaha'),
+                'usaha_lainnya' => $request->input('usaha_lainnya'),
+                'jangka_waktu' => $request->input('jangka_waktu'),
+                'tipe_angsuran' => $request->input('tipe_angsuran'),
+                'tempat_kerja' => $request->input('tempat_kerja'),
+                'jabatan_terakhir' => $request->input('jabatan_terakhir'),
+                'lama_kerja' => $request->input('lama_kerja'),
                 'pendapatan_kotor' => $pendapatan_kotor,
                 'pendapatan_bersih' => $pendapatan_bersih,
-                'slip_gaji' => $slip_gaji,
+                'slip_gaji' => $slip_gaji_path,
                 'bunga_persen' => $bunga,
                 'total_pinjaman' => $total,
                 'status' => 'diajukan',
@@ -187,40 +209,30 @@ class PinjamanController extends Controller
             if ($nominal > 25000000) {
                 PinjamanAgunan::create([
                     'pinjaman_id' => $pinjaman->id,
-                    'jenis_agunan' => $request->jenis_agunan,
-                    'jenis_agunan_lainnya' => $request->jenis_agunan_lainnya,
-                    'bukti_agunan' => $request->bukti_agunan,
-                    'bukti_kepemilikan' => $request->bukti_kepemilikan,
-                    'bukti_file' => $bukti_file,
+                    'jenis_agunan' => $request->input('jenis_agunan'),
+                    'jenis_agunan_lainnya' => $request->input('jenis_agunan_lainnya'),
+                    'bukti_agunan' => $request->input('bukti_agunan'),
+                    'bukti_kepemilikan' => $request->input('bukti_kepemilikan'),
+                    'bukti_file' => $bukti_file_path,
                 ]);
             }
 
-            PinjamanUser::create([
-                'pinjaman_id' => $pinjaman->id,
-                'telp' => auth()->user()->telp,
-                'nama' => auth()->user()->nama,
-                'panggilan' => auth()->user()->panggilan,
-                'gender' => auth()->user()->gender,
-                'file_kk' => auth()->user()->detail->file_kk,
-                'file_ktp' => auth()->user()->detail->file_ktp,
-                'tempat_lahir' => auth()->user()->detail->tempat_lahir,
-                'tanggal_lahir' => auth()->user()->detail->tanggal_lahir,
-                'alamat' => auth()->user()->detail->alamat,
-                'kode_pos' => auth()->user()->detail->kode_pos,
-                'pekerjaan' => auth()->user()->detail->pekerjaan,
-                'no_npwp' => auth()->user()->detail->no_npwp,
-                'nama_ibu' => auth()->user()->detail->nama_ibu,
-                'tinggal_bersama' => auth()->user()->detail->tinggal_bersama,
-                'nama_pasangan' => auth()->user()->detail->nama_pasangan,
-                'pekerjaan_pasangan' => auth()->user()->detail->pekerjaan_pasangan,
-            ]);
+            // ===============================
+            // UPLOAD FILE
+            // ===============================
+            $request->file('slip_gaji')
+                ->storeAs('public/uploads/', $slip_gaji_path);
 
-            $request->slip_gaji->storeAs('public/uploads/', $slip_gaji);
-            $request->bukti_file->storeAs('public/uploads/', $bukti_file);
+            if ($bukti_file_path) {
+                $request->file('bukti_file')
+                    ->storeAs('public/uploads/', $bukti_file_path);
+            }
         });
 
-        return redirect('anggota/pinjaman')->with('success', 'Berhasil membuat Pinjaman');
+        return redirect('anggota/pinjaman')
+            ->with('success', 'Berhasil membuat Pinjaman');
     }
+
 
     public function show($id)
     {

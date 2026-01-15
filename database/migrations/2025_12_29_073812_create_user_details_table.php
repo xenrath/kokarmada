@@ -12,6 +12,9 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('user_id')->unique();
             $table->foreign('user_id')->references('id')->on('users')->restrictOnDelete();
+            $table->string('no_ktp');
+            $table->string('masa_berlaku_ktp');
+            $table->string('foto_diri');
             $table->string('file_ktp');
             $table->string('file_kk');
             $table->string('tempat_lahir');

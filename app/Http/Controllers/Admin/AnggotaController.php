@@ -64,6 +64,9 @@ class AnggotaController extends Controller
 
         if ($request->boolean('lengkapi_data')) {
             $validator_user_detail = Validator::make($request->all(), [
+                'detail_foto_diri' => 'required|mimes:jpg,jpeg,png|max:2048',
+                'detail_no_ktp' => 'required|unique:user_details,no_ktp',
+                'detail_masa_berlaku_ktp' => 'required',
                 'detail_file_ktp' => 'required|mimes:pdf,jpg,jpeg,png|max:2048',
                 'detail_file_kk' => 'required|mimes:pdf,jpg,jpeg,png|max:2048',
                 'detail_tempat_lahir' => 'required',
@@ -77,6 +80,12 @@ class AnggotaController extends Controller
                 'detail_nama_ibu' => 'required',
                 'detail_tinggal_bersama' => 'required',
             ], [
+                'detail_foto_diri.required' => 'Foto Diri harus ditambahkan!',
+                'detail_foto_diri.mimes' => 'Foto Diri harus berupa gambar (jpg, jpeg, png).',
+                'detail_foto_diri.max' => 'Foto Diri yang ditambahkan terlalu besar!',
+                'detail_no_ktp.required' => 'No. KTP harus diisi!',
+                'detail_no_ktp.unique' => 'No. KTP sudah digunakan!',
+                'detail_masa_berlaku_ktp.required' => 'Masa Berlaku KTP harus diisi!',
                 'detail_file_ktp.required' => 'File KTP harus ditambahkan!',
                 'detail_file_ktp.mimes' => 'File KTP harus berupa pdf atau gambar (jpg, jpeg, png).',
                 'detail_file_ktp.max' => 'File KTP yang ditambahkan terlalu besar!',
@@ -124,14 +133,19 @@ class AnggotaController extends Controller
         }
 
         if ($request->boolean('lengkapi_data')) {
+            $detail_foto_diri_waktu = Carbon::now()->format('ymdhis');
+            $detail_foto_diri_random = rand(10, 99);
+            $detail_foto_diri = 'foto_diri/' . $detail_foto_diri_waktu . $detail_foto_diri_random . '.' . $request->detail_foto_diri->getClientOriginalExtension();
+            $request->detail_foto_diri->storeAs('public/uploads/', $detail_foto_diri);
+
             $detail_file_ktp_waktu = Carbon::now()->format('ymdhis');
             $detail_file_ktp_random = rand(10, 99);
-            $detail_file_ktp = 'anggota/' . $detail_file_ktp_waktu . $detail_file_ktp_random . '.' . $request->detail_file_ktp->getClientOriginalExtension();
+            $detail_file_ktp = 'file_ktp/' . $detail_file_ktp_waktu . $detail_file_ktp_random . '.' . $request->detail_file_ktp->getClientOriginalExtension();
             $request->detail_file_ktp->storeAs('public/uploads/', $detail_file_ktp);
 
             $detail_file_kk_waktu = Carbon::now()->format('ymdhis');
             $detail_file_kk_random = rand(10, 99);
-            $detail_file_kk = 'anggota/' . $detail_file_kk_waktu . $detail_file_kk_random . '.' . $request->detail_file_kk->getClientOriginalExtension();
+            $detail_file_kk = 'file_kk/' . $detail_file_kk_waktu . $detail_file_kk_random . '.' . $request->detail_file_kk->getClientOriginalExtension();
             $request->detail_file_kk->storeAs('public/uploads/', $detail_file_kk);
 
             $tanggal_lahir = sprintf(
@@ -143,6 +157,9 @@ class AnggotaController extends Controller
 
             $create_user_detail = UserDetail::create([
                 'user_id' => $create_user->id,
+                'foto_diri' => $detail_foto_diri,
+                'no_ktp' => $request->detail_no_ktp,
+                'masa_berlaku_ktp' => $request->detail_masa_berlaku_ktp,
                 'file_ktp' => $detail_file_ktp,
                 'file_kk' => $detail_file_kk,
                 'tempat_lahir' => $request->detail_tempat_lahir,
@@ -187,6 +204,9 @@ class AnggotaController extends Controller
 
         $user_detail = UserDetail::where('user_id', $id)
             ->select(
+                'no_ktp',
+                'masa_berlaku_ktp',
+                'foto_diri',
                 'file_ktp',
                 'file_kk',
                 'tempat_lahir',
@@ -222,6 +242,9 @@ class AnggotaController extends Controller
 
         $user_detail = UserDetail::where('user_id', $id)
             ->select(
+                'no_ktp',
+                'masa_berlaku_ktp',
+                'foto_diri',
                 'file_ktp',
                 'file_kk',
                 'tempat_lahir',
@@ -259,16 +282,21 @@ class AnggotaController extends Controller
 
         if ($user_detail_exists) {
             $lengkapi_data = true;
+            $validator_detail_foto_diri = 'nullable';
             $validator_detail_file_ktp = 'nullable';
             $validator_detail_file_kk = 'nullable';
         } else {
             $lengkapi_data = $request->boolean('lengkapi_data');
+            $validator_detail_foto_diri = 'required';
             $validator_detail_file_ktp = 'required';
             $validator_detail_file_kk = 'required';
         }
 
         if ($lengkapi_data) {
             $validator_user_detail = Validator::make($request->all(), [
+                'detail_foto_diri' => $validator_detail_foto_diri . '|mimes:jpg,jpeg,png|max:2048',
+                'detail_no_ktp' => 'required|unique:user_details,no_ktp,' . UserDetail::where('user_id', $id)->value('id'),
+                'detail_masa_berlaku_ktp' => 'required',
                 'detail_file_ktp' => $validator_detail_file_ktp . '|mimes:pdf,jpg,jpeg,png|max:2048',
                 'detail_file_kk' => $validator_detail_file_kk . '|mimes:pdf,jpg,jpeg,png|max:2048',
                 'detail_tempat_lahir' => 'required',
@@ -282,6 +310,12 @@ class AnggotaController extends Controller
                 'detail_nama_ibu' => 'required',
                 'detail_tinggal_bersama' => 'required',
             ], [
+                'detail_foto_diri.required' => 'Foto Diri harus ditambahkan!',
+                'detail_foto_diri.mimes' => 'Foto Diri harus berupa gambar (jpg, jpeg, png).',
+                'detail_foto_diri.max' => 'Foto Diri yang ditambahkan terlalu besar!',
+                'detail_no_ktp.required' => 'No. KTP harus diisi!',
+                'detail_no_ktp.unique' => 'No. KTP sudah digunakan!',
+                'detail_masa_berlaku_ktp.required' => 'Masa Berlaku KTP harus diisi!',
                 'detail_file_ktp.required' => 'File KTP harus ditambahkan!',
                 'detail_file_ktp.mimes' => 'File KTP harus berupa pdf atau gambar (jpg, jpeg, png).',
                 'detail_file_ktp.max' => 'File KTP yang ditambahkan terlalu besar!',
@@ -327,10 +361,19 @@ class AnggotaController extends Controller
         }
 
         if ($lengkapi_data) {
+            if ($request->detail_foto_diri) {
+                $detail_foto_diri_waktu = Carbon::now()->format('ymdhis');
+                $detail_foto_diri_random = rand(10, 99);
+                $detail_foto_diri = 'foto_diri/' . $detail_foto_diri_waktu . $detail_foto_diri_random . '.' . $request->detail_foto_diri->getClientOriginalExtension();
+                $request->detail_foto_diri->storeAs('public/uploads/', $detail_foto_diri);
+            } else {
+                $detail_foto_diri = $user_detail_exists ? UserDetail::where('user_id', $id)->value('foto_diri') : null;
+            }
+
             if ($request->detail_file_ktp) {
                 $detail_file_ktp_waktu = Carbon::now()->format('ymdhis');
                 $detail_file_ktp_random = rand(10, 99);
-                $detail_file_ktp = 'anggota/' . $detail_file_ktp_waktu . $detail_file_ktp_random . '.' . $request->detail_file_ktp->getClientOriginalExtension();
+                $detail_file_ktp = 'file_ktp/' . $detail_file_ktp_waktu . $detail_file_ktp_random . '.' . $request->detail_file_ktp->getClientOriginalExtension();
                 $request->detail_file_ktp->storeAs('public/uploads/', $detail_file_ktp);
             } else {
                 $detail_file_ktp = $user_detail_exists ? UserDetail::where('user_id', $id)->value('file_ktp') : null;
@@ -339,7 +382,7 @@ class AnggotaController extends Controller
             if ($request->detail_file_kk) {
                 $detail_file_kk_waktu = Carbon::now()->format('ymdhis');
                 $detail_file_kk_random = rand(10, 99);
-                $detail_file_kk = 'anggota/' . $detail_file_kk_waktu . $detail_file_kk_random . '.' . $request->detail_file_kk->getClientOriginalExtension();
+                $detail_file_kk = 'file_kk/' . $detail_file_kk_waktu . $detail_file_kk_random . '.' . $request->detail_file_kk->getClientOriginalExtension();
                 $request->detail_file_kk->storeAs('public/uploads/', $detail_file_kk);
             } else {
                 $detail_file_kk = $user_detail_exists ? UserDetail::where('user_id', $id)->value('file_kk') : null;
@@ -354,6 +397,9 @@ class AnggotaController extends Controller
 
             if ($user_detail_exists) {
                 $update_user_detail = UserDetail::where('user_id', $id)->update([
+                    'foto_diri' => $detail_foto_diri,
+                    'no_ktp' => $request->detail_no_ktp,
+                    'masa_berlaku_ktp' => $request->detail_masa_berlaku_ktp,
                     'file_ktp' => $detail_file_ktp,
                     'file_kk' => $detail_file_kk,
                     'tempat_lahir' => $request->detail_tempat_lahir,
@@ -381,6 +427,9 @@ class AnggotaController extends Controller
             } else {
                 $create_user_detail = UserDetail::create([
                     'user_id' => $id,
+                    'foto_diri' => $detail_foto_diri,
+                    'no_ktp' => $request->detail_no_ktp,
+                    'masa_berlaku_ktp' => $request->detail_masa_berlaku_ktp,
                     'file_ktp' => $detail_file_ktp,
                     'file_kk' => $detail_file_kk,
                     'tempat_lahir' => $request->detail_tempat_lahir,

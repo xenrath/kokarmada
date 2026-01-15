@@ -41,6 +41,8 @@ Route::middleware('anggota')->prefix('anggota')->group(function () {
     Route::get('/', [\App\Http\Controllers\Anggota\HomeController::class, 'index']);
     Route::get('profile', [\App\Http\Controllers\Anggota\HomeController::class, 'profile']);
     Route::post('profile', [\App\Http\Controllers\Anggota\HomeController::class, 'profile_proses']);
+    Route::get('password', [\App\Http\Controllers\Anggota\HomeController::class, 'password']);
+    Route::post('password', [\App\Http\Controllers\Anggota\HomeController::class, 'password_proses']);
     
     // Route::resource('simpanan', \App\Http\Controllers\Anggota\SimpananController::class);
     

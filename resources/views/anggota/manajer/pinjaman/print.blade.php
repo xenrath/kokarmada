@@ -203,35 +203,35 @@
                             <td style="vertical-align: top; width: 120px;">Nama</td>
                             <td style="vertical-align: top; padding: 0px 6px;">:</td>
                             <td style="vertical-align: top;">
-                                {{ $pinjaman->pinjaman_user->nama }}
+                                {{ $user->nama }}
                             </td>
                         </tr>
                         <tr>
                             <td style="vertical-align: top; width: 120px;">Panggilan</td>
                             <td style="vertical-align: top; padding: 0px 6px;">:</td>
                             <td style="vertical-align: top;">
-                                {{ $pinjaman->pinjaman_user->panggilan }}
+                                {{ $user->panggilan }}
                             </td>
                         </tr>
                         <tr>
                             <td style="vertical-align: top; width: 120px;">TTL</td>
                             <td style="vertical-align: top; padding: 0px 6px;">:</td>
                             <td style="vertical-align: top;">
-                                {{ $pinjaman->pinjaman_user->tempat_lahir }},
-                                {{ Carbon\Carbon::parse($pinjaman->pinjaman_user->tanggal_lahir)->translatedFormat('d F Y') }}
+                                {{ $user_detail->tempat_lahir }},
+                                {{ Carbon\Carbon::parse($user_detail->tanggal_lahir)->translatedFormat('d F Y') }}
                             </td>
                         </tr>
                         <tr>
                             <td style="vertical-align: top; width: 120px;">Pekerjaan</td>
                             <td style="vertical-align: top; padding: 0px 6px;">:</td>
                             <td style="vertical-align: top;">
-                                {{ $pinjaman->pinjaman_user->pekerjaan }}
+                                {{ $user_detail->pekerjaan }}
                             </td>
                         </tr>
                         <tr>
                             <td style="vertical-align: top; width: 120px;">
                                 Nama
-                                @if ($pinjaman->pinjaman_user->gender == 'L')
+                                @if ($user->gender == 'L')
                                     Istri
                                 @else
                                     Suami
@@ -239,14 +239,14 @@
                             </td>
                             <td style="vertical-align: top; padding: 0px 6px;">:</td>
                             <td style="vertical-align: top;">
-                                {{ $pinjaman->pinjaman_user->nama_pasangan ?? '-' }}
+                                {{ $user_detail->nama_pasangan ?? '-' }}
                             </td>
                         </tr>
                         <tr>
                             <td style="vertical-align: top; width: 120px;">Alamat</td>
                             <td style="vertical-align: top; padding: 0px 6px;">:</td>
                             <td style="vertical-align: top;">
-                                {{ $pinjaman->pinjaman_user->alamat }}
+                                {{ $user_detail->alamat }}
                             </td>
                         </tr>
                         <tr>
@@ -254,14 +254,14 @@
                             </td>
                             <td style="vertical-align: top; padding: 0px 6px;">:</td>
                             <td style="vertical-align: top;">
-                                {{ $pinjaman->pinjaman_user->nama_ibu }}
+                                {{ $user_detail->nama_ibu }}
                             </td>
                         </tr>
                         <tr>
                             <td style="vertical-align: top; width: 120px;">Tinggal Bersama</td>
                             <td style="vertical-align: top; padding: 0px 6px;">:</td>
                             <td style="vertical-align: top;">
-                                {{ $pinjaman->pinjaman_user->tinggal_bersama }}
+                                {{ $user_detail->tinggal_bersama }}
                             </td>
                         </tr>
                     </table>
@@ -276,17 +276,22 @@
                         <tr>
                             <td style="vertical-align: top; width: 120px;">No. KTP</td>
                             <td style="vertical-align: top; padding: 0px 6px;">:</td>
-                            <td style="vertical-align: top;">100200300400500</td>
+                            <td style="vertical-align: top;">
+                                {{ $user_detail->no_ktp }}
+                            </td>
                         </tr>
                         <tr>
                             <td style="vertical-align: top; width: 120px;">Masa Berlaku KTP</td>
                             <td style="vertical-align: top; padding: 0px 6px;">:</td>
-                            <td style="vertical-align: top;">Seumur Hidup</td>
+                            <td style="vertical-align: top;">
+                                {{ $user_detail->masa_berlaku_ktp }}
+                            </td>
                         </tr>
                         <tr>
                             <td style="vertical-align: top; width: 120px;">No. Telp / HP</td>
                             <td style="vertical-align: top; padding: 0px 6px;">:</td>
-                            <td style="vertical-align: top;">{{ $pinjaman->pinjaman_user->telp }}
+                            <td style="vertical-align: top;">
+                                {{ $user->telp }}
                             </td>
                         </tr>
                         <tr>
@@ -297,7 +302,7 @@
                         <tr>
                             <td style="vertical-align: top; width: 120px;">
                                 Pekerjaan
-                                @if ($pinjaman->pinjaman_user->gender == 'L')
+                                @if ($user->gender == 'L')
                                     Istri
                                 @else
                                     Suami
@@ -305,21 +310,21 @@
                             </td>
                             <td style="vertical-align: top; padding: 0px 6px;">:</td>
                             <td style="vertical-align: top;">
-                                {{ $pinjaman->pinjaman_user->pekerjaan_pasangan ?? '-' }}
+                                {{ $user_detail->pekerjaan_pasangan ?? '-' }}
                             </td>
                         </tr>
                         <tr>
                             <td style="vertical-align: top; width: 120px;">Kode POS</td>
                             <td style="vertical-align: top; padding: 0px 6px;">:</td>
                             <td style="vertical-align: top;">
-                                {{ $pinjaman->pinjaman_user->kode_pos }}
+                                {{ $user_detail->kode_pos }}
                             </td>
                         </tr>
                         <tr>
                             <td style="vertical-align: top; width: 120px;">No. NPWP</td>
                             <td style="vertical-align: top; padding: 0px 6px;">:</td>
                             <td style="vertical-align: top;">
-                                {{ $pinjaman->pinjaman_user->no_npwp }}
+                                {{ $user_detail->no_npwp }}
                             </td>
                         </tr>
                     </table>
@@ -557,14 +562,14 @@
                 <td style="width:16px; vertical-align: top;">
                     <img src="{{ public_path('storage/uploads/asset/square-regular.svg') }}" style="height:16px;">
                 </td>
-                <td style="width:200px; vertical-align: top;">Kredit konsumtif lainya</td>
+                <td style="width: 204px; vertical-align: top;">Kredit konsumtif lainya</td>
 
                 {{-- Kredit potong gaji --}}
                 <td style="width:16px; vertical-align: top;">
                     <img src="{{ public_path('storage/uploads/asset/check-square-regular.svg') }}"
                         style="height:16px;">
                 </td>
-                <td style="width:200px; vertical-align: top;">Kredit potong gaji</td>
+                <td style="width: 204px; vertical-align: top;">Kredit potong gaji</td>
             </tr>
         </table>
     </div>

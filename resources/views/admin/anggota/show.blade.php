@@ -19,52 +19,65 @@
             <div class="card-body">
                 <div class="row">
                     <div class="col-md-6 mb-2">
-                        <strong>Nama Lengkap</strong>
-                        <br>
-                        {{ $user->nama }}
+                        <img src="{{ asset('storage/uploads/' . $user_detail->foto_diri) }}" alt="" class="img-fluid">
                     </div>
                     <div class="col-md-6 mb-2">
-                        <strong>Nama Panggilan</strong>
-                        <br>
-                        {{ $user->panggilan }}
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-6 mb-2">
-                        <strong>Jenis Kelamin</strong>
-                        <br>
-                        {{ $user->gender == 'L' ? 'Laki-laki' : 'Perempuan' }}
-                    </div>
-                    <div class="col-md-6 mb-2">
-                        <strong>No. HP / WhatsApp</strong>
-                        <br>
-                        {{ $user->telp }}
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-6 mb-2">
-                        <strong>Role</strong>
-                        <br>
-                        <span class="badge badge-info-lighten rounded-0">
-                            {{ ucfirst($user->role) }}
-                        </span>
-                    </div>
-                    <div class="col-md-6 mb-2">
-                        <strong>Spesial</strong>
-                        <br>
-                        @if ($user->spesial != 'normal')
-                            <span class="badge badge-secondary-lighten rounded-0">
-                                {{ ucfirst($user->spesial) }}
+                        <div class="mb-2">
+                            <strong>Nama Lengkap</strong>
+                            <br>
+                            {{ $user->nama }}
+                        </div>
+                        <div class="mb-2">
+                            <strong>Nama Panggilan</strong>
+                            <br>
+                            {{ $user->panggilan }}
+                        </div>
+                        <div class="mb-2">
+                            <strong>Jenis Kelamin</strong>
+                            <br>
+                            {{ $user->gender == 'L' ? 'Laki-laki' : 'Perempuan' }}
+                        </div>
+                        <div class="mb-2">
+                            <strong>No. HP / WhatsApp</strong>
+                            <br>
+                            {{ $user->telp }}
+                        </div>
+                        <div class="mb-2">
+                            <strong>Role</strong>
+                            <br>
+                            <span class="badge badge-info-lighten rounded-0">
+                                {{ ucfirst($user->role) }}
                             </span>
-                        @else
-                            -
-                        @endif
+                        </div>
+                        <div class="mb-2">
+                            <strong>Spesial</strong>
+                            <br>
+                            @if ($user->spesial != 'normal')
+                                <span class="badge badge-secondary-lighten rounded-0">
+                                    {{ ucfirst($user->spesial) }}
+                                </span>
+                            @else
+                                -
+                            @endif
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
         <div class="card mb-2 rounded-0">
             <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6 mb-2">
+                        <strong>No. KTP</strong>
+                        <br>
+                        {{ $user_detail->no_ktp ?? '-' }}
+                    </div>
+                    <div class="col-md-6 mb-2">
+                        <strong>Masa Berlaku KTP</strong>
+                        <br>
+                        {{ $user_detail->masa_berlaku_ktp ?? '-' }}
+                    </div>
+                </div>
                 <div class="row">
                     <div class="col-md-6 mb-2">
                         <strong>Tempat Lahir</strong>

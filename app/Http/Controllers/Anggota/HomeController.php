@@ -45,6 +45,9 @@ class HomeController extends Controller
 
         $user_detail = UserDetail::where('user_id', auth()->user()->id)
             ->select(
+                'no_ktp',
+                'masa_berlaku_ktp',
+                'foto_diri',
                 'file_ktp',
                 'file_kk',
                 'tempat_lahir',
@@ -68,9 +71,13 @@ class HomeController extends Controller
         $user_detail_exists = UserDetail::where('user_id', auth()->user()->id)->exists();
 
         if ($user_detail_exists) {
+            $validator_detail_no_ktp = 'unique:user_details,no_ktp,' . UserDetail::where('user_id', auth()->user()->id)->value('id');
+            $validator_detail_foto_diri = 'nullable';
             $validator_detail_file_ktp = 'nullable';
             $validator_detail_file_kk = 'nullable';
         } else {
+            $validator_detail_no_ktp = 'unique:user_details,no_ktp';
+            $validator_detail_foto_diri = 'required';
             $validator_detail_file_ktp = 'required';
             $validator_detail_file_kk = 'required';
         }
@@ -80,6 +87,9 @@ class HomeController extends Controller
             'panggilan' => 'required',
             'gender' => 'required',
             'telp' => 'required|unique:users,telp,' . auth()->user()->id,
+            'detail_no_ktp' => 'required|' . $validator_detail_no_ktp,
+            'detail_masa_berlaku_ktp' => 'required',
+            'detail_foto_diri' => $validator_detail_foto_diri . '|mimes:jpg,jpeg,png|max:2048',
             'detail_file_ktp' => $validator_detail_file_ktp . '|mimes:pdf,jpg,jpeg,png|max:2048',
             'detail_file_kk' => $validator_detail_file_kk . '|mimes:pdf,jpg,jpeg,png|max:2048',
             'detail_tempat_lahir' => 'required',
@@ -99,6 +109,10 @@ class HomeController extends Controller
             'telp.required' => 'No. Hp / WhatsApp harus diisi!',
             'telp.unique' => 'No. Hp / WhatsApp sudah digunakan!',
             'gender.required' => 'Jenis Kelamin harus dipilih!',
+            'detail_no_ktp.required' => 'No. KTP harus diisi!',
+            'detail_no_ktp.unique' => 'No. KTP sudah digunakan!',
+            'detail_masa_berlaku_ktp.required' => 'Masa Berlaku KTP harus diisi!',
+            'detail_foto_diri.required' => 'Foto Diri harus ditambahkan!',
             'detail_file_ktp.required' => 'File KTP harus ditambahkan!',
             'detail_file_ktp.mimes' => 'File KTP harus berupa pdf atau gambar (jpg, jpeg, png).',
             'detail_file_ktp.max' => 'File KTP yang ditambahkan terlalu besar!',
@@ -138,10 +152,19 @@ class HomeController extends Controller
                 ->with('error', 'Gagal memperbarui Profile!');
         }
 
+        if ($request->detail_foto_diri) {
+            $detail_foto_diri_waktu = Carbon::now()->format('ymdhis');
+            $detail_foto_diri_random = rand(10, 99);
+            $detail_foto_diri = 'foto_diri/' . $detail_foto_diri_waktu . $detail_foto_diri_random . '.' . $request->detail_foto_diri->getClientOriginalExtension();
+            $request->detail_foto_diri->storeAs('public/uploads/', $detail_foto_diri);
+        } else {
+            $detail_foto_diri = $user_detail_exists ? UserDetail::where('user_id', auth()->user()->id)->value('foto_diri') : null;
+        }
+
         if ($request->detail_file_ktp) {
             $detail_file_ktp_waktu = Carbon::now()->format('ymdhis');
             $detail_file_ktp_random = rand(10, 99);
-            $detail_file_ktp = 'anggota/' . $detail_file_ktp_waktu . $detail_file_ktp_random . '.' . $request->detail_file_ktp->getClientOriginalExtension();
+            $detail_file_ktp = 'file_ktp/' . $detail_file_ktp_waktu . $detail_file_ktp_random . '.' . $request->detail_file_ktp->getClientOriginalExtension();
             $request->detail_file_ktp->storeAs('public/uploads/', $detail_file_ktp);
         } else {
             $detail_file_ktp = $user_detail_exists ? UserDetail::where('user_id', auth()->user()->id)->value('file_ktp') : null;
@@ -150,7 +173,7 @@ class HomeController extends Controller
         if ($request->detail_file_kk) {
             $detail_file_kk_waktu = Carbon::now()->format('ymdhis');
             $detail_file_kk_random = rand(10, 99);
-            $detail_file_kk = 'anggota/' . $detail_file_kk_waktu . $detail_file_kk_random . '.' . $request->detail_file_kk->getClientOriginalExtension();
+            $detail_file_kk = 'file_kk/' . $detail_file_kk_waktu . $detail_file_kk_random . '.' . $request->detail_file_kk->getClientOriginalExtension();
             $request->detail_file_kk->storeAs('public/uploads/', $detail_file_kk);
         } else {
             $detail_file_kk = $user_detail_exists ? UserDetail::where('user_id', auth()->user()->id)->value('file_kk') : null;
@@ -162,9 +185,12 @@ class HomeController extends Controller
             $request->detail_bulan_lahir,
             $request->detail_tanggal_lahir
         );
-
+        
         if ($user_detail_exists) {
             $update_user_detail = UserDetail::where('user_id', auth()->user()->id)->update([
+                'no_ktp' => $request->detail_no_ktp,
+                'masa_berlaku_ktp' => $request->detail_masa_berlaku_ktp,
+                'foto_diri' => $detail_foto_diri,
                 'file_ktp' => $detail_file_ktp,
                 'file_kk' => $detail_file_kk,
                 'tempat_lahir' => $request->detail_tempat_lahir,
@@ -188,6 +214,9 @@ class HomeController extends Controller
         } else {
             $create_user_detail = UserDetail::create([
                 'user_id' => auth()->user()->id,
+                'no_ktp' => $request->detail_no_ktp,
+                'masa_berlaku_ktp' => $request->detail_masa_berlaku_ktp,
+                'foto_diri' => $detail_foto_diri,
                 'file_ktp' => $detail_file_ktp,
                 'file_kk' => $detail_file_kk,
                 'tempat_lahir' => $request->detail_tempat_lahir,
@@ -210,6 +239,41 @@ class HomeController extends Controller
             }
         }
 
-        return redirect('anggota/profile')->with('success', 'Berhasil memperbarui Profile');;
+        return redirect('anggota/profile')->with('success', 'Berhasil memperbarui Profile');
+    }
+
+    public function password()
+    {
+        return view('anggota.password');
+    }
+
+    public function password_proses(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'password' => 'required|confirmed',
+        ], [
+            'password.required' => 'Password Baru harus diisi!',
+            'password.confirmed' => 'Konfirmasi Password tidak sesuai!',
+        ]);
+
+        if ($validator->fails()) {
+            return back()
+                ->withInput()
+                ->withErrors($validator->errors())
+                ->with('error', 'Gagal memperbarui Password!');
+        }
+
+        $update = User::where('id', auth()->user()->id)->update([
+            'password' => bcrypt($request->password),
+        ]);
+
+        if (!$update) {
+            return back()
+                ->withInput()
+                ->withErrors($validator->errors())
+                ->with('error', 'Gagal memperbarui Password!');
+        }
+
+        return redirect('anggota')->with('success', 'Berhasil memperbarui Password');;
     }
 }

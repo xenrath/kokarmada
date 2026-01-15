@@ -10,8 +10,7 @@ class PengaturanSeeder extends Seeder
     public function run(): void
     {
         Pengaturan::create([
-            'bunga_pinjaman_pertahun' => 8.0,
-            'bunga_pinjaman_perbulan' => 0.67,
+            'bunga_pinjaman' => 8.0,
             'jangka_waktu_pinjaman' => 2,
         ]);
     }

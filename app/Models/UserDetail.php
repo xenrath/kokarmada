@@ -11,6 +11,9 @@ class UserDetail extends Model
 
     protected $fillable = [
         'user_id',
+        'no_ktp',
+        'masa_berlaku_ktp',
+        'foto_diri',
         'file_ktp',
         'file_kk',
         'tempat_lahir',

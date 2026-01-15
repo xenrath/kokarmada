@@ -70,7 +70,7 @@
                                     <td>
                                         {{ Carbon\Carbon::parse($pinjaman->tanggal_pengajuan)->translatedFormat('d F Y') }}
                                     </td>
-                                    <td>{{ $pinjaman->pinjaman_user->nama }}</td>
+                                    <td>{{ $pinjaman->user->nama }}</td>
                                     <td>@rupiah($pinjaman->nominal)</td>
                                     <td>
                                         @if ($pinjaman->tipe_angsuran == 'bulanan')
@@ -86,10 +86,10 @@
                                     </td>
                                     <td>
                                         <a href="{{ url('anggota/manajer/pinjaman/print/' . $pinjaman->id) }}"
-                                            class="action-icon">
+                                            class="action-icon" target="_blank">
                                             <i class="mdi mdi-printer"></i>
                                         </a>
-                                        <a href="{{ url('anggota/pinjaman/' . $pinjaman->id) }}" class="action-icon">
+                                        <a href="{{ url('anggota/manajer/pinjaman/' . $pinjaman->id) }}" class="action-icon">
                                             <i class="mdi mdi-eye"></i>
                                         </a>
                                         <a href="{{ url('admin/anggota/edit') }}" class="action-icon">

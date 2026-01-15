@@ -76,7 +76,8 @@
                             @forelse ($pinjamans as $pinjaman)
                                 <tr>
                                     <td class="text-center">{{ $loop->iteration }}</td>
-                                    <td>{{ Carbon\Carbon::parse($pinjaman->tanggal_pengajuan)->translatedFormat('d F Y') }}</td>
+                                    <td>{{ Carbon\Carbon::parse($pinjaman->tanggal_pengajuan)->translatedFormat('d F Y') }}
+                                    </td>
                                     <td>@rupiah($pinjaman->nominal)</td>
                                     <td>
                                         @if ($pinjaman->tipe_angsuran == 'bulanan')
@@ -148,6 +149,12 @@
                                 </a>
                             </div>
                         </div>
+                        <div class="row justify-content-center">
+                            <div class="col-md-12 mb-2">
+                                <img src="{{ asset('storage/uploads/' . $user_detail->foto_diri) }}" alt=""
+                                    width="200" class="d-block mx-auto">
+                            </div>
+                        </div>
                         <div class="row">
                             <div class="col-md-6 mb-2">
                                 <strong>Nama Lengkap</strong>
@@ -182,6 +189,18 @@
                                 <strong>Tanggal Lahir</strong>
                                 <br>
                                 {{ $user_detail && $user_detail->tanggal_lahir ? \Carbon\Carbon::parse($user_detail->tanggal_lahir)->translatedFormat('d F Y') : null }}
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-2">
+                                <strong>No. KTP</strong>
+                                <br>
+                                {{ $user_detail->no_ktp ?? '-' }}
+                            </div>
+                            <div class="col-md-6 mb-2">
+                                <strong>Masa Berlaku KTP</strong>
+                                <br>
+                                {{ $user_detail->masa_berlaku_ktp ?? '-' }}
                             </div>
                         </div>
                         <div class="row">
