@@ -17,25 +17,6 @@
                         <form action="{{ url('anggota/simpanan') }}" method="get" autocomplete="off" id="form-filter"
                             class="row gy-2 gx-2 align-items-center justify-content-xl-start justify-content-between">
                             <div class="col-auto">
-                                <div class="d-flex align-items-center">
-                                    <select class="form-select rounded-0" name="status"
-                                        onchange="$('#form-filter').submit();">
-                                        <option value="">- Pilih Status -</option>
-                                        <option value="menunggu"
-                                            {{ request()->get('status') == 'menunggu' ? 'selected' : '' }}>
-                                            Menunggu
-                                        </option>
-                                        <option value="proses" {{ request()->get('status') == 'proses' ? 'selected' : '' }}>
-                                            Proses
-                                        </option>
-                                        <option value="selesai"
-                                            {{ request()->get('status') == 'selesai' ? 'selected' : '' }}>
-                                            Selesai
-                                        </option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="col-auto">
                                 <label for="keyword" class="visually-hidden">Cari</label>
                                 <div class="input-group">
                                     <input type="search" class="form-control rounded-0" id="keyword" name="keyword"
@@ -49,10 +30,11 @@
                     </div>
                     <div class="col-xl-4">
                         <div class="text-xl-end mt-xl-0 mt-2">
-                            <a href="{{ url('anggota/pinjaman/create') }}" class="btn btn-primary rounded-0 mb-2">
-                                <i class="mdi mdi-file-plus-outline me-1"></i>
-                                Buat Simpanan
-                            </a>
+                            <button type="button" class="btn btn-primary rounded-0 mb-2" data-bs-toggle="modal"
+                                data-bs-target="#modal-generate">
+                                <i class="mdi mdi-sync me-1"></i>
+                                Generate Simpanan
+                            </button>
                             {{-- <button type="button" class="btn btn-light rounded-0 mb-2">Export</button> --}}
                         </div>
                     </div>
@@ -85,4 +67,36 @@
         </div>
     </div>
     <!-- container -->
+
+    <div id="modal-generate" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="modal-generate-label"
+        aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content rounded-0">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="modal-generate-label">Generate Simpanan</h4>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-hidden="true"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="alert alert-warning text-center rounded-0" role="alert">
+                        <div>
+                            Pastikan gaji bulan {{ Carbon\Carbon::now()->translatedFormat('F') }} telah dibayarkan terlebih
+                            dahulu sebelum melakukan proses generate simpanan.
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer justify-content-between">
+                    <button type="button" class="btn btn-light rounded-0" data-bs-dismiss="modal">Batal</button>
+                    <button type="button" class="btn btn-primary rounded-0" id="btn-lanjutkan">
+                        <span id="btn-lanjutkan-text">Lanjutkan</span>
+                        <span id="btn-lanjutkan-load" style="display:none;">
+                            <i class="mdi mdi-spin mdi-loading"></i>
+                        </span>
+                    </button>
+                </div>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
+    <!-- /.modal -->
 @endsection

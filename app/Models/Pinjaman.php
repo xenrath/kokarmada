@@ -31,6 +31,7 @@ class Pinjaman extends Model
         'slip_gaji',
         'bunga_persen',
         'total_pinjaman',
+        'nominal_rekomendasi',
         'status',
     ];
 

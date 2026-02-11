@@ -45,76 +45,14 @@ class PinjamanController extends Controller
         return view('anggota.pinjaman.create', compact('pengaturan'));
     }
 
-    public function store(Request $request)
+    public function update(Request $request, $id)
     {
-        $user_detail_exists = UserDetail::where('user_id', auth()->user()->id)->exists();
-        if (!$user_detail_exists) {
-            return redirect('anggota/pinjaman')->with('error', 'Anda belum melengkapi Data Diri!');
-        }
-
-        if ($request->usaha == 'lainnya') {
-            $validator_usaha_lainnya = 'required';
-        } else {
-            $validator_usaha_lainnya = 'nullable';
-        }
-
-        $nominal = (int) str_replace('.', '', $request->nominal);
-
-        if ($nominal > 25000000) {
-            $validator_jenis_agunan = 'required';
-            $validator_bukti_agunan = 'required';
-            $validator_bukti_kepemilikan = 'required';
-            $validator_bukti_file = 'required';
-
-            if ($request->jenis_agunan == 'lainnya') {
-                $validator_jenis_agunan_lainnya = 'required';
-            } else {
-                $validator_jenis_agunan_lainnya = 'nullable';
-            }
-        } else {
-            $validator_jenis_agunan = 'nullable';
-            $validator_jenis_agunan_lainnya = 'nullable';
-            $validator_bukti_agunan = 'nullable';
-            $validator_bukti_kepemilikan = 'nullable';
-            $validator_bukti_file = 'nullable';
-        }
-
         $validator = Validator::make($request->all(), [
-            'nominal' => 'required',
-            'tujuan' => 'required',
-            'usaha' => 'required',
-            'usaha_lainnya' => $validator_usaha_lainnya,
-            'jangka_waktu' => 'required',
-            'tipe_angsuran' => 'required',
-            'jenis_agunan' => $validator_jenis_agunan,
-            'jenis_agunan_lainnya' => $validator_jenis_agunan_lainnya,
-            'bukti_agunan' => $validator_bukti_agunan,
-            'bukti_kepemilikan' => $validator_bukti_kepemilikan,
-            'bukti_file' => $validator_bukti_file,
-            'tempat_kerja' => 'required',
-            'jabatan_terakhir' => 'required',
-            'lama_kerja' => 'required',
-            'pendapatan_kotor' => 'required',
-            'pendapatan_bersih' => 'required',
-            'slip_gaji' => 'required',
+            'nominal_rekomendasi' => 'required',
+            'catatan_rekomendasi' => 'required',
         ], [
-            'nominal.required' => 'Nominal Pengajuan harus diisi!',
-            'tujuan.required' => 'Tujuan Pengajuan harus diisi!',
-            'usaha.required' => 'Usaha harus dipilih!',
-            'usaha_lainnya.required' => 'Usaha Lainnya harus diisi!',
-            'jangka_waktu.required' => 'Jangka Waktu harus diisi!',
-            'tipe_angsuran.required' => 'Tipe Angsuran harus dipilih!',
-            'jenis_agunan.required' => 'Jenis Agunan harus diisi!',
-            'jenis_agunan_lainnya.required' => 'Jenis Agunan Lainnya harus diisi!',
-            'bukti_agunan.required' => 'Bukti Agunan harus diisi!',
-            'bukti_kepemilikan.required' => 'Bukti Kepemilikan harus diisi!',
-            'bukti_file.required' => 'File Bukti harus diisi!',
-            'tempat_kerja.required' => 'Tempat Bekerja harus diisi!',
-            'jabatan_terakhir.required' => 'Jabatan Terakhir harus diisi!',
-            'lama_kerja.required' => 'Lama Bekerja harus diisi!',
-            'pendapatan_kotor.required' => 'Pendapatan Kotor harus diisi!',
-            'pendapatan_bersih.required' => 'Pendapatan Bersih harus diisi!',
-            'slip_gaji.required' => 'Slip Gaji harus ditambahkan!',
+            'nominal_rekomendasi.required' => 'Nominal Rekomendasi Analis harus diisi!',
+            'catatan_rekomendasi.required' => 'Catatan Hasil Analisis harus diisi!',
         ]);
 
         if ($validator->fails()) {

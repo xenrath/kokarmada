@@ -21,7 +21,7 @@
                     <a data-bs-toggle="collapse" href="#collapse-detail-nasabah" role="button" aria-expanded="false"
                         aria-controls="collapse-detail-nasabah"><i class="mdi mdi-plus"></i></a>
                 </div>
-                <h5 class="card-title mb-0">Detail Nasabah</h5>
+                <h4 class="header-title mb-0">Detail Nasabah</h4>
             </div>
             <div id="collapse-detail-nasabah" class="collapse">
                 <div class="card-body border-top">
@@ -168,7 +168,24 @@
                 </div>
             </div>
         </div>
-        <div class="card mb-4 rounded-0">
+        <div class="card mb-2 rounded-0">
+            <div class="card-body border-bottom pb-2">
+                <div class="dropdown float-end">
+                    <a href="#" class="dropdown-toggle arrow-none card-drop" data-bs-toggle="dropdown"
+                        aria-expanded="false">
+                        <i class="mdi mdi-dots-horizontal"></i>
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-end rounded-0">
+                        <!-- item-->
+                        <a href="{{ url('anggota/manajer/pinjaman/print/' . $pinjaman->id) }}" class="dropdown-item"
+                            target="_blank">
+                            <i class="mdi mdi-printer"></i>
+                            Print
+                        </a>
+                    </div>
+                </div>
+                <h4 class="header-title">Detail Pinjaman</h4>
+            </div>
             <div class="card-body">
                 <div class="row">
                     <div class="col-md-6 mb-2">
@@ -335,6 +352,71 @@
                 </div>
             </div>
         </div>
+        <div class="card mb-4 rounded-0">
+            <div class="card-body border-bottom pb-2">
+                <h4 class="header-title">Analisis Pengajuan Pinjaman</h4>
+            </div>
+            <form action="{{ url('anggota/manajer/pinjaman/' . $pinjaman->id) }}" method="post" id="form-submit">
+                @csrf
+                @method('put')
+                <div class="card-body">
+                    <div class="form-group mb-2">
+                        <label for="nominal_rekomendasi" class="form-label">Nominal Rekomendasi Analis *</label>
+                        <input type="text" id="nominal_rekomendasi" name="nominal_rekomendasi"
+                            class="form-control rounded-0 @error('nominal_rekomendasi') is-invalid @enderror"
+                            value="{{ old('nominal_rekomendasi') }}">
+                        @error('nominal_rekomendasi')
+                            <div class="invalid-feedback">
+                                {{ $message }}
+                            </div>
+                        @enderror
+                    </div>
+                    <div class="form-group mb-2">
+                        <label for="catatan_rekomendasi" class="form-label">Catatan Hasil Analisis *</label>
+                        <textarea class="form-control rounded-0 @error('catatan_rekomendasi') is-invalid @enderror" id="catatan_rekomendasi"
+                            name="catatan_rekomendasi" rows="3">{{ old('catatan_rekomendasi') }}</textarea>
+                        @error('catatan_rekomendasi')
+                            <div class="invalid-feedback">
+                                {{ $message }}
+                            </div>
+                        @enderror
+                    </div>
+                </div>
+            </form>
+            <div class="card-footer text-end">
+                <button type="button" class="btn btn-primary rounded-0" id="btn-submit" onclick="form_submit()">
+                    <span id="btn-submit-text">
+                        <i class="mdi mdi-send"></i>
+                        Kirim Hasil Analisis
+                    </span>
+                    <span id="btn-submit-load" style="display: none;">
+                        <i class="mdi mdi-spin mdi-loading"></i>
+                        Memproses...
+                    </span>
+                </button>
+            </div>
+        </div>
     </div>
     <!-- container -->
+@endsection
+
+@section('script')
+    <script>
+        function format_rupiah(angka) {
+            return new Intl.NumberFormat('id-ID').format(angka);
+        }
+
+        $('#nominal_rekomendasi').on('input', function() {
+            let value = $(this).val().replace(/\D/g, '');
+            $(this).val(format_rupiah(value));
+        });
+    </script>
+    <script>
+        function form_submit() {
+            $('#btn-submit').prop('disabled', true);
+            $('#btn-submit-text').hide();
+            $('#btn-submit-load').show();
+            $('#form-submit').submit();
+        }
+    </script>
 @endsection

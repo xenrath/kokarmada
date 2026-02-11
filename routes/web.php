@@ -53,6 +53,8 @@ Route::middleware('anggota')->prefix('anggota')->group(function () {
     });
     
     Route::middleware('manajer')->prefix('manajer')->group(function () {
+        Route::resource('simpanan', \App\Http\Controllers\Anggota\Manajer\SimpananController::class);
+
         Route::get('pinjaman/print/{id}', [\App\Http\Controllers\Anggota\Manajer\PinjamanController::class, 'print']);
         Route::resource('pinjaman', \App\Http\Controllers\Anggota\Manajer\PinjamanController::class);
     });

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Anggota;
+namespace App\Http\Controllers\Anggota\Manajer;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
@@ -13,7 +13,7 @@ class SimpananController extends Controller
 {
     public function index()
     {
-        return view('anggota.simpanan.index');
+        return view('anggota.manajer.simpanan.index');
     }
 
     public function profile()

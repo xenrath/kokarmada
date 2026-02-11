@@ -85,10 +85,6 @@
                                         </span>
                                     </td>
                                     <td>
-                                        <a href="{{ url('anggota/manajer/pinjaman/print/' . $pinjaman->id) }}"
-                                            class="action-icon" target="_blank">
-                                            <i class="mdi mdi-printer"></i>
-                                        </a>
                                         <a href="{{ url('anggota/manajer/pinjaman/' . $pinjaman->id) }}" class="action-icon">
                                             <i class="mdi mdi-eye"></i>
                                         </a>
