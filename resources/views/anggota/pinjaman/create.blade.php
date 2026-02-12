@@ -16,7 +16,7 @@
         </div>
         <!-- end page title -->
         <div class="card mb-4 rounded-0">
-            <form action="{{ url('anggota/pinjaman') }}" method="POST" autocomplete="off" id="form-submit"
+            <form action="{{ url('anggota/pinjaman/') }}" method="POST" autocomplete="off" id="form-submit"
                 enctype="multipart/form-data">
                 @csrf
                 <div class="card-body">

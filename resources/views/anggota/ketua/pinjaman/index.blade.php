@@ -47,15 +47,6 @@
                             </div>
                         </form>
                     </div>
-                    <div class="col-xl-4">
-                        <div class="text-xl-end mt-xl-0 mt-2">
-                            <a href="{{ url('anggota/pinjaman/create') }}" class="btn btn-primary rounded-0 mb-2">
-                                <i class="mdi mdi-file-plus-outline me-1"></i>
-                                Buat Pinjaman
-                            </a>
-                            {{-- <button type="button" class="btn btn-light rounded-0 mb-2">Export</button> --}}
-                        </div>
-                    </div><!-- end col-->
                 </div>
             </div>
             <div class="card-body p-0">
@@ -64,19 +55,63 @@
                         <thead class="table-light">
                             <tr>
                                 <th class="text-center" style="width: 10px">No</th>
-                                <th>Nama Anggota</th>
-                                <th>Jumlah</th>
-                                <th>Waktu</th>
+                                <th>Tanggal Pinjaman</th>
+                                <th>Nama Nasabah</th>
+                                <th>Nominal</th>
+                                <th>Jangka Waktu</th>
                                 <th>Status</th>
                                 <th style="width: 120px">Action</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td colspan="6" class="text-center">
-                                    <span class="text-muted">- Data tidak ditemukan -</span>
-                                </td>
-                            </tr>
+                            @forelse ($pinjamans as $pinjaman)
+                                <tr>
+                                    <td class="text-center">{{ $loop->iteration }}</td>
+                                    <td>
+                                        {{ Carbon\Carbon::parse($pinjaman->tanggal_pengajuan)->translatedFormat('d F Y') }}
+                                    </td>
+                                    <td>{{ $pinjaman->user->nama }}</td>
+                                    <td>
+                                        @rupiah($pinjaman->nominal)
+                                        <br>
+                                        @rupiah($pinjaman->pinjaman_analis->nominal)
+                                    </td>
+                                    <td>
+                                        @if ($pinjaman->tipe_angsuran == 'bulanan')
+                                            {{ $pinjaman->jangka_waktu * 12 }} Bulan
+                                        @else
+                                            {{ $pinjaman->jangka_waktu }} Tahun
+                                        @endif
+                                    </td>
+                                    <td>
+                                        <span class="badge badge-info-lighten rounded-0">
+                                            @if ($pinjaman->status == 'diajukan')
+                                                DIAJUKAN
+                                            @elseif ($pinjaman->status == 'disetujui_manajer')
+                                                DISETUJUI
+                                                <br>
+                                                ANALIS
+                                            @elseif ($pinjaman->status == 'disetujui_ketua')
+                                                DISETUJUI
+                                                <br>
+                                                KETUA
+                                            @endif
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <a href="{{ url('anggota/ketua/pinjaman/' . $pinjaman->id) }}"
+                                            class="action-icon">
+                                            <i class="mdi mdi-eye"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="7" class="text-center">
+                                        <span class="text-muted">- Data tidak ditemukan -</span>
+                                    </td>
+                                </tr>
+                            @endforelse
                         </tbody>
                     </table>
                 </div>

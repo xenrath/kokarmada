@@ -31,7 +31,6 @@ class Pinjaman extends Model
         'slip_gaji',
         'bunga_persen',
         'total_pinjaman',
-        'nominal_rekomendasi',
         'status',
     ];
 
@@ -48,6 +47,11 @@ class Pinjaman extends Model
     public function pinjaman_agunan()
     {
         return $this->hasOne(PinjamanAgunan::class, 'pinjaman_id', 'id');
+    }
+
+    public function pinjaman_analis()
+    {
+        return $this->hasOne(PinjamanAnalis::class, 'pinjaman_id', 'id');
     }
 
     public function angsuran()

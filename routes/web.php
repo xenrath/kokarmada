@@ -43,15 +43,17 @@ Route::middleware('anggota')->prefix('anggota')->group(function () {
     Route::post('profile', [\App\Http\Controllers\Anggota\HomeController::class, 'profile_proses']);
     Route::get('password', [\App\Http\Controllers\Anggota\HomeController::class, 'password']);
     Route::post('password', [\App\Http\Controllers\Anggota\HomeController::class, 'password_proses']);
-    
-    // Route::resource('simpanan', \App\Http\Controllers\Anggota\SimpananController::class);
-    
+
+    Route::resource('simpanan', \App\Http\Controllers\Anggota\SimpananController::class);
+
     Route::resource('pinjaman', \App\Http\Controllers\Anggota\PinjamanController::class);
-    
+
     Route::middleware('ketua')->prefix('ketua')->group(function () {
-        // Route::resource('user', \App\Http\Controllers\Anggota\UserController::class);
+        Route::resource('simpanan', \App\Http\Controllers\Anggota\Ketua\SimpananController::class);
+
+        Route::resource('pinjaman', \App\Http\Controllers\Anggota\Ketua\PinjamanController::class);
     });
-    
+
     Route::middleware('manajer')->prefix('manajer')->group(function () {
         Route::resource('simpanan', \App\Http\Controllers\Anggota\Manajer\SimpananController::class);
 

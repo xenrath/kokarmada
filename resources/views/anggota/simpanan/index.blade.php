@@ -18,45 +18,11 @@
                             class="row gy-2 gx-2 align-items-center justify-content-xl-start justify-content-between">
                             <div class="col-auto">
                                 <div class="d-flex align-items-center">
-                                    <select class="form-select rounded-0" name="status"
-                                        onchange="$('#form-filter').submit();">
-                                        <option value="">- Pilih Status -</option>
-                                        <option value="menunggu"
-                                            {{ request()->get('status') == 'menunggu' ? 'selected' : '' }}>
-                                            Menunggu
-                                        </option>
-                                        <option value="proses" {{ request()->get('status') == 'proses' ? 'selected' : '' }}>
-                                            Proses
-                                        </option>
-                                        <option value="selesai"
-                                            {{ request()->get('status') == 'selesai' ? 'selected' : '' }}>
-                                            Selesai
-                                        </option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="col-auto">
-                                <label for="keyword" class="visually-hidden">Cari</label>
-                                <div class="input-group">
-                                    <input type="search" class="form-control rounded-0" id="keyword" name="keyword"
-                                        placeholder="Cari..." value="{{ request()->get('keyword') }}">
-                                    <button class="btn btn-primary rounded-0" type="submit">
-                                        <i class="mdi mdi-magnify"></i>
-                                    </button>
+                                    <input class="form-control rounded-0" id="example-month" type="month" name="month">
                                 </div>
                             </div>
                         </form>
                     </div>
-                    <div class="col-xl-4">
-                        <div class="text-xl-end mt-xl-0 mt-2">
-                            <a href="{{ url('anggota/pinjaman/create') }}" class="btn btn-primary rounded-0 mb-2">
-                                <i class="mdi mdi-file-plus-outline me-1"></i>
-                                Buat Simpanan
-                            </a>
-                            {{-- <button type="button" class="btn btn-light rounded-0 mb-2">Export</button> --}}
-                        </div>
-                    </div>
-                    <!-- end col-->
                 </div>
             </div>
             <div class="card-body p-0">

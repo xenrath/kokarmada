@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Anggota\Manajer;
+namespace App\Http\Controllers\Anggota\Ketua;
 
 use App\Http\Controllers\Controller;
 use App\Models\Pinjaman;
@@ -29,7 +29,7 @@ class PinjamanController extends Controller
             ->with('pinjaman_analis:pinjaman_id,nominal')
             ->get();
 
-        return view('anggota.manajer.pinjaman.index', compact('pinjamans'));
+        return view('anggota.ketua.pinjaman.index', compact('pinjamans'));
     }
 
     public function show($id)
@@ -93,7 +93,7 @@ class PinjamanController extends Controller
             ->select('nominal', 'catatan')
             ->first();
 
-        return view('anggota.manajer.pinjaman.show', compact(
+        return view('anggota.ketua.pinjaman.show', compact(
             'pinjaman',
             'user',
             'user_detail',
@@ -236,7 +236,7 @@ class PinjamanController extends Controller
 
         $dana_terbilang = $this->terbilang($pinjaman->nominal) . 'rupiah';
 
-        $pdf = Pdf::loadview('anggota.manajer.pinjaman.print', compact('pinjaman', 'dana_terbilang', 'user', 'user_detail'));
+        $pdf = Pdf::loadview('anggota.ketua.pinjaman.print', compact('pinjaman', 'dana_terbilang', 'user', 'user_detail'));
         return $pdf->stream('Formulir Pengajuan Pinjaman Koperasi');
     }
 

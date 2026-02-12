@@ -71,7 +71,11 @@
                                         {{ Carbon\Carbon::parse($pinjaman->tanggal_pengajuan)->translatedFormat('d F Y') }}
                                     </td>
                                     <td>{{ $pinjaman->user->nama }}</td>
-                                    <td>@rupiah($pinjaman->nominal)</td>
+                                    <td>
+                                        @rupiah($pinjaman->nominal)
+                                        <br>
+                                        @rupiah($pinjaman->pinjaman_analis->nominal)
+                                    </td>
                                     <td>
                                         @if ($pinjaman->tipe_angsuran == 'bulanan')
                                             {{ $pinjaman->jangka_waktu * 12 }} Bulan
@@ -81,11 +85,22 @@
                                     </td>
                                     <td>
                                         <span class="badge badge-info-lighten rounded-0">
-                                            {{ ucfirst($pinjaman->status) }}
+                                            @if ($pinjaman->status == 'diajukan')
+                                                DIAJUKAN
+                                            @elseif ($pinjaman->status == 'disetujui_manajer')
+                                                DISETUJUI
+                                                <br>
+                                                ANALIS
+                                            @elseif ($pinjaman->status == 'disetujui_ketua')
+                                                DISETUJUI
+                                                <br>
+                                                KETUA
+                                            @endif
                                         </span>
                                     </td>
                                     <td>
-                                        <a href="{{ url('anggota/manajer/pinjaman/' . $pinjaman->id) }}" class="action-icon">
+                                        <a href="{{ url('anggota/manajer/pinjaman/' . $pinjaman->id) }}"
+                                            class="action-icon">
                                             <i class="mdi mdi-eye"></i>
                                         </a>
                                         <a href="{{ url('admin/anggota/edit') }}" class="action-icon">
@@ -95,7 +110,7 @@
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="6" class="text-center">
+                                    <td colspan="7" class="text-center">
                                         <span class="text-muted">- Data tidak ditemukan -</span>
                                     </td>
                                 </tr>

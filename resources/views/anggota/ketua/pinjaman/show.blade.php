@@ -7,7 +7,7 @@
     <div class="container-fluid">
         <!-- start page title -->
         <div class="d-flex align-items-center gap-2">
-            <a href="{{ url('anggota/manajer/pinjaman') }}" class="btn btn-secondary rounded-0">
+            <a href="{{ url('anggota/ketua/pinjaman') }}" class="btn btn-secondary rounded-0">
                 <i class="mdi mdi-arrow-left"></i>
             </a>
             <div class="page-title-box">
@@ -15,78 +15,51 @@
             </div>
         </div>
         <!-- end page title -->
-        @if (empty($pinjaman_analis))
-            <div class="card mb-2 rounded-0">
-                <div class="card-body border-bottom pb-2">
-                    <h4 class="header-title">Analisis Pengajuan Pinjaman</h4>
-                </div>
-                <form action="{{ url('anggota/manajer/pinjaman/' . $pinjaman->id) }}" method="post" id="form-submit"
-                    autocomplete="off">
-                    @csrf
-                    @method('put')
-                    <div class="card-body">
-                        <div class="form-group mb-2">
-                            <label for="nominal" class="form-label">Nominal Rekomendasi Analis *</label>
-                            <input type="text" id="nominal" name="nominal"
-                                class="form-control rounded-0 @error('nominal') is-invalid @enderror"
-                                value="{{ old('nominal') }}">
-                            @error('nominal')
-                                <div class="invalid-feedback">
-                                    {{ $message }}
-                                </div>
-                            @enderror
-                        </div>
-                        <div class="form-group mb-2">
-                            <label for="catatan" class="form-label">Catatan Hasil Analisis *</label>
-                            <textarea class="form-control rounded-0 @error('catatan') is-invalid @enderror" id="catatan" name="catatan"
-                                rows="3">{{ old('catatan') }}</textarea>
-                            @error('catatan')
-                                <div class="invalid-feedback">
-                                    {{ $message }}
-                                </div>
-                            @enderror
-                        </div>
-                    </div>
-                </form>
-                <div class="card-footer text-end">
-                    <button type="button" class="btn btn-primary rounded-0" id="btn-submit" onclick="form_submit()">
-                        <span id="btn-submit-text">
-                            <i class="mdi mdi-send"></i>
-                            Kirim Hasil Analisis
-                        </span>
-                        <span id="btn-submit-load" style="display: none;">
-                            <i class="mdi mdi-spin mdi-loading"></i>
-                            Memproses...
-                        </span>
-                    </button>
-                </div>
+        <div class="card mb-2 rounded-0">
+            <div class="card-body border-bottom pb-2">
+                <h4 class="header-title">Analisis Pengajuan Pinjaman</h4>
             </div>
-        @else
-            <div class="card mb-2 rounded-0">
-                <div class="card-body border-bottom pb-2">
-                    <h4 class="header-title">Analisis Pengajuan Pinjaman</h4>
-                </div>
+            <form action="{{ url('anggota/ketua/pinjaman/' . $pinjaman->id) }}" method="post" id="form-submit"
+                autocomplete="off">
+                @csrf
+                @method('put')
                 <div class="card-body">
-                    <div class="mb-2">
-                        <strong>Nominal Rekomendasi Analis</strong>
-                        <br>
-                        {{ @rupiah($pinjaman_analis->nominal) }}
+                    <div class="form-group mb-2">
+                        <label for="nominal" class="form-label">Nominal Rekomendasi Analis *</label>
+                        <input type="text" id="nominal" name="nominal"
+                            class="form-control rounded-0 @error('nominal') is-invalid @enderror"
+                            value="{{ old('nominal') }}">
+                        @error('nominal')
+                            <div class="invalid-feedback">
+                                {{ $message }}
+                            </div>
+                        @enderror
                     </div>
-                    <div class="mb-2">
-                        <strong>Catatan Hasil Analisis</strong>
-                        <br>
-                        {!! nl2br(e($pinjaman_analis->catatan)) !!}
+                    <div class="form-group mb-2">
+                        <label for="catatan" class="form-label">Catatan Hasil Analisis *</label>
+                        <textarea class="form-control rounded-0 @error('catatan') is-invalid @enderror" id="catatan" name="catatan"
+                            rows="3">{{ old('catatan') }}</textarea>
+                        @error('catatan')
+                            <div class="invalid-feedback">
+                                {{ $message }}
+                            </div>
+                        @enderror
                     </div>
                 </div>
-                <div class="card-footer">
-                    <button type="button" class="btn btn-warning rounded-0 mb-2" data-bs-toggle="modal"
-                        data-bs-target="#modal-generate">
-                        <i class="mdi mdi-pencil"></i>
-                        Edit
-                    </button>
-                </div>
+            </form>
+            <div class="card-footer text-end">
+                <button type="button" class="btn btn-primary rounded-0" id="btn-submit" onclick="form_submit()">
+                    <span id="btn-submit-text">
+                        <i class="mdi mdi-send"></i>
+                        Kirim Hasil Analisis
+                    </span>
+                    <span id="btn-submit-load" style="display: none;">
+                        <i class="mdi mdi-spin mdi-loading"></i>
+                        Memproses...
+                    </span>
+                </button>
             </div>
-        @endif
+        </div>
 
         <div class="card mb-2 rounded-0">
             <div class="card-body">
@@ -241,7 +214,7 @@
                 </div>
             </div>
         </div>
-        <div class="card mb-4 rounded-0">
+        <div class="card mb-2 rounded-0">
             <div class="card-body border-bottom pb-2">
                 <div class="dropdown float-end">
                     <a href="#" class="dropdown-toggle arrow-none card-drop" data-bs-toggle="dropdown"
@@ -250,7 +223,7 @@
                     </a>
                     <div class="dropdown-menu dropdown-menu-end rounded-0">
                         <!-- item-->
-                        <a href="{{ url('anggota/manajer/pinjaman/print/' . $pinjaman->id) }}" class="dropdown-item"
+                        <a href="{{ url('anggota/ketua/pinjaman/print/' . $pinjaman->id) }}" class="dropdown-item"
                             target="_blank">
                             <i class="mdi mdi-printer"></i>
                             Print
@@ -425,6 +398,23 @@
                 </div>
             </div>
         </div>
+        <div class="card mb-2 rounded-0">
+            <div class="card-body border-bottom pb-2">
+                <h4 class="header-title">Analisis Pengajuan Pinjaman</h4>
+            </div>
+            <div class="card-body">
+                <div class="mb-2">
+                    <strong>Nominal Rekomendasi Analis</strong>
+                    <br>
+                    @rupiah($pinjaman_analis->nominal)
+                </div>
+                <div class="mb-2">
+                    <strong>Catatan Hasil Analisis</strong>
+                    <br>
+                    {!! nl2br(e($pinjaman_analis->catatan)) !!}
+                </div>
+            </div>
+        </div>
     </div>
     <!-- container -->
 
@@ -436,7 +426,7 @@
                     <h4 class="modal-title" id="modal-generate-label">Edit Analisis</h4>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-hidden="true"></button>
                 </div>
-                <form action="{{ url('anggota/manajer/pinjaman/' . $pinjaman->id) }}" method="post" id="form-edit"
+                <form action="{{ url('anggota/ketua/pinjaman/' . $pinjaman->id) }}" method="post" id="form-edit"
                     autocomplete="off">
                     @csrf
                     @method('put')
