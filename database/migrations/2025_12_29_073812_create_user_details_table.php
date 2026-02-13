@@ -27,6 +27,8 @@ return new class extends Migration
             $table->string('tinggal_bersama');
             $table->string('nama_pasangan')->nullable();
             $table->string('pekerjaan_pasangan')->nullable();
+            $table->string('bank_nama');
+            $table->string('bank_rekening');
             $table->timestamps();
         });
     }

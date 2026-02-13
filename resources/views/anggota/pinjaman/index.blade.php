@@ -291,6 +291,18 @@
                                 {{ $user_detail->pekerjaan_pasangan ?? '-' }}
                             </div>
                         </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-2">
+                                <strong>Nama Bank</strong>
+                                <br>
+                                {{ $user_detail->bank_nama ?? '-' }}
+                            </div>
+                            <div class="col-md-6 mb-2">
+                                <strong>Nomor Rekening Bank</strong>
+                                <br>
+                                {{ $user_detail->bank_rekening ?? '-' }}
+                            </div>
+                        </div>
                     </div>
                     <div class="modal-body border-top">
                         <div class="form-check form-check-inline">

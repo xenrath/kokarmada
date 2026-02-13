@@ -11,7 +11,7 @@ return new class extends Migration
         Schema::create('pinjaman_analiss', function (Blueprint $table) {
             $table->id();
             $table->foreignId('pinjaman_id')->constrained('pinjamans')->onDelete('restrict');
-            $table->foreignId('manajer_id')->constrained('manajers')->onDelete('restrict');
+            $table->foreignId('manajer_id')->constrained('users')->onDelete('restrict');
             $table->string('manajer_nama');
             $table->bigInteger('nominal');
             $table->text('tujuan');

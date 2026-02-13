@@ -15,51 +15,6 @@
             </div>
         </div>
         <!-- end page title -->
-        <div class="card mb-2 rounded-0">
-            <div class="card-body border-bottom pb-2">
-                <h4 class="header-title">Analisis Pengajuan Pinjaman</h4>
-            </div>
-            <form action="{{ url('anggota/ketua/pinjaman/' . $pinjaman->id) }}" method="post" id="form-submit"
-                autocomplete="off">
-                @csrf
-                @method('put')
-                <div class="card-body">
-                    <div class="form-group mb-2">
-                        <label for="nominal" class="form-label">Nominal Rekomendasi Analis *</label>
-                        <input type="text" id="nominal" name="nominal"
-                            class="form-control rounded-0 @error('nominal') is-invalid @enderror"
-                            value="{{ old('nominal') }}">
-                        @error('nominal')
-                            <div class="invalid-feedback">
-                                {{ $message }}
-                            </div>
-                        @enderror
-                    </div>
-                    <div class="form-group mb-2">
-                        <label for="catatan" class="form-label">Catatan Hasil Analisis *</label>
-                        <textarea class="form-control rounded-0 @error('catatan') is-invalid @enderror" id="catatan" name="catatan"
-                            rows="3">{{ old('catatan') }}</textarea>
-                        @error('catatan')
-                            <div class="invalid-feedback">
-                                {{ $message }}
-                            </div>
-                        @enderror
-                    </div>
-                </div>
-            </form>
-            <div class="card-footer text-end">
-                <button type="button" class="btn btn-primary rounded-0" id="btn-submit" onclick="form_submit()">
-                    <span id="btn-submit-text">
-                        <i class="mdi mdi-send"></i>
-                        Kirim Hasil Analisis
-                    </span>
-                    <span id="btn-submit-load" style="display: none;">
-                        <i class="mdi mdi-spin mdi-loading"></i>
-                        Memproses...
-                    </span>
-                </button>
-            </div>
-        </div>
 
         <div class="card mb-2 rounded-0">
             <div class="card-body">
@@ -413,6 +368,99 @@
                     <br>
                     {!! nl2br(e($pinjaman_analis->catatan)) !!}
                 </div>
+                <div class="mb-2">
+                    <strong>Tanggal Analisis</strong>
+                    <br>
+                    {{ Carbon\Carbon::parse($pinjaman_analis->updated_at)->translatedFormat('d F Y') }}
+                </div>
+            </div>
+        </div>
+        <div class="card mb-4 rounded-0">
+            <div class="card-body border-bottom pb-2">
+                <h4 class="header-title">Konfirmasi Pengajuan Pinjaman</h4>
+            </div>
+            <form action="{{ url('anggota/ketua/pinjaman/' . $pinjaman->id) }}" method="post" id="form-submit"
+                autocomplete="off">
+                @csrf
+                @method('put')
+                <div class="card-body">
+                    <div class="form-group mb-2">
+                        <label for="status_pinjaman" class="form-label">Status Pengajuan *</label>
+                        <select class="form-select rounded-0 @error('status_pinjaman') is-invalid @enderror"
+                            id="status_pinjaman" name="status_pinjaman">
+                            <option value="">- Pilih -</option>
+                            <option value="tolak" {{ old('usaha') == 'tolak' ? 'selected' : '' }}>
+                                Ditolak
+                            </option>
+                            <option value="setuju" {{ old('usaha') == 'setuju' ? 'selected' : '' }}>
+                                Disetujui
+                            </option>
+                        </select>
+                        @error('status')
+                            <div class="invalid-feedback">
+                                {{ $message }}
+                            </div>
+                        @enderror
+                    </div>
+                    <div class="form-group mb-2">
+                        <label for="status_pinjaman" class="form-label">Nominal yang disetujui *</label>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="border p-2 rounded-0 mb-2 mb-md-0">
+                                    <address class="mb-0 address-lg">
+                                        <div class="form-check mb-2">
+                                            <input type="radio" id="customRadio1" name="customRadio"
+                                                class="form-check-input">
+                                            <label class="form-check-label fw-semibold" for="customRadio1">Nominal
+                                                yang diajukan anggota</label>
+                                        </div>
+                                        <div class="text-center font-16 fw-bold">
+                                            @rupiah($pinjaman->nominal)
+                                            </span>
+                                    </address>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="border p-2 rounded-0">
+                                    <address class="mb-0 address-lg">
+                                        <div class="form-check mb-2">
+                                            <input type="radio" id="customRadio2" name="customRadio"
+                                                class="form-check-input">
+                                            <label class="form-check-label fw-semibold" for="customRadio2">Nominal
+                                                rekomendasi Analis</label>
+                                        </div>
+                                        <div class="text-center font-16 fw-bold">
+                                            @rupiah($pinjaman_analis->nominal)
+                                        </div>
+                                    </address>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- end row-->
+                    <div class="form-group mb-2">
+                        <label for="catatan" class="form-label">Catatan Pengajuan *</label>
+                        <textarea class="form-control rounded-0 @error('catatan') is-invalid @enderror" id="catatan" name="catatan"
+                            rows="3">{{ old('catatan') }}</textarea>
+                        @error('catatan')
+                            <div class="invalid-feedback">
+                                {{ $message }}
+                            </div>
+                        @enderror
+                    </div>
+                </div>
+            </form>
+            <div class="card-footer text-end">
+                <button type="button" class="btn btn-primary rounded-0" id="btn-submit" onclick="form_submit()">
+                    <span id="btn-submit-text">
+                        <i class="mdi mdi-send"></i>
+                        Konfirmasi Pengajuan
+                    </span>
+                    <span id="btn-submit-load" style="display: none;">
+                        <i class="mdi mdi-spin mdi-loading"></i>
+                        Memproses...
+                    </span>
+                </button>
             </div>
         </div>
     </div>

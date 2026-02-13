@@ -486,6 +486,32 @@
                         </div>
                     </div>
                 </div>
+                <div class="card-body border-top">
+                    <div class="row">
+                        <div class="col-md-6 mb-2">
+                            <label for="detail_bank_nama" class="form-label">Nama Bank *</label>
+                            <input type="text" id="detail_bank_nama" name="detail_bank_nama"
+                                class="form-control rounded-0 @error('detail_bank_nama') is-invalid @enderror"
+                                value="{{ old('detail_bank_nama', $user_detail->bank_nama ?? null) }}">
+                            @error('detail_bank_nama')
+                                <div class="invalid-feedback">
+                                    {{ $message }}
+                                </div>
+                            @enderror
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <label for="detail_bank_rekening" class="form-label">Nomor Rekening Bank *</label>
+                            <input type="text" id="detail_bank_rekening" name="detail_bank_rekening"
+                                class="form-control rounded-0 @error('detail_bank_rekening') is-invalid @enderror"
+                                value="{{ old('detail_bank_rekening', $user_detail->bank_rekening ?? null) }}">
+                            @error('detail_bank_rekening')
+                                <div class="invalid-feedback">
+                                    {{ $message }}
+                                </div>
+                            @enderror
+                        </div>
+                    </div>
+                </div>
                 <div class="card-footer d-flex justify-content-end">
                     <button type="submit" class="btn btn-primary rounded-0" id="btn-submit" onclick="form_submit()">
                         <span id="btn-submit-text">

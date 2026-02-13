@@ -90,7 +90,7 @@ class PinjamanController extends Controller
             ->first();
 
         $pinjaman_analis = PinjamanAnalis::where('pinjaman_id', $id)
-            ->select('nominal', 'catatan')
+            ->select('nominal', 'catatan', 'updated_at')
             ->first();
 
         return view('anggota.ketua.pinjaman.show', compact(

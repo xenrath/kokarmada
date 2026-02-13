@@ -39,6 +39,8 @@ class PinjamanController extends Controller
                 'no_npwp',
                 'nama_ibu',
                 'tinggal_bersama',
+                'bank_nama',
+                'bank_rekening',
             )
             ->first();
 

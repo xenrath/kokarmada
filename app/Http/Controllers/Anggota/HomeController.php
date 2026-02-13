@@ -60,6 +60,8 @@ class HomeController extends Controller
                 'tinggal_bersama',
                 'nama_pasangan',
                 'pekerjaan_pasangan',
+                'bank_nama',
+                'bank_rekening',
             )
             ->first();
 
@@ -102,6 +104,8 @@ class HomeController extends Controller
             'detail_no_npwp' => 'required',
             'detail_nama_ibu' => 'required',
             'detail_tinggal_bersama' => 'required',
+            'detail_bank_nama' => 'required',
+            'detail_bank_rekening' => 'required',
         ], [
             'nama.required' => 'Nama Lengkap harus diisi!',
             'panggilan.required' => 'Nama Panggilan harus diisi!',
@@ -129,6 +133,8 @@ class HomeController extends Controller
             'detail_no_npwp.required' => 'No. NPWP harus diisi!',
             'detail_nama_ibu.required' => 'Nama Gadis Ibu Kandung harus diisi!',
             'detail_tinggal_bersama.required' => 'Tinggal Bersama harus diisi!',
+            'detail_bank_nama.required' => 'Nama Bank harus diisi!',
+            'detail_bank_rekening.required' => 'Nomor Rekening Bank harus diisi!',
         ]);
 
         if ($validator->fails()) {
@@ -185,7 +191,7 @@ class HomeController extends Controller
             $request->detail_bulan_lahir,
             $request->detail_tanggal_lahir
         );
-        
+
         if ($user_detail_exists) {
             $update_user_detail = UserDetail::where('user_id', auth()->user()->id)->update([
                 'no_ktp' => $request->detail_no_ktp,
@@ -203,6 +209,8 @@ class HomeController extends Controller
                 'tinggal_bersama' => $request->detail_tinggal_bersama,
                 'nama_pasangan' => $request->detail_nama_pasangan,
                 'pekerjaan_pasangan' => $request->detail_pekerjaan_pasangan,
+                'bank_nama' => $request->detail_bank_nama,
+                'bank_rekening' => $request->detail_bank_rekening,
             ]);
 
             if (!$update_user_detail) {
@@ -229,6 +237,8 @@ class HomeController extends Controller
                 'tinggal_bersama' => $request->detail_tinggal_bersama,
                 'nama_pasangan' => $request->detail_nama_pasangan,
                 'pekerjaan_pasangan' => $request->detail_pekerjaan_pasangan,
+                'bank_nama' => $request->detail_bank_nama,
+                'bank_rekening' => $request->detail_bank_rekening,
             ]);
 
             if (!$create_user_detail) {
