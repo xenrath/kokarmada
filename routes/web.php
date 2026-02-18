@@ -43,6 +43,7 @@ Route::middleware('anggota')->prefix('anggota')->group(function () {
     Route::post('profile', [\App\Http\Controllers\Anggota\HomeController::class, 'profile_proses']);
     Route::get('password', [\App\Http\Controllers\Anggota\HomeController::class, 'password']);
     Route::post('password', [\App\Http\Controllers\Anggota\HomeController::class, 'password_proses']);
+    Route::get('notifikasi', [\App\Http\Controllers\Anggota\HomeController::class, 'notifikasi']);
 
     Route::resource('simpanan', \App\Http\Controllers\Anggota\SimpananController::class);
 
@@ -52,6 +53,20 @@ Route::middleware('anggota')->prefix('anggota')->group(function () {
         Route::resource('simpanan', \App\Http\Controllers\Anggota\Ketua\SimpananController::class);
 
         Route::resource('pinjaman', \App\Http\Controllers\Anggota\Ketua\PinjamanController::class);
+    });
+    
+    Route::middleware('sekretaris')->prefix('sekretaris')->group(function () {
+        Route::resource('simpanan', \App\Http\Controllers\Anggota\Sekretaris\SimpananController::class);
+
+        Route::resource('pinjaman', \App\Http\Controllers\Anggota\Sekretaris\PinjamanController::class);
+    });
+    
+    Route::middleware('bendahara')->prefix('bendahara')->group(function () {
+        Route::resource('simpanan', \App\Http\Controllers\Anggota\Bendahara\SimpananController::class);
+
+        Route::resource('pinjaman', \App\Http\Controllers\Anggota\Bendahara\PinjamanController::class);
+        
+        Route::resource('keuangan-rekening', \App\Http\Controllers\Anggota\Bendahara\KeuanganRekeningController::class);
     });
 
     Route::middleware('manajer')->prefix('manajer')->group(function () {

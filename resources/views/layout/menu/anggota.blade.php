@@ -55,6 +55,24 @@
             <span>Data Pinjaman</span>
         </a>
     </li>
+    <li class="side-nav-item {{ request()->is('anggota/bendahara/keuangan*') ? 'menuitem-active' : '' }}">
+        <a data-bs-toggle="collapse" href="#sidebarEcommerce" aria-expanded="false" aria-controls="sidebarEcommerce"
+            class="side-nav-link">
+            <i class="uil uil-wallet"></i>
+            <span>Keuangan</span>
+            <span class="menu-arrow"></span>
+        </a>
+        <div class="collapse {{ request()->is('anggota/bendahara/keuangan*') ? 'show' : '' }}" id="sidebarEcommerce">
+            <ul class="side-nav-second-level">
+                <li class="{{ request()->is('anggota/bendahara/keuangan-rekening*') ? 'menuitem-active' : '' }}">
+                    <a href="{{ url('anggota/bendahara/keuangan-rekening') }}">Rekening</a>
+                </li>
+                <li class="{{ request()->is('anggota/bendahara/keuangan-arus*') ? 'menuitem-active' : '' }}">
+                    <a href="{{ url('anggota/bendahara/keuangan-arus') }}">Arus Kas</a>
+                </li>
+            </ul>
+        </div>
+    </li>
 @endif
 @if (auth()->user()->isManajer())
     <li class="side-nav-title side-nav-item">Menu Manajer Analis</li>

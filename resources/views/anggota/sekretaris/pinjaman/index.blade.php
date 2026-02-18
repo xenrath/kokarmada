@@ -73,10 +73,8 @@
                                     <td>{{ $pinjaman->user->nama }}</td>
                                     <td>
                                         @rupiah($pinjaman->nominal)
-                                        @if ($pinjaman->pinjaman_analis)
-                                            <br>
-                                            @rupiah($pinjaman->pinjaman_analis->nominal)
-                                        @endif
+                                        <br>
+                                        @rupiah($pinjaman->pinjaman_analis->nominal)
                                     </td>
                                     <td>
                                         @if ($pinjaman->tipe_angsuran == 'bulanan')
@@ -101,12 +99,9 @@
                                         </span>
                                     </td>
                                     <td>
-                                        <a href="{{ url('anggota/manajer/pinjaman/' . $pinjaman->id) }}"
+                                        <a href="{{ url('anggota/ketua/pinjaman/' . $pinjaman->id) }}"
                                             class="action-icon">
                                             <i class="mdi mdi-eye"></i>
-                                        </a>
-                                        <a href="{{ url('admin/anggota/edit') }}" class="action-icon">
-                                            <i class="mdi mdi-square-edit-outline"></i>
                                         </a>
                                     </td>
                                 </tr>

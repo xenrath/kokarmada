@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Anggota;
 
 use App\Http\Controllers\Controller;
+use App\Models\Notifikasi;
 use App\Models\Pengaturan;
 use App\Models\Pinjaman;
 use App\Models\PinjamanAgunan;
@@ -229,6 +230,15 @@ class PinjamanController extends Controller
                 $request->file('bukti_file')
                     ->storeAs('public/uploads/', $bukti_file_path);
             }
+
+            $manajer_id = User::where('spesial', 'manajer')->value('id');
+
+            Notifikasi::create([
+                'user_id' => $manajer_id,
+                'judul' => 'Pengajuan Pinjaman Baru',
+                'pesan' => 'Pengajuan pinjaman dari ' . auth()->user()->panggilan . ' menunggu analisa.',
+                'link' => 'anggota/manajer/pinjaman/' . $pinjaman->id,
+            ]);
         });
 
         return redirect('anggota/pinjaman')

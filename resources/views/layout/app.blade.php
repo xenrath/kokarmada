@@ -94,83 +94,47 @@
                                     <h5 class="m-0">
                                         <span class="float-end">
                                             <a href="javascript: void(0);" class="text-dark">
-                                                <small>Clear All</small>
+                                                <small>Hapus Semua</small>
                                             </a>
-                                        </span>Notification
+                                        </span>
+                                        Notifikasi
                                     </h5>
                                 </div>
 
                                 <div style="max-height: 230px;" data-simplebar="">
+                                    @php
+                                        $notifikasis = \App\Models\Notifikasi::where('user_id', auth()->user()->id)
+                                            ->orderByDesc('created_at')
+                                            ->limit(5)
+                                            ->get();
+                                    @endphp
                                     <!-- item-->
-                                    <a href="javascript:void(0);" class="dropdown-item notify-item">
-                                        <div class="notify-icon bg-primary">
-                                            <i class="mdi mdi-comment-account-outline"></i>
+                                    @forelse ($notifikasis as $notifikasi)
+                                        <a href="{{ url($notifikasi->link) }}" class="dropdown-item notify-item">
+                                            <div class="notify-icon bg-primary">
+                                                <i class="mdi mdi-cash-plus"></i>
+                                            </div>
+                                            <p class="notify-details">
+                                                {{ $notifikasi->pesan }}
+                                                <small class="text-muted">
+                                                    {{ $notifikasi->created_at->format('H:i - d M Y') }}
+                                                </small>
+                                            </p>
+                                        </a>
+                                    @empty
+                                        <div class="dropdown-item notify-item d-flex justify-content-center align-items-center"
+                                            style="height: 60px;">
+                                            <p class="text-muted mb-0">
+                                                - Tidak ada notifikasi -
+                                            </p>
                                         </div>
-                                        <p class="notify-details">Caleb Flakelar commented on Admin
-                                            <small class="text-muted">1 min ago</small>
-                                        </p>
-                                    </a>
-
-                                    <!-- item-->
-                                    <a href="javascript:void(0);" class="dropdown-item notify-item">
-                                        <div class="notify-icon bg-info">
-                                            <i class="mdi mdi-account-plus"></i>
-                                        </div>
-                                        <p class="notify-details">New user registered.
-                                            <small class="text-muted">5 hours ago</small>
-                                        </p>
-                                    </a>
-
-                                    <!-- item-->
-                                    <a href="javascript:void(0);" class="dropdown-item notify-item">
-                                        <div class="notify-icon">
-                                            <img src="{{ asset('hyper/assets/images/users/avatar-2.jpg') }}"
-                                                class="img-fluid rounded-circle" alt="">
-                                        </div>
-                                        <p class="notify-details">Cristina Pride</p>
-                                        <p class="text-muted mb-0 user-msg">
-                                            <small>Hi, How are you? What about our next meeting</small>
-                                        </p>
-                                    </a>
-
-                                    <!-- item-->
-                                    <a href="javascript:void(0);" class="dropdown-item notify-item">
-                                        <div class="notify-icon bg-primary">
-                                            <i class="mdi mdi-comment-account-outline"></i>
-                                        </div>
-                                        <p class="notify-details">Caleb Flakelar commented on Admin
-                                            <small class="text-muted">4 days ago</small>
-                                        </p>
-                                    </a>
-
-                                    <!-- item-->
-                                    <a href="javascript:void(0);" class="dropdown-item notify-item">
-                                        <div class="notify-icon">
-                                            <img src="{{ asset('hyper/assets/images/users/avatar-4.jpg') }}"
-                                                class="img-fluid rounded-circle" alt="">
-                                        </div>
-                                        <p class="notify-details">Karen Robinson</p>
-                                        <p class="text-muted mb-0 user-msg">
-                                            <small>Wow ! this admin looks good and awesome design</small>
-                                        </p>
-                                    </a>
-
-                                    <!-- item-->
-                                    <a href="javascript:void(0);" class="dropdown-item notify-item">
-                                        <div class="notify-icon bg-info">
-                                            <i class="mdi mdi-heart"></i>
-                                        </div>
-                                        <p class="notify-details">Carlos Crouch liked
-                                            <b>Admin</b>
-                                            <small class="text-muted">13 days ago</small>
-                                        </p>
-                                    </a>
+                                    @endforelse
                                 </div>
 
                                 <!-- All-->
-                                <a href="javascript:void(0);"
+                                <a href="{{ url('anggota/notifikasi') }}"
                                     class="dropdown-item text-center text-primary notify-item notify-all">
-                                    View All
+                                    Lihat Semua
                                 </a>
 
                             </div>

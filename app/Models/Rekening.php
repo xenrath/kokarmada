@@ -5,15 +5,15 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Notifikasi extends Model
+class Rekening extends Model
 {
     use HasFactory;
 
     protected $fillable = [
-        'user_id',
-        'judul',
-        'pesan',
-        'link',
-        'is_read',
+        'jenis',
+        'bank',
+        'nomor',
+        'nama',
+        'is_aktif',
     ];
 }
