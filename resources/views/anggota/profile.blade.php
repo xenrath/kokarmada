@@ -398,7 +398,13 @@
                             @enderror
                         </div>
                         <div class="col-md-6 mb-2">
-                            <label for="detail_no_npwp" class="form-label">No. NPWP *</label>
+                            <label for="detail_no_npwp"
+                                class="form-label d-flex flex-column flex-md-row align-items-md-center">
+                                <span>No. NPWP</span>
+                                <small class="text-muted ms-md-2">
+                                    (opsional)
+                                </small>
+                            </label>
                             <input type="text" id="detail_no_npwp" name="detail_no_npwp"
                                 class="form-control rounded-0 @error('detail_no_npwp') is-invalid @enderror"
                                 value="{{ old('detail_no_npwp', $user_detail->no_npwp ?? null) }}">
