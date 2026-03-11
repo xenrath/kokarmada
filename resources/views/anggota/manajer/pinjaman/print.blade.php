@@ -436,24 +436,27 @@
                 <td style="vertical-align: top; width: 10px;">:</td>
                 <td style="padding-top: 4px;">
                     <table cellpadding="0" cellspacing="0">
+                        @php
+                            $jenis_agunan = optional($pinjaman->pinjaman_agunan)->jenis_agunan;
+                        @endphp
                         <tr>
                             {{-- Kendaraan --}}
                             <td style="width:16px; vertical-align: top;">
-                                <img src="{{ public_path('storage/uploads/asset/' . ($pinjaman->pinjaman_agunan->jenis_agunan == 'kendaraan' ? 'check-square-regular.svg' : 'square-regular.svg')) }}"
+                                <img src="{{ public_path('storage/uploads/asset/' . ($jenis_agunan == 'kendaraan' ? 'check-square-regular.svg' : 'square-regular.svg')) }}"
                                     style="height:16px;">
                             </td>
                             <td style="width:140px; vertical-align: top;">Kendaraan</td>
 
                             {{-- Tanah & Bangunan --}}
                             <td style="width:16px; vertical-align: top;">
-                                <img src="{{ public_path('storage/uploads/asset/' . ($pinjaman->pinjaman_agunan->jenis_agunan == 'tanah_bangunan' ? 'check-square-regular.svg' : 'square-regular.svg')) }}"
+                                <img src="{{ public_path('storage/uploads/asset/' . ($jenis_agunan == 'tanah_bangunan' ? 'check-square-regular.svg' : 'square-regular.svg')) }}"
                                     style="height:16px;">
                             </td>
                             <td style="width:140px; vertical-align: top;">Tanah & Bangunan</td>
 
                             {{-- Pekarangan --}}
                             <td style="width:16px; vertical-align: top;">
-                                <img src="{{ public_path('storage/uploads/asset/' . ($pinjaman->pinjaman_agunan->jenis_agunan == 'pekarangan' ? 'check-square-regular.svg' : 'square-regular.svg')) }}"
+                                <img src="{{ public_path('storage/uploads/asset/' . ($jenis_agunan == 'pekarangan' ? 'check-square-regular.svg' : 'square-regular.svg')) }}"
                                     style="height:16px;">
                             </td>
                             <td style="width:140px; vertical-align: top;">Pekarangan</td>
@@ -461,19 +464,19 @@
                         <tr>
                             {{-- Sawah --}}
                             <td style="width:16px; vertical-align: top;">
-                                <img src="{{ public_path('storage/uploads/asset/' . ($pinjaman->pinjaman_agunan->jenis_agunan == 'sawah' ? 'check-square-regular.svg' : 'square-regular.svg')) }}"
+                                <img src="{{ public_path('storage/uploads/asset/' . ($jenis_agunan == 'sawah' ? 'check-square-regular.svg' : 'square-regular.svg')) }}"
                                     style="height:16px;">
                             </td>
                             <td style="width:140px; vertical-align: top;">Sawah</td>
 
                             {{-- Lainnya --}}
                             <td style="width:16px; vertical-align: top;">
-                                <img src="{{ public_path('storage/uploads/asset/' . ($pinjaman->pinjaman_agunan->jenis_agunan == 'lainnya' ? 'check-square-regular.svg' : 'square-regular.svg')) }}"
+                                <img src="{{ public_path('storage/uploads/asset/' . ($jenis_agunan == 'lainnya' ? 'check-square-regular.svg' : 'square-regular.svg')) }}"
                                     style="height:16px;">
                             </td>
                             <td style="vertical-align: top;">
                                 Lainnya:
-                                @if ($pinjaman->pinjaman_agunan->jenis_agunan == 'lainnya')
+                                @if ($jenis_agunan == 'lainnya')
                                     {{ $pinjaman->pinjaman_agunan->jenis_agunan_lainnya }}
                                 @endif
                             </td>
@@ -486,24 +489,27 @@
                 <td style="vertical-align: top; width: 10px;">:</td>
                 <td style="padding-top: 4px;">
                     <table cellpadding="0" cellspacing="0">
+                        @php
+                            $bukti_agunan = optional($pinjaman->pinjaman_agunan)->bukti_agunan;
+                        @endphp
                         <tr>
                             {{-- SHM --}}
                             <td style="width:16px; vertical-align: top;">
-                                <img src="{{ public_path('storage/uploads/asset/' . ($pinjaman->pinjaman_agunan->bukti_agunan == 'shm' ? 'check-square-regular.svg' : 'square-regular.svg')) }}"
+                                <img src="{{ public_path('storage/uploads/asset/' . ($bukti_agunan == 'shm' ? 'check-square-regular.svg' : 'square-regular.svg')) }}"
                                     style="height:16px;">
                             </td>
                             <td style="width:140px; vertical-align: top;">SHM</td>
 
                             {{-- HGB --}}
                             <td style="width:16px; vertical-align: top;">
-                                <img src="{{ public_path('storage/uploads/asset/' . ($pinjaman->pinjaman_agunan->bukti_agunan == 'hgb' ? 'check-square-regular.svg' : 'square-regular.svg')) }}"
+                                <img src="{{ public_path('storage/uploads/asset/' . ($bukti_agunan == 'hgb' ? 'check-square-regular.svg' : 'square-regular.svg')) }}"
                                     style="height:16px;">
                             </td>
                             <td style="width:140px; vertical-align: top;">HGB</td>
 
                             {{-- HGU --}}
                             <td style="width:16px; vertical-align: top;">
-                                <img src="{{ public_path('storage/uploads/asset/' . ($pinjaman->pinjaman_agunan->bukti_agunan == 'hgu' ? 'check-square-regular.svg' : 'square-regular.svg')) }}"
+                                <img src="{{ public_path('storage/uploads/asset/' . ($bukti_agunan == 'hgu' ? 'check-square-regular.svg' : 'square-regular.svg')) }}"
                                     style="height:16px;">
                             </td>
                             <td style="width:140px; vertical-align: top;">HGU</td>
@@ -511,14 +517,14 @@
                         <tr>
                             {{-- Hak Pakai --}}
                             <td style="width:16px; vertical-align: top;">
-                                <img src="{{ public_path('storage/uploads/asset/' . ($pinjaman->pinjaman_agunan->bukti_agunan == 'hak_pakai' ? 'check-square-regular.svg' : 'square-regular.svg')) }}"
+                                <img src="{{ public_path('storage/uploads/asset/' . ($bukti_agunan == 'hak_pakai' ? 'check-square-regular.svg' : 'square-regular.svg')) }}"
                                     style="height:16px;">
                             </td>
                             <td style="width:140px; vertical-align: top;">Hak Pakai</td>
 
                             {{-- BPKB --}}
                             <td style="width:16px; vertical-align: top;">
-                                <img src="{{ public_path('storage/uploads/asset/' . ($pinjaman->pinjaman_agunan->bukti_agunan == 'bpkb' ? 'check-square-regular.svg' : 'square-regular.svg')) }}"
+                                <img src="{{ public_path('storage/uploads/asset/' . ($bukti_agunan == 'bpkb' ? 'check-square-regular.svg' : 'square-regular.svg')) }}"
                                     style="height:16px;">
                             </td>
                             <td style="width:140px; vertical-align: top;">BPKB</td>
@@ -531,17 +537,20 @@
                 <td style="vertical-align: top; width: 10px;">:</td>
                 <td style="padding-top: 4px;">
                     <table cellpadding="0" cellspacing="0">
+                        @php
+                            $bukti_kepemilikan = optional($pinjaman->pinjaman_agunan)->bukti_kepemilikan;
+                        @endphp
                         <tr>
                             {{-- Milik Nasabah --}}
                             <td style="width:16px; vertical-align: top;">
-                                <img src="{{ public_path('storage/uploads/asset/' . ($pinjaman->pinjaman_agunan->bukti_kepemilikan == 'milik_nasabah' ? 'check-square-regular.svg' : 'square-regular.svg')) }}"
+                                <img src="{{ public_path('storage/uploads/asset/' . ($bukti_kepemilikan == 'milik_nasabah' ? 'check-square-regular.svg' : 'square-regular.svg')) }}"
                                     style="height:16px;">
                             </td>
                             <td style="width:140px; vertical-align: top;">Milik Nasabah</td>
 
                             {{-- Bukan Milik Nasabah --}}
                             <td style="width:16px; vertical-align: top;">
-                                <img src="{{ public_path('storage/uploads/asset/' . ($pinjaman->pinjaman_agunan->bukti_kepemilikan == 'bukan_milik_nasabah' ? 'check-square-regular.svg' : 'square-regular.svg')) }}"
+                                <img src="{{ public_path('storage/uploads/asset/' . ($bukti_kepemilikan == 'bukan_milik_nasabah' ? 'check-square-regular.svg' : 'square-regular.svg')) }}"
                                     style="height:16px;">
                             </td>
                             <td style="width:140px; vertical-align: top;">Bukan Milik Nasabah</td>

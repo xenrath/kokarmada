@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Anggota\Manajer;
 
 use App\Http\Controllers\Controller;
+use App\Models\Aktivitas;
+use App\Models\Notifikasi;
 use App\Models\Pinjaman;
 use App\Models\PinjamanAnalis;
 use App\Models\User;
@@ -119,6 +121,8 @@ class PinjamanController extends Controller
         }
 
         $nominal = (int) str_replace('.', '', $request->input('nominal'));
+        $kode = Pinjaman::where('id', $id)->value('kode');
+        $ketua_id = User::where('spesial', 'ketua')->value('id');
         $pinjaman_analis = PinjamanAnalis::where('pinjaman_id', $id)
             ->select('id', 'nominal', 'catatan')
             ->first();
@@ -135,12 +139,38 @@ class PinjamanController extends Controller
             Pinjaman::where('id', $id)->update([
                 'status' => 'disetujui_manajer',
             ]);
+
+            Aktivitas::create([
+                'user_id' => auth()->user()->id,
+                'judul' => 'Analisis Pinjaman Dikirim',
+                'pesan' => 'Manajer Analis mengirimkan hasil analisis pengajuan pinjaman nasabah dengan nomor ' . $kode . ' kepada Ketua untuk proses persetujuan.',
+            ]);
+
+            Notifikasi::create([
+                'user_id' => $ketua_id,
+                'judul' => 'Menunggu Persetujuan Ketua',
+                'pesan' => 'Pengajuan pinjaman dengan nomor ' . $kode . ' sedang menunggu persetujuan Ketua.',
+                'link' => 'anggota/ketua/pinjaman/' . $id,
+            ]);
         } else {
             PinjamanAnalis::where('id', $pinjaman_analis->id)->update([
                 'manajer_id' => auth()->user()->id,
                 'manajer_nama' => auth()->user()->nama,
                 'nominal' => $nominal,
                 'catatan' => $request->catatan,
+            ]);
+
+            Aktivitas::create([
+                'user_id' => auth()->user()->id,
+                'judul' => 'Analisis Pinjaman Diperbarui',
+                'pesan' => 'Manajer Analis memperbarui hasil analisis pengajuan pinjaman nasabah dengan nomor ' . $kode,
+            ]);
+
+            Notifikasi::create([
+                'user_id' => $ketua_id,
+                'judul' => 'Analisis Pinjaman Diperbarui',
+                'pesan' => 'Analisis pengajuan pinjaman dengan nomor ' . $kode . ' telah diperbarui oleh Manajer Analis dan menunggu persetujuan Anda.',
+                'link' => 'anggota/ketua/pinjaman/' . $id,
             ]);
         }
 

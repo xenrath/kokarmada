@@ -70,7 +70,7 @@
                     <div class="mb-2">
                         <strong>Nominal Rekomendasi Analis</strong>
                         <br>
-                        {{ @rupiah($pinjaman_analis->nominal) }}
+                        @rupiah($pinjaman_analis->nominal)
                     </div>
                     <div class="mb-2">
                         <strong>Catatan Hasil Analisis</strong>
@@ -236,6 +236,18 @@
                             </strong>
                             <br>
                             {{ $user_detail->pekerjaan_pasangan ?? '-' }}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-2">
+                            <strong>Nama Bank</strong>
+                            <br>
+                            {{ $user_detail->bank_nama ?? '-' }}
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <strong>Nomor Rekening Bank</strong>
+                            <br>
+                            {{ $user_detail->bank_rekening ?? '-' }}
                         </div>
                     </div>
                 </div>
@@ -428,57 +440,59 @@
     </div>
     <!-- container -->
 
-    <div id="modal-generate" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="modal-generate-label"
-        aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content rounded-0">
-                <div class="modal-header">
-                    <h4 class="modal-title" id="modal-generate-label">Edit Analisis</h4>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-hidden="true"></button>
-                </div>
-                <form action="{{ url('anggota/manajer/pinjaman/' . $pinjaman->id) }}" method="post" id="form-edit"
-                    autocomplete="off">
-                    @csrf
-                    @method('put')
-                    <div class="modal-body">
-                        <div class="form-group mb-2">
-                            <label for="nominal" class="form-label">Nominal Rekomendasi Analis *</label>
-                            <input type="text" id="nominal" name="nominal"
-                                class="form-control rounded-0 @error('nominal') is-invalid @enderror"
-                                value="{{ old('nominal', $pinjaman_analis->nominal) }}">
-                            @error('nominal')
-                                <div class="invalid-feedback">
-                                    {{ $message }}
-                                </div>
-                            @enderror
-                        </div>
-                        <div class="form-group mb-2">
-                            <label for="catatan" class="form-label">Catatan Hasil Analisis *</label>
-                            <textarea class="form-control rounded-0 @error('catatan') is-invalid @enderror" id="catatan" name="catatan"
-                                rows="3">{{ old('catatan', $pinjaman_analis->catatan) }}</textarea>
-                            @error('catatan')
-                                <div class="invalid-feedback">
-                                    {{ $message }}
-                                </div>
-                            @enderror
-                        </div>
+    @if ($pinjaman_analis)
+        <div id="modal-generate" class="modal fade" tabindex="-1" role="dialog"
+            aria-labelledby="modal-generate-label" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content rounded-0">
+                    <div class="modal-header">
+                        <h4 class="modal-title" id="modal-generate-label">Edit Analisis</h4>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-hidden="true"></button>
                     </div>
-                </form>
-                <div class="modal-footer justify-content-between">
-                    <button type="button" class="btn btn-light rounded-0" data-bs-dismiss="modal">Batal</button>
-                    <button type="button" class="btn btn-primary rounded-0" id="btn-edit" onclick="form_edit()">
-                        <span id="btn-edit-text">Simpan</span>
-                        <span id="btn-edit-load" style="display:none;">
-                            <i class="mdi mdi-spin mdi-loading"></i>
-                        </span>
-                    </button>
+                    <form action="{{ url('anggota/manajer/pinjaman/' . $pinjaman->id) }}" method="post" id="form-edit"
+                        autocomplete="off">
+                        @csrf
+                        @method('put')
+                        <div class="modal-body">
+                            <div class="form-group mb-2">
+                                <label for="nominal" class="form-label">Nominal Rekomendasi Analis *</label>
+                                <input type="text" id="nominal" name="nominal"
+                                    class="form-control rounded-0 @error('nominal') is-invalid @enderror"
+                                    value="{{ old('nominal', $pinjaman_analis->nominal) }}">
+                                @error('nominal')
+                                    <div class="invalid-feedback">
+                                        {{ $message }}
+                                    </div>
+                                @enderror
+                            </div>
+                            <div class="form-group mb-2">
+                                <label for="catatan" class="form-label">Catatan Hasil Analisis *</label>
+                                <textarea class="form-control rounded-0 @error('catatan') is-invalid @enderror" id="catatan" name="catatan"
+                                    rows="3">{{ old('catatan', $pinjaman_analis->catatan) }}</textarea>
+                                @error('catatan')
+                                    <div class="invalid-feedback">
+                                        {{ $message }}
+                                    </div>
+                                @enderror
+                            </div>
+                        </div>
+                    </form>
+                    <div class="modal-footer justify-content-between">
+                        <button type="button" class="btn btn-light rounded-0" data-bs-dismiss="modal">Batal</button>
+                        <button type="button" class="btn btn-primary rounded-0" id="btn-edit" onclick="form_edit()">
+                            <span id="btn-edit-text">Simpan</span>
+                            <span id="btn-edit-load" style="display:none;">
+                                <i class="mdi mdi-spin mdi-loading"></i>
+                            </span>
+                        </button>
+                    </div>
                 </div>
+                <!-- /.modal-content -->
             </div>
-            <!-- /.modal-content -->
+            <!-- /.modal-dialog -->
         </div>
-        <!-- /.modal-dialog -->
-    </div>
-    <!-- /.modal -->
+        <!-- /.modal -->
+    @endif
 @endsection
 
 @section('script')

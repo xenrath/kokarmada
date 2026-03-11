@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Anggota;
 
 use App\Http\Controllers\Controller;
+use App\Models\Aktivitas;
 use App\Models\Notifikasi;
 use App\Models\User;
 use App\Models\UserDetail;
@@ -32,6 +33,10 @@ class HomeController extends Controller
                 'no_npwp',
                 'nama_ibu',
                 'tinggal_bersama',
+                'nama_pasangan',
+                'pekerjaan_pasangan',
+                'bank_nama',
+                'bank_rekening',
             )
             ->first();
 
@@ -292,6 +297,10 @@ class HomeController extends Controller
             ->orderByDesc('created_at')
             ->get();
 
-        return view('anggota.notifikasi', compact('notifikasis'));
+        $aktivitass = Aktivitas::where('user_id', auth()->user()->id)
+            ->orderByDesc('created_at')
+            ->get();
+
+        return view('anggota.notifikasi', compact('notifikasis', 'aktivitass'));
     }
 }

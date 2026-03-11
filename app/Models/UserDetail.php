@@ -26,6 +26,8 @@ class UserDetail extends Model
         'tinggal_bersama',
         'nama_pasangan',
         'pekerjaan_pasangan',
+        'bank_nama',
+        'bank_rekening',
     ];
 
     public function user()

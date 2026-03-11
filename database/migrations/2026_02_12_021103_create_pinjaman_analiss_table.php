@@ -14,7 +14,7 @@ return new class extends Migration
             $table->foreignId('manajer_id')->constrained('users')->onDelete('restrict');
             $table->string('manajer_nama');
             $table->bigInteger('nominal');
-            $table->text('tujuan');
+            $table->text('catatan');
             $table->boolean('status')->default(false);
             $table->timestamps();
         });

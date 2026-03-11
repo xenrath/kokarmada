@@ -16,6 +16,8 @@
     <link href="{{ asset('hyper/assets/css/app.min.css') }}" rel="stylesheet" type="text/css" id="light-style">
     <link href="{{ asset('hyper/assets/css/app-dark.min.css') }}" rel="stylesheet" type="text/css" id="dark-style">
 
+    @yield('style')
+
     <!-- Toastr alert -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
 
@@ -82,13 +84,20 @@
                 <div class="navbar-custom">
                     <ul class="list-unstyled topbar-menu float-end mb-0">
                         <li class="dropdown notification-list">
+                            @php
+                                $notifikasis = \App\Models\Notifikasi::where('user_id', auth()->user()->id)
+                                    ->orderByDesc('created_at')
+                                    ->limit(5)
+                                    ->get();
+                            @endphp
                             <a class="nav-link dropdown-toggle arrow-none" data-bs-toggle="dropdown" href="#"
                                 role="button" aria-haspopup="false" aria-expanded="false">
                                 <i class="dripicons-bell noti-icon"></i>
-                                <span class="noti-icon-badge"></span>
+                                @if (count($notifikasis))
+                                    <span class="noti-icon-badge"></span>
+                                @endif
                             </a>
                             <div class="dropdown-menu dropdown-menu-end dropdown-menu-animated dropdown-lg rounded-0">
-
                                 <!-- item-->
                                 <div class="dropdown-item noti-title">
                                     <h5 class="m-0">
@@ -100,14 +109,7 @@
                                         Notifikasi
                                     </h5>
                                 </div>
-
                                 <div style="max-height: 230px;" data-simplebar="">
-                                    @php
-                                        $notifikasis = \App\Models\Notifikasi::where('user_id', auth()->user()->id)
-                                            ->orderByDesc('created_at')
-                                            ->limit(5)
-                                            ->get();
-                                    @endphp
                                     <!-- item-->
                                     @forelse ($notifikasis as $notifikasi)
                                         <a href="{{ url($notifikasi->link) }}" class="dropdown-item notify-item">
@@ -117,7 +119,9 @@
                                             <p class="notify-details">
                                                 {{ $notifikasi->pesan }}
                                                 <small class="text-muted">
-                                                    {{ $notifikasi->created_at->format('H:i - d M Y') }}
+                                                    {{ $notifikasi->created_at->format('H:i') }}
+                                                    WIB •
+                                                    {{ $notifikasi->created_at->translatedFormat('d M Y') }}
                                                 </small>
                                             </p>
                                         </a>
@@ -130,16 +134,13 @@
                                         </div>
                                     @endforelse
                                 </div>
-
                                 <!-- All-->
                                 <a href="{{ url('anggota/notifikasi') }}"
                                     class="dropdown-item text-center text-primary notify-item notify-all">
                                     Lihat Semua
                                 </a>
-
                             </div>
                         </li>
-
                         <li class="dropdown notification-list">
                             <a class="nav-link dropdown-toggle nav-user arrow-none me-0" data-bs-toggle="dropdown"
                                 href="#" role="button" aria-haspopup="false" aria-expanded="false">
@@ -272,7 +273,6 @@
     </script>
 
     @yield('script')
-
 
 </body>
 
