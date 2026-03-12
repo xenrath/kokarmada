@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Anggota\Manajer;
+namespace App\Http\Controllers\Anggota\Petugas;
 
 use App\Http\Controllers\Controller;
 use App\Models\Aktivitas;
@@ -14,7 +14,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
-class PinjamanController extends Controller
+class PengadaanController extends Controller
 {
     public function index()
     {
@@ -23,15 +23,15 @@ class PinjamanController extends Controller
             'user_id',
             'tanggal_pengajuan',
             'nominal',
+            'nominal_disetujui',
             'jangka_waktu',
             'tipe_angsuran',
             'status',
         )
             ->with('user:id,nama')
-            ->with('pinjaman_analis:pinjaman_id,nominal')
             ->get();
 
-        return view('anggota.manajer.pinjaman.index', compact('pinjamans'));
+        return view('anggota.petugas.pinjaman.index', compact('pinjamans'));
     }
 
     public function show($id)
@@ -97,7 +97,7 @@ class PinjamanController extends Controller
             ->select('nominal', 'catatan')
             ->first();
 
-        return view('anggota.manajer.pinjaman.show', compact(
+        return view('anggota.petugas.pinjaman.show', compact(
             'pinjaman',
             'user',
             'user_detail',
@@ -268,7 +268,7 @@ class PinjamanController extends Controller
 
         $dana_terbilang = $this->terbilang($pinjaman->nominal) . 'rupiah';
 
-        $pdf = Pdf::loadview('anggota.manajer.pinjaman.print', compact('pinjaman', 'dana_terbilang', 'user', 'user_detail'));
+        $pdf = Pdf::loadview('anggota.petugas.pinjaman.print', compact('pinjaman', 'dana_terbilang', 'user', 'user_detail'));
         return $pdf->stream('Formulir Pengajuan Pinjaman Koperasi');
     }
 

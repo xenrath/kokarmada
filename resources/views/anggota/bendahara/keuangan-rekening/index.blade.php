@@ -141,7 +141,7 @@
                             <p>
                                 Yakin aktifkan rekening
                                 @if ($rekening->jenis == 'bank')
-                                    dari  <strong>Bank {{ $rekening->bank }}</strong>
+                                    dari <strong>Bank {{ $rekening->bank }}</strong>
                                     atas nama <strong>{{ $rekening->nama }}</strong>?
                                 @else
                                     dengan nama rekening <strong>{{ $rekening->nama }}</strong>?

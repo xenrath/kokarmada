@@ -107,6 +107,13 @@
             <span>Data Pinjaman</span>
         </a>
     </li>
+    <li class="side-nav-item {{ request()->is('anggota/petugas/pengadaan*') ? 'menuitem-active' : '' }}">
+        <a href="{{ url('anggota/petugas/pengadaan') }}"
+            class="side-nav-link {{ request()->is('anggota/petugas/pengadaan*') ? 'active' : '' }}">
+            <i class="uil-clipboard-alt"></i>
+            <span>Data Pengadaan</span>
+        </a>
+    </li>
 @endif
 @if (!auth()->user()->isNormal())
     <li class="side-nav-title side-nav-item">Menu Nasabah</li>

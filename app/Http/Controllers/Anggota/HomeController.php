@@ -5,10 +5,12 @@ namespace App\Http\Controllers\Anggota;
 use App\Http\Controllers\Controller;
 use App\Models\Aktivitas;
 use App\Models\Notifikasi;
+use App\Models\Pinjaman;
 use App\Models\User;
 use App\Models\UserDetail;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Validator;
 
 class HomeController extends Controller
@@ -302,5 +304,93 @@ class HomeController extends Controller
             ->get();
 
         return view('anggota.notifikasi', compact('notifikasis', 'aktivitass'));
+    }
+
+    public function print($id)
+    {
+        $pinjaman = Pinjaman::where('id', $id)
+            ->select(
+                'id',
+                'user_id',
+                'kode',
+                'nominal',
+                'tujuan',
+                'usaha',
+                'usaha_lainnya',
+                'jangka_waktu',
+                'tipe_angsuran',
+                'tempat_kerja',
+                'jabatan_terakhir',
+                'lama_kerja',
+                'pendapatan_kotor',
+                'pendapatan_bersih',
+            )
+            ->with('pinjaman_agunan', function ($query) {
+                $query->select(
+                    'pinjaman_id',
+                    'jenis_agunan',
+                    'jenis_agunan_lainnya',
+                    'bukti_agunan',
+                    'bukti_kepemilikan',
+                );
+            })
+            ->first();
+
+        $user = User::where('id', $pinjaman->user_id)
+            ->select(
+                'telp',
+                'nama',
+                'panggilan',
+                'gender',
+            )
+            ->first();
+
+        $user_detail = UserDetail::where('user_id', $pinjaman->user_id)
+            ->select(
+                'no_ktp',
+                'masa_berlaku_ktp',
+                'file_ktp',
+                'file_kk',
+                'tempat_lahir',
+                'tanggal_lahir',
+                'alamat',
+                'kode_pos',
+                'pekerjaan',
+                'no_npwp',
+                'nama_ibu',
+                'tinggal_bersama',
+                'nama_pasangan',
+                'pekerjaan_pasangan',
+            )
+            ->first();
+
+        $dana_terbilang = $this->terbilang($pinjaman->nominal) . 'rupiah';
+
+        $pdf = Pdf::loadview('anggota.ketua.pinjaman.print', compact('pinjaman', 'dana_terbilang', 'user', 'user_detail'));
+        return $pdf->stream('Formulir Pengajuan Pinjaman Koperasi');
+    }
+
+    public function terbilang($value)
+    {
+        $angka = ["", "satu", "dua", "tiga", "empat", "lima", "enam", "tujuh", "delapan", "sembilan", "sepuluh", "sebelas"];
+        $space = $value > 0 ? " " : null;
+
+        if ($value < 12) {
+            return $angka[$value] . $space;
+        } elseif ($value < 20) {
+            return $this->terbilang($value - 10) . "belas" . $space;
+        } elseif ($value < 100) {
+            return $this->terbilang($value / 10) . "puluh" . $space . $this->terbilang($value % 10);
+        } elseif ($value < 200) {
+            return "seratus" . $this->terbilang($value - 100);
+        } elseif ($value < 1000) {
+            return $this->terbilang($value / 100) . "ratus" . $space . $this->terbilang($value % 100);
+        } elseif ($value < 2000) {
+            return "seribu" . $this->terbilang($value - 1000);
+        } elseif ($value < 1000000) {
+            return $this->terbilang($value / 1000) . "ribu" . $space . $this->terbilang($value % 1000);
+        } elseif ($value < 1000000000) {
+            return $this->terbilang($value / 1000000) . "juta" . $space . $this->terbilang($value % 1000000);
+        }
     }
 }

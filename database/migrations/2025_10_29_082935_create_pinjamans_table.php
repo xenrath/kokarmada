@@ -16,6 +16,7 @@ return new class extends Migration
             $table->date('tanggal_pengajuan');
             $table->date('tanggal_disetujui')->nullable();
             $table->bigInteger('nominal');
+            $table->bigInteger('nominal_disetujui')->nullable();
             $table->text('tujuan');
             $table->enum('usaha', ['perdagangan', 'pertanian', 'jasa', 'lainnya']);
             $table->string('usaha_lainnya');
@@ -33,9 +34,9 @@ return new class extends Migration
                 'diajukan',
                 'disetujui_manajer',
                 'disetujui_ketua',
-                'ditolak',
                 'lunas',
-                'berjalan'
+                'berjalan',
+                'ditolak',
             ])->default('diajukan');
             $table->timestamps();
         });

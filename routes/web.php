@@ -44,6 +44,7 @@ Route::middleware('anggota')->prefix('anggota')->group(function () {
     Route::get('password', [\App\Http\Controllers\Anggota\HomeController::class, 'password']);
     Route::post('password', [\App\Http\Controllers\Anggota\HomeController::class, 'password_proses']);
     Route::get('notifikasi', [\App\Http\Controllers\Anggota\HomeController::class, 'notifikasi']);
+    Route::get('pinjaman/print/{id}', [\App\Http\Controllers\Anggota\HomeController::class, 'print']);
 
     Route::resource('simpanan', \App\Http\Controllers\Anggota\SimpananController::class);
 
@@ -52,21 +53,25 @@ Route::middleware('anggota')->prefix('anggota')->group(function () {
     Route::middleware('ketua')->prefix('ketua')->group(function () {
         Route::resource('simpanan', \App\Http\Controllers\Anggota\Ketua\SimpananController::class);
 
+        Route::get('pinjaman/print/{id}', [\App\Http\Controllers\Anggota\Ketua\PinjamanController::class, 'print']);
         Route::resource('pinjaman', \App\Http\Controllers\Anggota\Ketua\PinjamanController::class);
     });
-    
+
     Route::middleware('sekretaris')->prefix('sekretaris')->group(function () {
         Route::resource('simpanan', \App\Http\Controllers\Anggota\Sekretaris\SimpananController::class);
 
         Route::resource('pinjaman', \App\Http\Controllers\Anggota\Sekretaris\PinjamanController::class);
     });
-    
+
     Route::middleware('bendahara')->prefix('bendahara')->group(function () {
         Route::resource('simpanan', \App\Http\Controllers\Anggota\Bendahara\SimpananController::class);
 
         Route::resource('pinjaman', \App\Http\Controllers\Anggota\Bendahara\PinjamanController::class);
-        
+
         Route::resource('keuangan-rekening', \App\Http\Controllers\Anggota\Bendahara\KeuanganRekeningController::class);
+
+        Route::get('keuangan-arus/pemasukan/create', [\App\Http\Controllers\Anggota\Bendahara\KeuanganArusController::class, 'create_pemasukan']);
+        Route::resource('keuangan-arus', \App\Http\Controllers\Anggota\Bendahara\KeuanganArusController::class);
     });
 
     Route::middleware('manajer')->prefix('manajer')->group(function () {
@@ -74,5 +79,11 @@ Route::middleware('anggota')->prefix('anggota')->group(function () {
 
         Route::get('pinjaman/print/{id}', [\App\Http\Controllers\Anggota\Manajer\PinjamanController::class, 'print']);
         Route::resource('pinjaman', \App\Http\Controllers\Anggota\Manajer\PinjamanController::class);
+    });
+
+    Route::middleware('petugas')->prefix('petugas')->group(function () {
+        Route::resource('simpanan', \App\Http\Controllers\Anggota\Petugas\SimpananController::class);
+        Route::resource('pinjaman', \App\Http\Controllers\Anggota\Petugas\PinjamanController::class);
+        Route::resource('pengadaan', \App\Http\Controllers\Anggota\Petugas\PengadaanController::class);
     });
 });

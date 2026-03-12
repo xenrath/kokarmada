@@ -50,23 +50,25 @@
                 </div>
             </div>
             <div class="tab-pane" id="ribbons-aktivitas">
-                @foreach ($aktivitass as $aktivitas)
-                    <div class="col-md-6">
-                        <div class="card mb-2 rounded-0">
-                            <div class="card-body">
-                                <div class="mb-2">
-                                    <strong>{{ $aktivitas->judul }}</strong>
-                                    <br>
-                                    {{ $aktivitas->pesan }}
+                <div class="row">
+                    @foreach ($aktivitass as $aktivitas)
+                        <div class="col-md-6">
+                            <div class="card mb-2 rounded-0">
+                                <div class="card-body">
+                                    <div class="mb-2">
+                                        <strong>{{ $aktivitas->judul }}</strong>
+                                        <br>
+                                        {{ $aktivitas->pesan }}
+                                    </div>
+                                    <small class="text-muted">
+                                        {{ $aktivitas->created_at->format('H:i') }} WIB •
+                                        {{ $aktivitas->created_at->translatedFormat('d M Y') }}
+                                    </small>
                                 </div>
-                                <small class="text-muted">
-                                    {{ $aktivitas->created_at->format('H:i') }} WIB •
-                                    {{ $aktivitas->created_at->translatedFormat('d M Y') }}
-                                </small>
                             </div>
                         </div>
-                    </div>
-                @endforeach
+                    @endforeach
+                </div>
             </div>
         </div>
     </div>

@@ -18,6 +18,7 @@ class Pinjaman extends Model
         'tanggal_pengajuan',
         'tanggal_disetujui',
         'nominal',
+        'nominal_disetujui',
         'tujuan',
         'usaha',
         'usaha_lainnya',

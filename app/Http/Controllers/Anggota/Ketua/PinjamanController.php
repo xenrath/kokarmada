@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Anggota\Ketua;
 
 use App\Http\Controllers\Controller;
+use App\Models\Aktivitas;
+use App\Models\Notifikasi;
 use App\Models\Pinjaman;
 use App\Models\PinjamanAnalis;
 use App\Models\User;
@@ -41,6 +43,7 @@ class PinjamanController extends Controller
                 'kode',
                 'tanggal_pengajuan',
                 'nominal',
+                'nominal_disetujui',
                 'bunga_persen',
                 'jangka_waktu',
                 'total_pinjaman',
@@ -86,6 +89,8 @@ class PinjamanController extends Controller
                 'tinggal_bersama',
                 'nama_pasangan',
                 'pekerjaan_pasangan',
+                'bank_nama',
+                'bank_rekening',
             )
             ->first();
 
@@ -104,47 +109,48 @@ class PinjamanController extends Controller
     public function update(Request $request, $id)
     {
         $validator = Validator::make($request->all(), [
+            'status_pinjaman' => 'required',
             'nominal' => 'required',
-            'catatan' => 'required',
         ], [
-            'nominal.required' => 'Nominal Rekomendasi Analis harus diisi!',
-            'catatan.required' => 'Catatan Hasil Analisis harus diisi!',
+            'status_pinjaman.required' => 'Status Pengajuan harus dipilih!',
+            'nominal.required' => 'Nominal yang disetujui harus dipilih!',
         ]);
 
         if ($validator->fails()) {
             return back()
                 ->withInput()
                 ->withErrors($validator)
-                ->with('error', 'Pengajuan pinjaman gagal diproses!');
+                ->with('error', 'Konfirmasi pinjaman gagal diproses!');
         }
 
-        $nominal = (int) str_replace('.', '', $request->input('nominal'));
-        $pinjaman_analis = PinjamanAnalis::where('pinjaman_id', $id)
-            ->select('id', 'nominal', 'catatan')
-            ->first();
+        Pinjaman::where('id', $id)->update([
+            'nominal_disetujui' => $request->nominal,
+            'status' => $request->status_pinjaman,
+        ]);
 
-        if (empty($pinjaman_analis)) {
-            PinjamanAnalis::create([
-                'pinjaman_id' => $id,
-                'manajer_id' => auth()->user()->id,
-                'manajer_nama' => auth()->user()->nama,
-                'nominal' => $nominal,
-                'catatan' => $request->catatan,
-            ]);
-
-            Pinjaman::where('id', $id)->update([
-                'status' => 'disetujui_manajer',
-            ]);
-        } else {
-            PinjamanAnalis::where('id', $pinjaman_analis->id)->update([
-                'manajer_id' => auth()->user()->id,
-                'manajer_nama' => auth()->user()->nama,
-                'nominal' => $nominal,
-                'catatan' => $request->catatan,
+        if ($request->status_pinjaman == 'disetujui_ketua') {
+            PinjamanAnalis::where('pinjaman_id', $id)->update([
+                'status' => true
             ]);
         }
 
-        return redirect('anggota/manajer/pinjaman')->with('success', 'Hasil analisis pinjaman berhasil dikirim');
+        $kode = Pinjaman::where('id', $id)->value('kode');
+        $sekretaris_id = User::where('spesial', 'sekretaris')->value('id');
+
+        Aktivitas::create([
+            'user_id' => auth()->id(),
+            'judul' => 'Persetujuan Pinjaman',
+            'pesan' => 'Ketua telah menyetujui pengajuan pinjaman nasabah dengan nomor ' . $kode . ' dan meneruskannya kepada Sekretaris.',
+        ]);
+
+        Notifikasi::create([
+            'user_id' => $sekretaris_id,
+            'judul' => 'Menunggu Pembuatan Perjanjian Kredit',
+            'pesan' => 'Pengajuan pinjaman dengan nomor ' . $kode . ' telah disetujui oleh Ketua dan menunggu proses pembuatan perjanjian kredit.',
+            'link' => 'anggota/sekretaris/pinjaman/' . $id,
+        ]);
+
+        return redirect('anggota/ketua/pinjaman')->with('success', 'Pengajuan pinjaman berhasil disetujui');
     }
 
     public function generate_kode($nomor_urut)
