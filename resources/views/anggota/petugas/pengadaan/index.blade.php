@@ -1,13 +1,13 @@
 @extends('layout.app')
 
-@section('title', 'Data Pinjaman')
+@section('title', 'Data Pengadaan')
 
 @section('content')
     <!-- Start Content-->
     <div class="container-fluid">
         <!-- start page title -->
         <div class="page-title-box">
-            <h4 class="page-title">Data Pinjaman</h4>
+            <h4 class="page-title">Data Pengadaan</h4>
         </div>
         <!-- end page title -->
         <div class="card mb-2 rounded-0">
@@ -47,6 +47,16 @@
                             </div>
                         </form>
                     </div>
+                    <div class="col-xl-4">
+                        <div class="text-xl-end mt-xl-0 mt-2">
+                            <button type="button" class="btn btn-primary rounded-0 mb-2" data-bs-toggle="modal"
+                                data-bs-target="#modal-profile">
+                                <i class="mdi mdi-file-plus-outline me-1"></i>
+                                Buat Pengadaan
+                            </button>
+                            {{-- <button type="button" class="btn btn-light rounded-0 mb-2">Export</button> --}}
+                        </div>
+                    </div><!-- end col-->
                 </div>
             </div>
             <div class="card-body p-0">
@@ -55,64 +65,19 @@
                         <thead class="table-light">
                             <tr>
                                 <th class="text-center" style="width: 10px">No</th>
-                                <th>Tanggal Pinjaman</th>
-                                <th>Nama Nasabah</th>
-                                <th>Nominal</th>
-                                <th>Jangka Waktu</th>
-                                <th>Status</th>
+                                <th>Tanggal Pengadaan</th>
+                                <th>Barang</th>
+                                <th>Jumlah</th>
+                                <th>Harga</th>
                                 <th style="width: 120px">Action</th>
                             </tr>
                         </thead>
                         <tbody>
-                            @forelse ($pinjamans as $pinjaman)
-                                <tr>
-                                    <td class="text-center">{{ $loop->iteration }}</td>
-                                    <td>
-                                        {{ Carbon\Carbon::parse($pinjaman->tanggal_pengajuan)->translatedFormat('d F Y') }}
-                                    </td>
-                                    <td>{{ $pinjaman->user->nama }}</td>
-                                    <td>
-                                        @rupiah($pinjaman->nominal)
-                                        @if ($pinjaman->pinjaman_analis ?? false)
-                                            <br>
-                                            @rupiah($pinjaman->pinjaman_analis->nominal)
-                                        @endif
-                                    </td>
-                                    <td>
-                                        @if ($pinjaman->tipe_angsuran == 'bulanan')
-                                            {{ $pinjaman->jangka_waktu * 12 }} Bulan
-                                        @else
-                                            {{ $pinjaman->jangka_waktu }} Tahun
-                                        @endif
-                                    </td>
-                                    <td>
-                                        <span class="badge badge-info-lighten rounded-0">
-                                            @if ($pinjaman->status == 'diajukan')
-                                                DIAJUKAN
-                                            @elseif ($pinjaman->status == 'disetujui_manajer')
-                                                DISETUJUI
-                                                <br>
-                                                ANALIS
-                                            @elseif ($pinjaman->status == 'disetujui_ketua')
-                                                DISETUJUI
-                                                <br>
-                                                KETUA
-                                            @endif
-                                        </span>
-                                    </td>
-                                    <td>
-                                        <a href="{{ url('anggota/sekretaris/pinjaman/' . $pinjaman->id) }}" class="action-icon">
-                                            <i class="mdi mdi-eye"></i>
-                                        </a>
-                                    </td>
-                                </tr>
-                            @empty
-                                <tr>
-                                    <td colspan="7" class="text-center">
-                                        <span class="text-muted">- Data tidak ditemukan -</span>
-                                    </td>
-                                </tr>
-                            @endforelse
+                            <tr>
+                                <td colspan="6" class="text-center">
+                                    <span class="text-muted">- Data tidak ditemukan -</span>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                 </div>

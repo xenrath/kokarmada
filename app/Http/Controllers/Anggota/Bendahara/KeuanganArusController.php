@@ -36,9 +36,7 @@ class KeuanganArusController extends Controller
             )
             ->get();
 
-        return $rekenings;
-
-        return view('anggota.bendahara.keuangan-arus.create_pemasukan');
+        return view('anggota.bendahara.keuangan-arus.create_pemasukan', compact('rekenings'));
     }
 
     public function create()

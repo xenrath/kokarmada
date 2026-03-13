@@ -19,9 +19,11 @@
                         <select class="form-select rounded-0 @error('jenis') is-invalid @enderror" id="jenis"
                             name="jenis" onchange="jenis_check()">
                             <option value="">- Pilih -</option>
-                            <option value="bank" {{ old('jenis') == 'bank' ? 'selected' : '' }}>
-                                Bank
-                            </option>
+                            @foreach ($rekenings as $rekening)
+                                <option value="bank" {{ old('jenis') == 'bank' ? 'selected' : '' }}>
+                                    {{ $rekening-> }} {{ $rekening->nama }}
+                                </option>
+                            @endforeach
                             <option value="tunai" {{ old('jenis') == 'tunai' ? 'selected' : '' }}>
                                 Tunai
                             </option>

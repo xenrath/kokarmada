@@ -9,7 +9,7 @@
         content="Sistem Informasi Koperasi berbasis web untuk pengelolaan anggota, simpanan, pinjaman, dan laporan keuangan koperasi.">
     <meta name="author" content="Labib Bhamada">
     <!-- App favicon -->
-    <link rel="shortcut icon" href="{{ asset('storage/uploads/asset/logo-regular.png') }}">
+    <link rel="shortcut icon" href="{{ asset('storage/uploads/asset/logo-regular.png') }}?v={{ time() }}">
 
     <!-- App css -->
     <link href="{{ asset('hyper/assets/css/icons.min.css') }}" rel="stylesheet" type="text/css">

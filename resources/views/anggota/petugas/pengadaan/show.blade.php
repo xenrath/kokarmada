@@ -2,20 +2,12 @@
 
 @section('title', 'Detail Pinjaman')
 
-@section('style')
-    <style>
-        .card-select:hover {
-            background: #f8f9fa;
-        }
-    </style>
-@endsection
-
 @section('content')
     <!-- Start Content-->
     <div class="container-fluid">
         <!-- start page title -->
         <div class="d-flex align-items-center gap-2">
-            <a href="{{ url('anggota/bendahara/pinjaman') }}" class="btn btn-secondary rounded-0">
+            <a href="{{ url('anggota/petugas/pinjaman') }}" class="btn btn-secondary rounded-0">
                 <i class="mdi mdi-arrow-left"></i>
             </a>
             <div class="page-title-box">
@@ -23,62 +15,16 @@
             </div>
         </div>
         <!-- end page title -->
-
-        @if ($pinjaman->status == 'diajukan')
-            <div class="card mb-2 rounded-0">
-                <div class="card-body">
-                    <div class="alert alert-warning rounded-0 mb-0" role="alert">
-                        <i class="dripicons-clock me-2"></i>
-                        Pengajuan ini sedang menunggu proses pengecekan dan analisis oleh <strong>Manajer Analis</strong>.
-                    </div>
-                </div>
-            </div>
-        @endif
-        @if ($pinjaman->status == 'disetujui_manajer')
-            <div class="card mb-2 rounded-0">
-                <div class="card-body">
-                    <div class="alert alert-warning rounded-0 mb-0" role="alert">
-                        <i class="dripicons-clock me-2"></i>
-                        Pengajuan pinjaman ini sedang menunggu persetujuan dari <strong>Ketua</strong>.
-                    </div>
-                </div>
-            </div>
+        @if ($pinjaman->status == 'diajukan' || $pinjaman->status == 'disetujui_manajer')
         @endif
         @if ($pinjaman->status == 'disetujui_ketua')
-            <div class="card mb-2 rounded-0">
-                <div class="card-body">
-                    <div class="alert alert-success rounded-0 mb-0" role="alert">
-                        <i class="dripicons-checkmark me-2"></i>
-                        Pengajuan ini sedang menunggu <strong>Sekretaris</strong> untuk melakukan proses perjanjian kredit
-                        dengan nasabah.
-                    </div>
-                </div>
-            </div>
         @endif
-        @if ($pinjaman->status == 'ditolak')
-            <div class="card mb-2 rounded-0">
-                <div class="card-body">
-                    <div class="alert alert-danger rounded-0 mb-0" role="alert">
-                        <i class="dripicons-wrong me-2"></i>
-                        Pengajuan pinjaman ini telah Anda tolak. Pengajuan tidak akan diproses ke tahap selanjutnya.
-                    </div>
-                </div>
-            </div>
-        @endif
+
         <div class="card mb-4 rounded-0">
             <div class="card-body px-0 pt-2 pb-0">
                 <ul class="nav nav-tabs nav-justified nav-bordered">
-                    @if ($pinjaman_analis ?? false)
-                        <li class="nav-item">
-                            <a href="#analisis-b1" data-bs-toggle="tab" aria-expanded="false" class="nav-link active">
-                                <i class="mdi mdi-clipboard-search-outline d-md-none d-block"></i>
-                                <span class="d-none d-md-block">HASIL ANALISIS</span>
-                            </a>
-                        </li>
-                    @endif
                     <li class="nav-item">
-                        <a href="#nasabah-b1" data-bs-toggle="tab" aria-expanded="false"
-                            class="nav-link {{ $pinjaman_analis ? '' : 'active' }}">
+                        <a href="#nasabah-b1" data-bs-toggle="tab" aria-expanded="false" class="nav-link active">
                             <i class="mdi mdi-account-details-outline d-md-none d-block"></i>
                             <span class="d-none d-md-block">DETAIL NASABAH</span>
                         </a>
@@ -92,28 +38,7 @@
                 </ul>
             </div>
             <div class="tab-content">
-                @if ($pinjaman_analis ?? false)
-                    <div class="tab-pane show active" id="analisis-b1">
-                        <div class="card-body">
-                            <div class="mb-2">
-                                <strong>Nominal Rekomendasi Analis</strong>
-                                <br>
-                                @rupiah($pinjaman_analis->nominal)
-                            </div>
-                            <div class="mb-2">
-                                <strong>Catatan Hasil Analisis</strong>
-                                <br>
-                                {!! nl2br(e($pinjaman_analis->catatan)) !!}
-                            </div>
-                            <div class="mb-2">
-                                <strong>Tanggal Analisis</strong>
-                                <br>
-                                {{ Carbon\Carbon::parse($pinjaman_analis->updated_at)->translatedFormat('d F Y') }}
-                            </div>
-                        </div>
-                    </div>
-                @endif
-                <div class="tab-pane {{ $pinjaman_analis ? '' : 'show active' }}" id="nasabah-b1">
+                <div class="tab-pane show active" id="nasabah-b1">
                     <div class="card-body">
                         <div class="row">
                             <div class="col-md-6">
@@ -447,32 +372,4 @@
         </div>
     </div>
     <!-- container -->
-@endsection
-
-@section('script')
-    <script>
-        function format_rupiah(angka) {
-            return new Intl.NumberFormat('id-ID').format(angka);
-        }
-
-        $('#nominal').on('input', function() {
-            let value = $(this).val().replace(/\D/g, '');
-            $(this).val(format_rupiah(value));
-        });
-    </script>
-    <script>
-        function form_edit() {
-            $('#btn-edit').prop('disabled', true);
-            $('#btn-edit-text').hide();
-            $('#btn-edit-load').show();
-            $('#form-edit').submit();
-        }
-
-        function form_submit() {
-            $('#btn-submit').prop('disabled', true);
-            $('#btn-submit-text').hide();
-            $('#btn-submit-load').show();
-            $('#form-submit').submit();
-        }
-    </script>
 @endsection

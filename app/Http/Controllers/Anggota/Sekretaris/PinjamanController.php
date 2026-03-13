@@ -29,7 +29,7 @@ class PinjamanController extends Controller
             ->with('pinjaman_analis:pinjaman_id,nominal')
             ->get();
 
-        return view('anggota.ketua.pinjaman.index', compact('pinjamans'));
+        return view('anggota.sekretaris.pinjaman.index', compact('pinjamans'));
     }
 
     public function show($id)
@@ -93,7 +93,7 @@ class PinjamanController extends Controller
             ->select('nominal', 'catatan', 'updated_at')
             ->first();
 
-        return view('anggota.ketua.pinjaman.show', compact(
+        return view('anggota.sekretaris.pinjaman.show', compact(
             'pinjaman',
             'user',
             'user_detail',
@@ -236,7 +236,7 @@ class PinjamanController extends Controller
 
         $dana_terbilang = $this->terbilang($pinjaman->nominal) . 'rupiah';
 
-        $pdf = Pdf::loadview('anggota.ketua.pinjaman.print', compact('pinjaman', 'dana_terbilang', 'user', 'user_detail'));
+        $pdf = Pdf::loadview('anggota.sekretaris.pinjaman.print', compact('pinjaman', 'dana_terbilang', 'user', 'user_detail'));
         return $pdf->stream('Formulir Pengajuan Pinjaman Koperasi');
     }
 

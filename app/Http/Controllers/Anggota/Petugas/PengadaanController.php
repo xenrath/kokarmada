@@ -18,20 +18,7 @@ class PengadaanController extends Controller
 {
     public function index()
     {
-        $pinjamans = Pinjaman::select(
-            'id',
-            'user_id',
-            'tanggal_pengajuan',
-            'nominal',
-            'nominal_disetujui',
-            'jangka_waktu',
-            'tipe_angsuran',
-            'status',
-        )
-            ->with('user:id,nama')
-            ->get();
-
-        return view('anggota.petugas.pinjaman.index', compact('pinjamans'));
+        return view('anggota.petugas.pengadaan.index');
     }
 
     public function show($id)
@@ -97,7 +84,7 @@ class PengadaanController extends Controller
             ->select('nominal', 'catatan')
             ->first();
 
-        return view('anggota.petugas.pinjaman.show', compact(
+        return view('anggota.petugas.pengadaan.show', compact(
             'pinjaman',
             'user',
             'user_detail',
@@ -268,7 +255,7 @@ class PengadaanController extends Controller
 
         $dana_terbilang = $this->terbilang($pinjaman->nominal) . 'rupiah';
 
-        $pdf = Pdf::loadview('anggota.petugas.pinjaman.print', compact('pinjaman', 'dana_terbilang', 'user', 'user_detail'));
+        $pdf = Pdf::loadview('anggota.petugas.pengadaan.print', compact('pinjaman', 'dana_terbilang', 'user', 'user_detail'));
         return $pdf->stream('Formulir Pengajuan Pinjaman Koperasi');
     }
 

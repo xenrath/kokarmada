@@ -105,9 +105,6 @@
                                             class="action-icon">
                                             <i class="mdi mdi-eye"></i>
                                         </a>
-                                        <a href="{{ url('admin/anggota/edit') }}" class="action-icon">
-                                            <i class="mdi mdi-square-edit-outline"></i>
-                                        </a>
                                     </td>
                                 </tr>
                             @empty

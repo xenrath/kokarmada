@@ -90,14 +90,40 @@
             @endif
         @endif
         @if ($pinjaman->status == 'disetujui_ketua')
-        
+            <div class="card mb-2 rounded-0">
+                <div class="card-body">
+                    <div class="alert alert-success rounded-0 mb-0" role="alert">
+                        <i class="dripicons-checkmark me-2"></i>
+                        Pengajuan ini sedang menunggu <strong>Sekretaris</strong> untuk melakukan proses perjanjian kredit
+                        dengan nasabah.
+                    </div>
+                </div>
+            </div>
         @endif
-
+        @if ($pinjaman->status == 'ditolak')
+            <div class="card mb-2 rounded-0">
+                <div class="card-body">
+                    <div class="alert alert-danger rounded-0 mb-0" role="alert">
+                        <i class="dripicons-wrong me-2"></i>
+                        Pengajuan pinjaman ini telah Anda tolak. Pengajuan tidak akan diproses ke tahap selanjutnya.
+                    </div>
+                </div>
+            </div>
+        @endif
         <div class="card mb-4 rounded-0">
             <div class="card-body px-0 pt-2 pb-0">
                 <ul class="nav nav-tabs nav-justified nav-bordered">
+                    @if ($pinjaman_analis ?? false)
+                        <li class="nav-item">
+                            <a href="#analisis-b1" data-bs-toggle="tab" aria-expanded="false" class="nav-link active">
+                                <i class="mdi mdi-clipboard-check d-md-none d-block"></i>
+                                <span class="d-none d-md-block">HASIL ANALISIS</span>
+                            </a>
+                        </li>
+                    @endif
                     <li class="nav-item">
-                        <a href="#nasabah-b1" data-bs-toggle="tab" aria-expanded="false" class="nav-link active">
+                        <a href="#nasabah-b1" data-bs-toggle="tab" aria-expanded="false"
+                            class="nav-link {{ $pinjaman_analis ? '' : 'active' }}">
                             <i class="mdi mdi-account-details-outline d-md-none d-block"></i>
                             <span class="d-none d-md-block">DETAIL NASABAH</span>
                         </a>
@@ -111,7 +137,31 @@
                 </ul>
             </div>
             <div class="tab-content">
-                <div class="tab-pane show active" id="nasabah-b1">
+                @if ($pinjaman_analis ?? false)
+                    <div class="tab-pane show active" id="analisis-b1">
+                        <div class="card-body">
+                            <div class="mb-2">
+                                <strong>Nominal Rekomendasi Analis</strong>
+                                <br>
+                                @rupiah($pinjaman_analis->nominal)
+                            </div>
+                            <div class="mb-2">
+                                <strong>Catatan Hasil Analisis</strong>
+                                <br>
+                                {!! nl2br(e($pinjaman_analis->catatan)) !!}
+                            </div>
+                            <div class="mb-2">
+                                <strong>Tanggal Analisis</strong>
+                                <br>
+                                {{ Carbon\Carbon::parse($pinjaman_analis->updated_at)->translatedFormat('d F Y') }}
+                            </div>
+                        </div>
+                        <div class="card-body border-top">
+
+                        </div>
+                    </div>
+                @endif
+                <div class="tab-pane {{ $pinjaman_analis ? '' : 'show active' }}" id="nasabah-b1">
                     <div class="card-body">
                         <div class="row">
                             <div class="col-md-6">
@@ -270,7 +320,7 @@
                 <div class="tab-pane" id="pinjaman-b1">
                     <div class="card-body">
                         <div class="mb-2 text-end">
-                            <a href="{{ url('anggota/manajer/pinjaman/print/' . $pinjaman->id) }}"
+                            <a href="{{ url('anggota/ketua/pinjaman/print/' . $pinjaman->id) }}"
                                 class="btn btn-sm btn-dark rounded-0" target="_blank">
                                 <i class="mdi mdi-printer"></i>
                                 Print
