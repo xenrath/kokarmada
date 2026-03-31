@@ -157,7 +157,7 @@
                     <div class="col-md-6 mb-2">
                         <strong>Lama Bekerja pada Dinas / Instansi</strong>
                         <br>
-                        {{ $pinjaman->lama_kerja }}
+                        {{ $pinjaman->lama_kerja }} Tahun
                     </div>
                     <div class="col-md-6 mb-2">
                         <strong>Pendapatan Kotor</strong>

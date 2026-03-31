@@ -88,14 +88,24 @@
                                     </td>
                                     <td>
                                         <span class="badge badge-info-lighten rounded-0">
-                                            {{ ucfirst($pinjaman->status) }}
+                                            @if ($pinjaman->status == 'diajukan')
+                                                DIAJUKAN
+                                            @elseif ($pinjaman->status == 'disetujui_manajer')
+                                                DISETUJUI
+                                                <br>
+                                                ANALIS
+                                            @elseif ($pinjaman->status == 'disetujui_ketua')
+                                                DISETUJUI
+                                                <br>
+                                                KETUA
+                                            @endif
                                         </span>
                                     </td>
-                                    <td class="text-center">
+                                    <td>
                                         <a href="{{ url('anggota/pinjaman/' . $pinjaman->id) }}" class="action-icon">
                                             <i class="mdi mdi-eye"></i>
                                         </a>
-                                        <a href="{{ url('admin/anggota/' . $user->id . '/edit') }}" class="action-icon">
+                                        {{-- <a href="{{ url('admin/anggota/' . $user->id . '/edit') }}" class="action-icon">
                                             <i class="mdi mdi-square-edit-outline"></i>
                                         </a>
                                         @if ($user->status == 'aktif')
@@ -108,7 +118,7 @@
                                                 data-bs-target="#modal-aktif-{{ $user->id }}">
                                                 <i class="mdi mdi-check-circle"></i>
                                             </a>
-                                        @endif
+                                        @endif --}}
                                     </td>
                                 </tr>
                             @empty
