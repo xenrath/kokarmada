@@ -15,7 +15,17 @@
             </div>
         </div>
         <!-- end page title -->
-        @if ($pinjaman->status == 'diajukan' || $pinjaman->status == 'disetujui_manajer')
+        @if ($pinjaman->status == 'diajukan')
+        @endif
+        @if ($pinjaman->status == 'disetujui_manajer')
+            <div class="card mb-2 rounded-0">
+                <div class="card-body">
+                    <div class="alert alert-warning rounded-0 mb-0" role="alert">
+                        <i class="dripicons-clock me-2"></i>
+                        Pengajuan pinjaman ini sedang menunggu persetujuan dari <strong>Ketua</strong>.
+                    </div>
+                </div>
+            </div>
         @endif
         @if ($pinjaman->status == 'disetujui_ketua')
         @endif

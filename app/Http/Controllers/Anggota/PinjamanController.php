@@ -3,10 +3,12 @@
 namespace App\Http\Controllers\Anggota;
 
 use App\Http\Controllers\Controller;
+use App\Models\Aktivitas;
 use App\Models\Notifikasi;
 use App\Models\Pengaturan;
 use App\Models\Pinjaman;
 use App\Models\PinjamanAgunan;
+use App\Models\PinjamanAnalis;
 use App\Models\PinjamanUser;
 use App\Models\User;
 use App\Models\UserDetail;
@@ -231,6 +233,12 @@ class PinjamanController extends Controller
                     ->storeAs('public/uploads/', $bukti_file_path);
             }
 
+            Aktivitas::create([
+                'user_id' => auth()->user()->id,
+                'judul' => 'Pengajuan Pinjaman Baru',
+                'pesan' => 'Nasabah telah mengajukan pinjaman baru dengan kode ' . $kode,
+            ]);
+
             $manajer_id = User::where('spesial', 'manajer')->value('id');
 
             Notifikasi::create([
@@ -275,7 +283,47 @@ class PinjamanController extends Controller
             ->with('pinjaman_agunan:pinjaman_id,jenis_agunan,jenis_agunan_lainnya,bukti_agunan,bukti_kepemilikan,bukti_file')
             ->first();
 
-        return view('anggota.pinjaman.show', compact('pinjaman'));
+        $user = User::where('id', $pinjaman->user_id)
+            ->select(
+                'telp',
+                'nama',
+                'panggilan',
+                'gender',
+            )
+            ->first();
+
+        $user_detail = UserDetail::where('user_id', $pinjaman->user_id)
+            ->select(
+                'foto_diri',
+                'no_ktp',
+                'masa_berlaku_ktp',
+                'file_ktp',
+                'file_kk',
+                'tempat_lahir',
+                'tanggal_lahir',
+                'alamat',
+                'kode_pos',
+                'pekerjaan',
+                'no_npwp',
+                'nama_ibu',
+                'tinggal_bersama',
+                'nama_pasangan',
+                'pekerjaan_pasangan',
+                'bank_nama',
+                'bank_rekening',
+            )
+            ->first();
+
+        $pinjaman_analis = PinjamanAnalis::where('pinjaman_id', $id)
+            ->select('nominal', 'catatan')
+            ->first();
+
+        return view('anggota.pinjaman.show', compact(
+            'pinjaman',
+            'user',
+            'user_detail',
+            'pinjaman_analis',
+        ));
     }
 
     public function generate_kode($nomor_urut)
