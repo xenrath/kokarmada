@@ -25,109 +25,16 @@
                 </div>
             </div>
         @endif
-        {{-- @if ($pinjaman->status == 'disetujui_manajer')
+        @if ($pinjaman->status == 'disetujui_manajer')
             <div class="card mb-2 rounded-0">
-                <div class="card-body border-bottom pb-2">
-                    <h4 class="header-title">Konfirmasi Pengajuan Pinjaman</h4>
-                </div>
-                <form action="{{ url('anggota/ketua/pinjaman/' . $pinjaman->id) }}" method="post" id="form-submit"
-                    autocomplete="off">
-                    @csrf
-                    @method('put')
-                    <div class="card-body">
-                        <div class="form-group mb-2">
-                            <label for="status_pinjaman" class="form-label">Status Pengajuan *</label>
-                            <select class="form-select rounded-0 @error('status_pinjaman') is-invalid @enderror"
-                                id="status_pinjaman" name="status_pinjaman">
-                                <option value="">- Pilih -</option>
-                                <option value="ditolak" {{ old('status_pinjaman') == 'ditolak' ? 'selected' : '' }}>
-                                    Ditolak
-                                </option>
-                                <option value="disetujui_ketua"
-                                    {{ old('status_pinjaman') == 'disetujui_ketua' ? 'selected' : '' }}>
-                                    Disetujui
-                                </option>
-                            </select>
-                            @error('status_pinjaman')
-                                <div class="invalid-feedback">
-                                    {{ $message }}
-                                </div>
-                            @enderror
-                        </div>
-                        <div class="form-group mb-0">
-                            <label for="nominal" class="form-label">Nominal yang disetujui *</label>
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div
-                                        class="card border-secondary @error('nominal') border-danger @enderror border rounded-0 mb-2">
-                                        <label for="nominal1" style="cursor:pointer;">
-                                            <div class="card-body p-2">
-                                                <div class="form-check mb-1">
-                                                    <input type="radio" id="nominal1" name="nominal"
-                                                        class="form-check-input" value="{{ $pinjaman->nominal }}">
-                                                    <span class="form-check-label fw-semibold">
-                                                        Nominal yang diajukan Anggota
-                                                    </span>
-                                                </div>
-                                                <div class="text-center font-16 fw-bold">
-                                                    @rupiah($pinjaman->nominal)
-                                                </div>
-                                            </div>
-                                        </label>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div
-                                        class="card border-secondary @error('nominal') border-danger @enderror border rounded-0 mb-2">
-                                        <label for="nominal2" style="cursor:pointer;">
-                                            <div class="card-body p-2">
-                                                <div class="form-check mb-1">
-                                                    <input type="radio" id="nominal2" name="nominal"
-                                                        class="form-check-input" value="{{ $pinjaman_analis->nominal }}">
-                                                    <span class="form-check-label fw-semibold">
-                                                        Nominal Rekomendasi Manajer Analis
-                                                    </span>
-                                                </div>
-                                                <div class="text-center font-16 fw-bold">
-                                                    @rupiah($pinjaman_analis->nominal)
-                                                </div>
-                                            </div>
-                                        </label>
-                                    </div>
-                                </div>
-                            </div>
-                            @error('nominal')
-                                <small class="text-danger">
-                                    {{ $message }}
-                                </small>
-                            @enderror
-                        </div>
-                        <!-- end row-->
-                        <div class="alert alert-warning rounded-0 mt-4 mb-0" role="alert">
-                            <strong>Catatan :</strong>
-                            <br>
-                            <span>
-                                Jika nominal rekomendasi dari Manajer Analis dirasa kurang sesuai, Anda dapat
-                                menghubungi
-                                Manajer Analis untuk meninjau kembali nominal pinjaman.
-                            </span>
-                        </div>
+                <div class="card-body">
+                    <div class="alert alert-warning rounded-0 mb-0" role="alert">
+                        <i class="dripicons-clock me-2"></i>
+                        Pengajuan ini sedang menunggu persetujuan dari <strong>Ketua</strong>.
                     </div>
-                </form>
-                <div class="card-footer text-end">
-                    <button type="button" class="btn btn-primary rounded-0" id="btn-submit" onclick="form_submit()">
-                        <span id="btn-submit-text">
-                            <i class="mdi mdi-send"></i>
-                            Konfirmasi Pengajuan
-                        </span>
-                        <span id="btn-submit-load" style="display: none;">
-                            <i class="mdi mdi-spin mdi-loading"></i>
-                            Memproses...
-                        </span>
-                    </button>
                 </div>
             </div>
-        @endif --}}
+        @endif
         @if ($pinjaman->status == 'disetujui_ketua')
             <div class="card mb-2 rounded-0">
                 <div class="card-body">

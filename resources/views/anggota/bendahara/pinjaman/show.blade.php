@@ -77,16 +77,16 @@
                         </li>
                     @endif
                     <li class="nav-item">
+                        <a href="#pinjaman-b1" data-bs-toggle="tab" aria-expanded="true" class="nav-link">
+                            <i class="mdi mdi-file-document-outline d-md-none d-block"></i>
+                            <span class="d-none d-md-block">DETAIL PINJAMAN</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
                         <a href="#nasabah-b1" data-bs-toggle="tab" aria-expanded="false"
                             class="nav-link {{ $pinjaman_analis ? '' : 'active' }}">
                             <i class="mdi mdi-account-details-outline d-md-none d-block"></i>
                             <span class="d-none d-md-block">DETAIL NASABAH</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="#pinjaman-b1" data-bs-toggle="tab" aria-expanded="true" class="nav-link">
-                            <i class="mdi mdi-file-document-outline d-md-none d-block"></i>
-                            <span class="d-none d-md-block">DETAIL PINJAMAN</span>
                         </a>
                     </li>
                 </ul>
@@ -113,163 +113,7 @@
                         </div>
                     </div>
                 @endif
-                <div class="tab-pane {{ $pinjaman_analis ? '' : 'show active' }}" id="nasabah-b1">
-                    <div class="card-body">
-                        <div class="row">
-                            <div class="col-md-6">
-                                <img src="{{ asset('storage/uploads/' . $user_detail->foto_diri) }}" alt=""
-                                    class="img-fluid mb-2">
-                            </div>
-                            <div class="col-md-6">
-                                <div class="mb-2">
-                                    <strong>Nama Lengkap</strong>
-                                    <br>
-                                    {{ $user->nama }}
-                                </div>
-                                <div class="mb-2">
-                                    <strong>Nama Panggilan</strong>
-                                    <br>
-                                    {{ $user->panggilan }}
-                                </div>
-                                <div class="mb-2">
-                                    <strong>Jenis Kelamin</strong>
-                                    <br>
-                                    {{ $user->gender == 'L' ? 'Laki-laki' : 'Perempuan' }}
-                                </div>
-                                <div class="mb-2">
-                                    <strong>No. HP / WhatsApp</strong>
-                                    <br>
-                                    {{ $user->telp }}
-                                </div>
-                                <div class="mb-2">
-                                    <strong>Tempat Lahir</strong>
-                                    <br>
-                                    {{ $user_detail->tempat_lahir ?? '-' }}
-                                </div>
-                                <div class="mb-2">
-                                    <strong>Tanggal Lahir</strong>
-                                    <br>
-                                    {{ $user_detail && $user_detail->tanggal_lahir ? \Carbon\Carbon::parse($user_detail->tanggal_lahir)->translatedFormat('d F Y') : null }}
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="card-body border-top">
-                        <div class="row">
-                            <div class="col-md-6 mb-2">
-                                <strong>No. KTP</strong>
-                                <br>
-                                {{ $user_detail->no_ktp ?? '-' }}
-                            </div>
-                            <div class="col-md-6 mb-2">
-                                <strong>Masa Berlaku KTP</strong>
-                                <br>
-                                {{ $user_detail->masa_berlaku_ktp ?? '-' }}
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-6 mb-2">
-                                <strong>File KTP</strong>
-                                <br>
-                                @if ($user_detail->file_ktp ?? null)
-                                    <a href="{{ asset('storage/uploads/' . $user_detail->file_ktp) }}"
-                                        class="btn btn-sm btn-outline-secondary rounded-0 mt-1" target="_blank">
-                                        Lihat File KTP
-                                    </a>
-                                @else
-                                    -
-                                @endif
-                            </div>
-                            <div class="col-md-6 mb-2">
-                                <strong>File KK</strong>
-                                <br>
-                                @if ($user_detail->file_kk ?? null)
-                                    <a href="{{ asset('storage/uploads/' . $user_detail->file_kk) }}"
-                                        class="btn btn-sm btn-outline-secondary rounded-0 mt-1" target="_blank">
-                                        Lihat File KK
-                                    </a>
-                                @else
-                                    -
-                                @endif
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-6 mb-2">
-                                <strong>Alamat Lengkap</strong>
-                                <br>
-                                {{ $user_detail->alamat ?? '-' }}
-                            </div>
-                            <div class="col-md-6 mb-2">
-                                <strong>Kode POS</strong>
-                                <br>
-                                {{ $user_detail->kode_pos ?? '-' }}
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-6 mb-2">
-                                <strong>Pekerjaan</strong>
-                                <br>
-                                {{ $user_detail->pekerjaan ?? '-' }}
-                            </div>
-                            <div class="col-md-6 mb-2">
-                                <strong>No. NPWP</strong>
-                                <br>
-                                {{ $user_detail->no_npwp ?? '-' }}
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-6 mb-2">
-                                <strong>Nama Gadis Ibu Kandung</strong>
-                                <br>
-                                {{ $user_detail->nama_ibu ?? '-' }}
-                            </div>
-                            <div class="col-md-6 mb-2">
-                                <strong>Tinggal Bersama</strong>
-                                <br>
-                                {{ $user_detail->tinggal_bersama ?? '-' }}
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-6 mb-2">
-                                <strong>
-                                    Nama
-                                    @if ($user->gender == 'L')
-                                        Istri
-                                    @else
-                                        Suami
-                                    @endif
-                                </strong>
-                                <br>
-                                {{ $user_detail->nama_pasangan ?? '-' }}
-                            </div>
-                            <div class="col-md-6 mb-2">
-                                <strong>
-                                    Pekerjaan
-                                    @if ($user->gender == 'L')
-                                        Istri
-                                    @else
-                                        Suami
-                                    @endif
-                                </strong>
-                                <br>
-                                {{ $user_detail->pekerjaan_pasangan ?? '-' }}
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-6 mb-2">
-                                <strong>Nama Bank</strong>
-                                <br>
-                                {{ $user_detail->bank_nama ?? '-' }}
-                            </div>
-                            <div class="col-md-6 mb-2">
-                                <strong>Nomor Rekening Bank</strong>
-                                <br>
-                                {{ $user_detail->bank_rekening ?? '-' }}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="tab-pane" id="pinjaman-b1">
+                <div class="tab-pane {{ $pinjaman_analis ? '' : 'show active' }}" id="pinjaman-b1">
                     <div class="card-body">
                         <div class="mb-2 text-end">
                             <a href="{{ url('anggota/pinjaman/print/' . $pinjaman->id) }}"
@@ -439,6 +283,162 @@
                                     class="btn btn-sm btn-outline-secondary rounded-0 mt-1" target="_blank">
                                     Lihat Slip
                                 </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane" id="nasabah-b1">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <img src="{{ asset('storage/uploads/' . $user_detail->foto_diri) }}" alt=""
+                                    class="img-fluid mb-2">
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-2">
+                                    <strong>Nama Lengkap</strong>
+                                    <br>
+                                    {{ $user->nama }}
+                                </div>
+                                <div class="mb-2">
+                                    <strong>Nama Panggilan</strong>
+                                    <br>
+                                    {{ $user->panggilan }}
+                                </div>
+                                <div class="mb-2">
+                                    <strong>Jenis Kelamin</strong>
+                                    <br>
+                                    {{ $user->gender == 'L' ? 'Laki-laki' : 'Perempuan' }}
+                                </div>
+                                <div class="mb-2">
+                                    <strong>No. HP / WhatsApp</strong>
+                                    <br>
+                                    {{ $user->telp }}
+                                </div>
+                                <div class="mb-2">
+                                    <strong>Tempat Lahir</strong>
+                                    <br>
+                                    {{ $user_detail->tempat_lahir ?? '-' }}
+                                </div>
+                                <div class="mb-2">
+                                    <strong>Tanggal Lahir</strong>
+                                    <br>
+                                    {{ $user_detail && $user_detail->tanggal_lahir ? \Carbon\Carbon::parse($user_detail->tanggal_lahir)->translatedFormat('d F Y') : null }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body border-top">
+                        <div class="row">
+                            <div class="col-md-6 mb-2">
+                                <strong>No. KTP</strong>
+                                <br>
+                                {{ $user_detail->no_ktp ?? '-' }}
+                            </div>
+                            <div class="col-md-6 mb-2">
+                                <strong>Masa Berlaku KTP</strong>
+                                <br>
+                                {{ $user_detail->masa_berlaku_ktp ?? '-' }}
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-2">
+                                <strong>File KTP</strong>
+                                <br>
+                                @if ($user_detail->file_ktp ?? null)
+                                    <a href="{{ asset('storage/uploads/' . $user_detail->file_ktp) }}"
+                                        class="btn btn-sm btn-outline-secondary rounded-0 mt-1" target="_blank">
+                                        Lihat File KTP
+                                    </a>
+                                @else
+                                    -
+                                @endif
+                            </div>
+                            <div class="col-md-6 mb-2">
+                                <strong>File KK</strong>
+                                <br>
+                                @if ($user_detail->file_kk ?? null)
+                                    <a href="{{ asset('storage/uploads/' . $user_detail->file_kk) }}"
+                                        class="btn btn-sm btn-outline-secondary rounded-0 mt-1" target="_blank">
+                                        Lihat File KK
+                                    </a>
+                                @else
+                                    -
+                                @endif
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-2">
+                                <strong>Alamat Lengkap</strong>
+                                <br>
+                                {{ $user_detail->alamat ?? '-' }}
+                            </div>
+                            <div class="col-md-6 mb-2">
+                                <strong>Kode POS</strong>
+                                <br>
+                                {{ $user_detail->kode_pos ?? '-' }}
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-2">
+                                <strong>Pekerjaan</strong>
+                                <br>
+                                {{ $user_detail->pekerjaan ?? '-' }}
+                            </div>
+                            <div class="col-md-6 mb-2">
+                                <strong>No. NPWP</strong>
+                                <br>
+                                {{ $user_detail->no_npwp ?? '-' }}
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-2">
+                                <strong>Nama Gadis Ibu Kandung</strong>
+                                <br>
+                                {{ $user_detail->nama_ibu ?? '-' }}
+                            </div>
+                            <div class="col-md-6 mb-2">
+                                <strong>Tinggal Bersama</strong>
+                                <br>
+                                {{ $user_detail->tinggal_bersama ?? '-' }}
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-2">
+                                <strong>
+                                    Nama
+                                    @if ($user->gender == 'L')
+                                        Istri
+                                    @else
+                                        Suami
+                                    @endif
+                                </strong>
+                                <br>
+                                {{ $user_detail->nama_pasangan ?? '-' }}
+                            </div>
+                            <div class="col-md-6 mb-2">
+                                <strong>
+                                    Pekerjaan
+                                    @if ($user->gender == 'L')
+                                        Istri
+                                    @else
+                                        Suami
+                                    @endif
+                                </strong>
+                                <br>
+                                {{ $user_detail->pekerjaan_pasangan ?? '-' }}
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-2">
+                                <strong>Nama Bank</strong>
+                                <br>
+                                {{ $user_detail->bank_nama ?? '-' }}
+                            </div>
+                            <div class="col-md-6 mb-2">
+                                <strong>Nomor Rekening Bank</strong>
+                                <br>
+                                {{ $user_detail->bank_rekening ?? '-' }}
                             </div>
                         </div>
                     </div>

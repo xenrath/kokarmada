@@ -87,6 +87,8 @@ class PinjamanController extends Controller
                 'tinggal_bersama',
                 'nama_pasangan',
                 'pekerjaan_pasangan',
+                'bank_nama',
+                'bank_rekening',
             )
             ->first();
 
