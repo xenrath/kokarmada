@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Anggota\Sekretaris;
 
 use App\Http\Controllers\Controller;
+use App\Models\Pengaturan;
 use App\Models\Pinjaman;
 use App\Models\PinjamanAnalis;
 use App\Models\User;
@@ -32,7 +33,7 @@ class PinjamanController extends Controller
         return view('anggota.sekretaris.pinjaman.index', compact('pinjamans'));
     }
 
-    public function show($id)
+    public function show(int $id)
     {
         $pinjaman = Pinjaman::where('id', $id)
             ->select(
@@ -101,7 +102,7 @@ class PinjamanController extends Controller
         ));
     }
 
-    public function update(Request $request, $id)
+    public function update(Request $request, int $id)
     {
         $validator = Validator::make($request->all(), [
             'nominal' => 'required',
@@ -147,7 +148,7 @@ class PinjamanController extends Controller
         return redirect('anggota/manajer/pinjaman')->with('success', 'Hasil analisis pinjaman berhasil dikirim');
     }
 
-    public function generate_kode($nomor_urut)
+    public function generate_kode(int $nomor_urut)
     {
         $prefix = 'KOPKARMADA';
         $bulan = $this->bulan_romawi(Carbon::now()->month);
@@ -156,7 +157,7 @@ class PinjamanController extends Controller
         return "{$prefix}/{$nomor_urut}/{$bulan}/{$tahun}";
     }
 
-    function bulan_romawi($bulan)
+    function bulan_romawi(int $bulan)
     {
         $romawi = [
             1 => 'I',
@@ -176,7 +177,7 @@ class PinjamanController extends Controller
         return $romawi[$bulan] ?? '';
     }
 
-    public function print($id)
+    public function print(int $id)
     {
         $pinjaman = Pinjaman::where('id', $id)
             ->select(
@@ -240,7 +241,48 @@ class PinjamanController extends Controller
         return $pdf->stream('Formulir Pengajuan Pinjaman Koperasi');
     }
 
-    public function terbilang($value)
+    public function spk(int $id)
+    {
+        $pinjaman = Pinjaman::where('id', $id)
+            ->select(
+                'id',
+                'user_id',
+                'kode',
+                'nominal',
+                'nominal_disetujui',
+                'jangka_waktu',
+                'jabatan_terakhir',
+            )
+            ->first();
+
+        $user = User::where('id', $pinjaman->user_id)
+            ->select(
+                'nama',
+                'telp',
+            )
+            ->first();
+
+        $user_detail = UserDetail::where('user_id', $pinjaman->user_id)
+            ->select(
+                'alamat',
+                'pekerjaan',
+                'bank_nama',
+                'bank_rekening'
+            )
+            ->first();
+
+        $pengaturan = Pengaturan::select(
+            'id',
+            'bunga_pinjaman',
+        )->first();
+
+        $sekretaris = User::where('spesial', 'sekretaris')->first();
+
+        $pdf = Pdf::loadview('anggota.sekretaris.pinjaman.spk', compact('pinjaman', 'user', 'user_detail', 'pengaturan', 'sekretaris'));
+        return $pdf->stream('Formulir Pengajuan Pinjaman Koperasi.pdf');
+    }
+
+    public function terbilang(int $value)
     {
         $angka = ["", "satu", "dua", "tiga", "empat", "lima", "enam", "tujuh", "delapan", "sembilan", "sepuluh", "sebelas"];
         $space = $value > 0 ? " " : null;

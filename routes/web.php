@@ -56,10 +56,11 @@ Route::middleware('anggota')->prefix('anggota')->group(function () {
         Route::get('pinjaman/print/{id}', [\App\Http\Controllers\Anggota\Ketua\PinjamanController::class, 'print']);
         Route::resource('pinjaman', \App\Http\Controllers\Anggota\Ketua\PinjamanController::class);
     });
-
+    
     Route::middleware('sekretaris')->prefix('sekretaris')->group(function () {
         Route::resource('simpanan', \App\Http\Controllers\Anggota\Sekretaris\SimpananController::class);
-
+        
+        Route::get('pinjaman/spk/{id}', [\App\Http\Controllers\Anggota\Sekretaris\PinjamanController::class, 'spk']);
         Route::resource('pinjaman', \App\Http\Controllers\Anggota\Sekretaris\PinjamanController::class);
     });
 

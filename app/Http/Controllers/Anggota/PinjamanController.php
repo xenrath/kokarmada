@@ -263,6 +263,7 @@ class PinjamanController extends Controller
                 'kode',
                 'tanggal_pengajuan',
                 'nominal',
+                'nominal_disetujui',
                 'bunga_persen',
                 'jangka_waktu',
                 'total_pinjaman',

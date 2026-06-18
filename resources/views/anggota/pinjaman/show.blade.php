@@ -40,7 +40,7 @@
                 <div class="card-body">
                     <div class="alert alert-success rounded-0 mb-0" role="alert">
                         <i class="dripicons-checkmark me-2"></i>
-                        Anda telah menyetujui pengajuan pinjaman ini dengan nominal
+                        Pengajuan pinjaman Anda telah disetujui oleh <strong>Ketua</strong> dengan nominal
                         <strong>@rupiah($pinjaman->nominal_disetujui)</strong>
                     </div>
                 </div>

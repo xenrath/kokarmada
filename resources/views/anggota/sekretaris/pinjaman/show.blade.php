@@ -47,11 +47,16 @@
         @if ($pinjaman->status == 'disetujui_ketua')
             <div class="card mb-2 rounded-0">
                 <div class="card-body">
-                    <div class="alert alert-success rounded-0 mb-0" role="alert">
-                        <i class="dripicons-checkmark me-2"></i>
-                        Anda telah menyetujui pengajuan pinjaman ini dengan nominal
-                        <strong>@rupiah($pinjaman->nominal_disetujui)</strong>
+                    <div class="alert alert-warning rounded-0 mb-0" role="alert">
+                        <i class="dripicons-clock me-2"></i>
+                        Pengajuan pinjaman ini sedang menunggu proses perjanjian kredit (MOU) oleh
+                        <strong>Sekretaris</strong>
                     </div>
+                </div>
+                <div class="card-body border-top">
+                    <a href="{{ url('anggota/sekretaris/pinjaman/spk/' . $pinjaman->id) }}" class="btn btn-dark rounded-0" target="_blank">
+                        Lihat SPK
+                    </a>
                 </div>
             </div>
         @endif
