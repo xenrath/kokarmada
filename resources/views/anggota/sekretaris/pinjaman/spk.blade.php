@@ -384,10 +384,10 @@
                 <td style="vertical-align: top;">
                     @php
                         $bunga_pinjaman = $pengaturan->bunga_pinjaman / 100;
-                        $bunga = $pinjaman->nominal_disetujui * $bunga_pinjaman;
+                        $bunga = $pinjaman->nominal_disetujui * ($bunga_pinjaman * $pinjaman->jangka_waktu);
                         $nominal_disetujui = $pinjaman->nominal_disetujui + $bunga;
                     @endphp
-                    @rupiah($nominal_disetujui / 12)
+                    @rupiah($nominal_disetujui / (12 * $pinjaman->jangka_waktu))
                 </td>
             </tr>
             <tr>
