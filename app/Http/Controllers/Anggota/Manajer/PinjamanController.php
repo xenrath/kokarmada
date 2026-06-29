@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Anggota\Manajer;
 use App\Http\Controllers\Controller;
 use App\Models\Aktivitas;
 use App\Models\Notifikasi;
+use App\Models\Pengaturan;
 use App\Models\Pinjaman;
 use App\Models\PinjamanAnalis;
 use App\Models\User;
@@ -177,6 +178,88 @@ class PinjamanController extends Controller
         }
 
         return redirect('anggota/manajer/pinjaman')->with('success', 'Hasil analisis pinjaman berhasil dikirim');
+    }
+
+    public function surat_persetujuan_kredit(int $id)
+    {
+        $pinjaman = Pinjaman::where('id', $id)
+            ->select(
+                'id',
+                'user_id',
+                'kode',
+                'nominal',
+                'nominal_disetujui',
+                'jangka_waktu',
+                'jabatan_terakhir',
+            )
+            ->first();
+
+        $user = User::where('id', $pinjaman->user_id)
+            ->select(
+                'nama',
+                'telp',
+            )
+            ->first();
+
+        $user_detail = UserDetail::where('user_id', $pinjaman->user_id)
+            ->select(
+                'alamat',
+                'pekerjaan',
+                'bank_nama',
+                'bank_rekening'
+            )
+            ->first();
+
+        $pengaturan = Pengaturan::select(
+            'id',
+            'bunga_pinjaman',
+        )->first();
+
+        $sekretaris = User::where('spesial', 'sekretaris')->first();
+
+        $pdf = Pdf::loadview('anggota.manajer.pinjaman.surat_persetujuan_kredit', compact('pinjaman', 'user', 'user_detail', 'pengaturan', 'sekretaris'));
+        return $pdf->stream('Formulir Pengajuan Pinjaman Koperasi.pdf');
+    }
+
+    public function surat_perjanjian_kredit(int $id)
+    {
+        $pinjaman = Pinjaman::where('id', $id)
+            ->select(
+                'id',
+                'user_id',
+                'kode',
+                'nominal',
+                'nominal_disetujui',
+                'jangka_waktu',
+                'jabatan_terakhir',
+            )
+            ->first();
+
+        $user = User::where('id', $pinjaman->user_id)
+            ->select(
+                'nama',
+                'telp',
+            )
+            ->first();
+
+        $user_detail = UserDetail::where('user_id', $pinjaman->user_id)
+            ->select(
+                'alamat',
+                'pekerjaan',
+                'bank_nama',
+                'bank_rekening'
+            )
+            ->first();
+
+        $pengaturan = Pengaturan::select(
+            'id',
+            'bunga_pinjaman',
+        )->first();
+
+        $sekretaris = User::where('spesial', 'sekretaris')->first();
+
+        $pdf = Pdf::loadview('anggota.manajer.pinjaman.surat_perjanjian_kredit', compact('pinjaman', 'user', 'user_detail', 'pengaturan', 'sekretaris'));
+        return $pdf->stream('Formulir Pengajuan Pinjaman Koperasi.pdf');
     }
 
     public function generate_kode($nomor_urut)

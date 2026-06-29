@@ -44,6 +44,20 @@
                         dengan nasabah.
                     </div>
                 </div>
+                <div class="card-body border-top">
+                    <div class="mb-2">
+                        <a href="{{ url('anggota/manajer/pinjaman/surat-persetujuan-kredit/' . $pinjaman->id) }}"
+                            class="btn btn-dark rounded-0" target="_blank">
+                            Lihat Surat Persetujuan Kredit
+                        </a>
+                    </div>
+                    <div class="mb-2">
+                        <a href="{{ url('anggota/manajer/pinjaman/surat-perjanjian-kredit/' . $pinjaman->id) }}"
+                            class="btn btn-dark rounded-0" target="_blank">
+                            Lihat Surat Perjanjian Kredit
+                        </a>
+                    </div>
+                </div>
             </div>
         @endif
         @if ($pinjaman->status == 'ditolak')

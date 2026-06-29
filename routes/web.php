@@ -56,10 +56,10 @@ Route::middleware('anggota')->prefix('anggota')->group(function () {
         Route::get('pinjaman/print/{id}', [\App\Http\Controllers\Anggota\Ketua\PinjamanController::class, 'print']);
         Route::resource('pinjaman', \App\Http\Controllers\Anggota\Ketua\PinjamanController::class);
     });
-    
+
     Route::middleware('sekretaris')->prefix('sekretaris')->group(function () {
         Route::resource('simpanan', \App\Http\Controllers\Anggota\Sekretaris\SimpananController::class);
-        
+
         Route::get('pinjaman/spk/{id}', [\App\Http\Controllers\Anggota\Sekretaris\PinjamanController::class, 'spk']);
         Route::resource('pinjaman', \App\Http\Controllers\Anggota\Sekretaris\PinjamanController::class);
     });
@@ -79,6 +79,8 @@ Route::middleware('anggota')->prefix('anggota')->group(function () {
         Route::resource('simpanan', \App\Http\Controllers\Anggota\Manajer\SimpananController::class);
 
         Route::get('pinjaman/print/{id}', [\App\Http\Controllers\Anggota\Manajer\PinjamanController::class, 'print']);
+        Route::get('pinjaman/surat-persetujuan-kredit/{id}', [\App\Http\Controllers\Anggota\Manajer\PinjamanController::class, 'surat_persetujuan_kredit']);
+        Route::get('pinjaman/surat-perjanjian-kredit/{id}', [\App\Http\Controllers\Anggota\Manajer\PinjamanController::class, 'surat_perjanjian_kredit']);
         Route::resource('pinjaman', \App\Http\Controllers\Anggota\Manajer\PinjamanController::class);
     });
 
