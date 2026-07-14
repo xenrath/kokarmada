@@ -235,34 +235,36 @@ class PinjamanController extends Controller
             )
             ->first();
 
+        $nominal_terbilang = $this->terbilang($pinjaman->nominal_disetujui);
+
         $user = User::where('id', $pinjaman->user_id)
-            ->select(
-                'nama',
-                'telp',
-            )
+            ->select('id', 'nama')
+            ->with('user_detail:id,user_id,alamat,pekerjaan')
             ->first();
 
-        $user_detail = UserDetail::where('user_id', $pinjaman->user_id)
-            ->select(
-                'alamat',
-                'pekerjaan',
-                'bank_nama',
-                'bank_rekening'
-            )
+        $ketua = User::where('spesial', 'ketua')
+            ->select('id', 'nama', 'nipy')
             ->first();
+
+        $sekretaris = User::where('spesial', 'sekretaris')->first();
 
         $pengaturan = Pengaturan::select(
             'id',
             'bunga_pinjaman',
         )->first();
 
-        $sekretaris = User::where('spesial', 'sekretaris')->first();
-
-        $pdf = Pdf::loadview('anggota.manajer.pinjaman.surat_perjanjian_kredit', compact('pinjaman', 'user', 'user_detail', 'pengaturan', 'sekretaris'));
+        $pdf = Pdf::loadview('anggota.manajer.pinjaman.surat_perjanjian_kredit', compact(
+            'pinjaman',
+            'nominal_terbilang',
+            'user',
+            'pengaturan',
+            'ketua',
+            'sekretaris',
+        ));
         return $pdf->stream('Formulir Pengajuan Pinjaman Koperasi.pdf');
     }
 
-    public function generate_kode($nomor_urut)
+    public function generate_kode(int $nomor_urut)
     {
         $prefix = 'KOPKARMADA';
         $bulan = $this->bulan_romawi(Carbon::now()->month);

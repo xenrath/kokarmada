@@ -9,7 +9,7 @@
     <style>
         @page {
             size: A4;
-            margin: 1.5cm;
+            margin: 2cm;
         }
 
         body {
@@ -79,6 +79,10 @@
         .w-3cm {
             width: 3cm;
         }
+        
+        .w-4cm {
+            width: 4cm;
+        }
 
         .w-20px {
             width: 20px;
@@ -142,8 +146,13 @@
         Pada hari ini,
         {{ Carbon\Carbon::now()->translatedFormat('l') }}
         tanggal
-        bulan ...., tahun ...., (....-....-.....) bertempat di Slawi, yang
-        bertanda tangan dibawah ini:</p>
+        {{ Carbon\Carbon::now()->translatedFormat('d') }},
+        bulan
+        {{ Carbon\Carbon::now()->translatedFormat('F') }},
+        tahun
+        {{ Carbon\Carbon::now()->translatedFormat('Y') }},
+        ({{ Carbon\Carbon::now()->translatedFormat('d-m-Y') }})
+        bertempat di Slawi, yang bertanda tangan dibawah ini:</p>
 
     <!-- Pihak Pertama -->
     <table width="100%" cellspacing="0" cellpadding="0" class="mb-8">
@@ -151,19 +160,19 @@
             <td class="valign-top text-justify w-1cm">1.</td>
             <td class="valign-top text-justify w-3cm">Nama</td>
             <td class="valign-top text-justify text-center w-1cm">:</td>
-            <td class="valign-top text-justify">{{ $user->nama }}</td>
+            <td class="valign-top text-justify">{{ $ketua->nama }}</td>
         </tr>
         <tr>
             <td class="valign-top text-justify">&nbsp;</td>
             <td class="valign-top text-justify">Jabatan</td>
             <td class="valign-top text-justify text-center">:</td>
-            <td class="valign-top text-justify">{{ $user->jabatan_terakhir }}</td>
+            <td class="valign-top text-justify">Ketua Koperasi Karyawan Bhamada Slawi</td>
         </tr>
         <tr>
             <td class="valign-top text-justify">&nbsp;</td>
             <td class="valign-top text-justify">NIPY</td>
             <td class="valign-top text-justify text-center">:</td>
-            <td class="valign-top text-justify">1987.09.09.22.170</td>
+            <td class="valign-top text-justify">{{ $ketua->nipy }}</td>
         </tr>
     </table>
     <p>Dalam hal ini bertindak dan atas nama pengurus Koperasi Karyawan Bhamada Slawi, selanjutnya disebut Pihak
@@ -181,13 +190,13 @@
             <td class="valign-top text-justify w-20px">&nbsp;</td>
             <td class="valign-top text-justify">Pekerjaan</td>
             <td class="valign-top text-justify text-center w-20px">:</td>
-            <td class="valign-top text-justify">{{ $user->jabatan_terakhir }}</td>
+            <td class="valign-top text-justify">{{ $user->user_detail->pekerjaan }}</td>
         </tr>
         <tr>
             <td class="valign-top text-justify w-20px">&nbsp;</td>
             <td class="valign-top text-justify">Alamat Rumah</td>
             <td class="valign-top text-justify text-center w-20px">:</td>
-            <td class="valign-top text-justify">1987.09.09.22.170</td>
+            <td class="valign-top text-justify">{{ $user->user_detail->alamat }}</td>
         </tr>
         <tr>
             <td class="valign-top text-justify w-20px">&nbsp;</td>
@@ -207,15 +216,15 @@
     <table width="100%" cellspacing="0" cellpadding="0" class="mb-8">
         <tr>
             <td class="valign-top text-justify w-1cm">a.</td>
-            <td class="valign-top text-justify w-3cm">Jumlah Kredit</td>
+            <td class="valign-top text-justify w-4cm">Jumlah Kredit</td>
             <td class="valign-top text-justify text-center w-1cm">:</td>
-            <td class="valign-top text-justify">{{ $user->nama }}</td>
+            <td class="valign-top text-justify">{{ $pinjaman->nominal_disetujui }}</td>
         </tr>
         <tr>
             <td class="valign-top text-justify">b.</td>
             <td class="valign-top text-justify">Terbilang</td>
             <td class="valign-top text-justify text-center">:</td>
-            <td class="valign-top text-justify">{{ $user->jabatan_terakhir }}</td>
+            <td class="valign-top text-justify">{{ ucwords($nominal_terbilang) }}</td>
         </tr>
         <tr>
             <td class="valign-top text-justify">c.</td>
@@ -230,30 +239,35 @@
     <table width="100%" cellspacing="0" cellpadding="0" class="mb-8">
         <tr>
             <td class="valign-top text-justify w-1cm">(1)</td>
-            <td class="valign-top text-justify">Atas pinjaman sebagaimana disebut dalam Pasal 1, Pihak kedua setuju untuk
+            <td class="valign-top text-justify">Atas pinjaman sebagaimana disebut dalam Pasal 1, Pihak kedua setuju
+                untuk
                 membayar jasa sebesar Rp. ……………… per bulan atau 0,67% dari pokok pinjaman per bulan, dengan sistem
                 pembayaran jasa tetap;</td>
         </tr>
         <tr>
             <td class="valign-top text-justify">(2)</td>
-            <td class="valign-top text-justify">Selain pembayaran jasa sebagaimana disebut dalam Pasal 2 ayat (1), Pihak kedua
+            <td class="valign-top text-justify">Selain pembayaran jasa sebagaimana disebut dalam Pasal 2 ayat (1), Pihak
+                kedua
                 setuju mengembalikan jumlah pokok pinjaman berikut kewajiban-kewajiban lain yang ditetapkan oleh Pihak
                 Pertama (antara lain: simpanan pokok dan/atau simpanan wajib);</td>
         </tr>
         <tr>
             <td class="valign-top text-justify">(3)</td>
-            <td class="valign-top text-justify">Pihak Kedua setuju untuk melunasi pokok pinjaman berikut jasa dalam waktu
+            <td class="valign-top text-justify">Pihak Kedua setuju untuk melunasi pokok pinjaman berikut jasa dalam
+                waktu
                 ..... bulan (Rp. ........................./bulan) dan/atau dalam ..... kali Angsuran Pokok dan Jasa
                 sebagaimana termuat dalam Daftar Angsuran terlampir;</td>
         </tr>
         <tr>
             <td class="valign-top text-justify">(4)</td>
-            <td class="valign-top text-justify">Pembayaran Angsuran Pokok dan Jasa sebagaimana disebut dalam Pasal 2 ayat
+            <td class="valign-top text-justify">Pembayaran Angsuran Pokok dan Jasa sebagaimana disebut dalam Pasal 2
+                ayat
                 (3) diatas dilakukan mulai tanggal ................... sampai dengan tanggal ......................</td>
         </tr>
         <tr>
             <td class="valign-top text-justify">(5)</td>
-            <td class="valign-top text-justify">Pembayaran Angsuran Pokok dan Jasa sebagaimana disebut dalam Pasal 2 ayat
+            <td class="valign-top text-justify">Pembayaran Angsuran Pokok dan Jasa sebagaimana disebut dalam Pasal 2
+                ayat
                 (3) diatas harus dibayarkan dengan cara POTONG GAJI</td>
         </tr>
     </table>
@@ -318,7 +332,8 @@
         <tr>
             <td class="valign-top text-justify w-1cm">&nbsp;</td>
             <td class="valign-top text-justify w-1cm">b.</td>
-            <td class="valign-top text-justify">Memperoleh informasi dan saran dari Pihak Pertama terkait pengelolaan serta
+            <td class="valign-top text-justify">Memperoleh informasi dan saran dari Pihak Pertama terkait pengelolaan
+                serta
                 pemanfaatan dana pinjaman.</td>
         </tr>
         <tr>
@@ -364,13 +379,15 @@
     <table width="100%" cellspacing="0" cellpadding="0" class="mb-8">
         <tr>
             <td class="valign-top text-justify w-1cm">(1)</td>
-            <td class="valign-top text-justify">Apabila terjadi keterlambatan pembayaran angsuran selama lebih dari 3 (tiga)
+            <td class="valign-top text-justify">Apabila terjadi keterlambatan pembayaran angsuran selama lebih dari 3
+                (tiga)
                 bulan berturut-turut, maka pinjaman dinyatakan macet dan akan diproses sesuai dengan ketentuan internal
                 koperasi.</td>
         </tr>
         <tr>
             <td class="valign-top text-justify">(2)</td>
-            <td class="valign-top text-justify">Pihak Pertama berhak melakukan restrukturisasi pinjaman atau penyelesaian
+            <td class="valign-top text-justify">Pihak Pertama berhak melakukan restrukturisasi pinjaman atau
+                penyelesaian
                 kredit bermasalah sesuai ketentuan dalam Peraturan Pihak Pertama dan peraturan perundang-undangan yang
                 berlaku.</td>
         </tr>
@@ -386,7 +403,8 @@
     <table width="100%" cellspacing="0" cellpadding="0" class="mb-8">
         <tr>
             <td class="valign-top text-justify w-1cm">(1)</td>
-            <td class="valign-top text-justify">Pihak Kedua bersedia tunduk kepada semua peraturan dan kebiasaan mengenai
+            <td class="valign-top text-justify">Pihak Kedua bersedia tunduk kepada semua peraturan dan kebiasaan
+                mengenai
                 kredit uang yang ada pada Pihak Pertama termasuk ketentuan yang tercantum pada Anggaran Dasar Pihak
                 Pertama serta peraturan yang akan diadakan kelak meskipun tidak disebutkan disini secara terperinci.
             </td>

@@ -15,6 +15,7 @@ return new class extends Migration
             $table->string('nama');
             $table->string('panggilan');
             $table->enum('gender', ['L', 'P']);
+            $table->string('nipy')->nullable();
             $table->enum('role', ['dev', 'admin', 'anggota'])->default('anggota');
             $table->enum('spesial', ['ketua', 'sekretaris', 'bendahara', 'manajer', 'petugas', 'normal'])->default('normal');
             $table->enum('status', ['aktif', 'nonaktif'])->default('aktif');

@@ -20,7 +20,7 @@ class User extends Authenticatable
         'status'
     ];
 
-    public function detail()
+    public function user_detail()
     {
         return $this->hasOne(UserDetail::class);
     }
