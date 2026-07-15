@@ -79,7 +79,7 @@
         .w-3cm {
             width: 3cm;
         }
-        
+
         .w-4cm {
             width: 4cm;
         }
@@ -218,13 +218,13 @@
             <td class="valign-top text-justify w-1cm">a.</td>
             <td class="valign-top text-justify w-4cm">Jumlah Kredit</td>
             <td class="valign-top text-justify text-center w-1cm">:</td>
-            <td class="valign-top text-justify">{{ $pinjaman->nominal_disetujui }}</td>
+            <td class="valign-top text-justify">@rupiah($pinjaman->nominal_disetujui)</td>
         </tr>
         <tr>
             <td class="valign-top text-justify">b.</td>
             <td class="valign-top text-justify">Terbilang</td>
             <td class="valign-top text-justify text-center">:</td>
-            <td class="valign-top text-justify">{{ ucwords($nominal_terbilang) }}</td>
+            <td class="valign-top text-justify">{{ ucwords($nominal_terbilang) }} Rupiah</td>
         </tr>
         <tr>
             <td class="valign-top text-justify">c.</td>

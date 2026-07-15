@@ -273,7 +273,7 @@ class PinjamanController extends Controller
         return "{$prefix}/{$nomor_urut}/{$bulan}/{$tahun}";
     }
 
-    function bulan_romawi($bulan)
+    function bulan_romawi(int $bulan)
     {
         $romawi = [
             1 => 'I',
@@ -357,7 +357,7 @@ class PinjamanController extends Controller
         return $pdf->stream('Formulir Pengajuan Pinjaman Koperasi');
     }
 
-    public function terbilang($value)
+    public function terbilang(int $value)
     {
         $angka = ["", "satu", "dua", "tiga", "empat", "lima", "enam", "tujuh", "delapan", "sembilan", "sepuluh", "sebelas"];
         $space = $value > 0 ? " " : null;
