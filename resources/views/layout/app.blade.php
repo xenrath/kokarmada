@@ -53,17 +53,38 @@
             <div class="h-100" id="leftside-menu-container" data-simplebar="">
 
                 <!--- Sidemenu -->
-                <ul class="side-nav">
-                    @if (auth()->user()->isDev())
-                        @include('layout.menu.dev')
-                    @endif
-                    @if (auth()->user()->isAdmin())
-                        @include('layout.menu.admin')
-                    @endif
-                    @if (auth()->user()->isAnggota())
-                        @include('layout.menu.anggota')
-                    @endif
-                </ul>
+                @auth
+                    <ul class="side-nav">
+                        @auth
+                            <ul class="side-nav">
+                                @if (auth()->user()->isDeveloper())
+                                    @include('layout.menu.dev')
+                                @endif
+                                @if (auth()->user()->isAdmin())
+                                    @include('layout.menu.admin')
+                                @endif
+                                @if (auth()->user()->isMember())
+                                    @include('layout.menu.anggota')
+                                @endif
+                                @if (auth()->user()->isAnalystManager())
+                                    @include('layout.menu.analyst-manager')
+                                @endif
+                                @if (auth()->user()->isTreasurer())
+                                    @include('layout.menu.treasurer')
+                                @endif
+                                @if (auth()->user()->isChairman())
+                                    @include('layout.menu.chairman')
+                                @endif
+                                @if (auth()->user()->isSecretary())
+                                    @include('layout.menu.secretary')
+                                @endif
+                                @if (auth()->user()->isSupervisor())
+                                    @include('layout.menu.supervisor')
+                                @endif
+                            </ul>
+                        @endauth
+                    </ul>
+                @endauth
                 <!-- End Sidebar -->
 
                 <div class="clearfix"></div>
@@ -85,15 +106,12 @@
                     <ul class="list-unstyled topbar-menu float-end mb-0">
                         <li class="dropdown notification-list">
                             @php
-                                $notifikasis = \App\Models\Notifikasi::where('user_id', auth()->user()->id)
-                                    ->orderByDesc('created_at')
-                                    ->limit(5)
-                                    ->get();
+                                $notifications = auth()->user()->notifications()->latest()->limit(5)->get();
                             @endphp
                             <a class="nav-link dropdown-toggle arrow-none" data-bs-toggle="dropdown" href="#"
                                 role="button" aria-haspopup="false" aria-expanded="false">
                                 <i class="dripicons-bell noti-icon"></i>
-                                @if (count($notifikasis))
+                                @if ($notifications->count())
                                     <span class="noti-icon-badge"></span>
                                 @endif
                             </a>
@@ -111,17 +129,16 @@
                                 </div>
                                 <div style="max-height: 230px;" data-simplebar="">
                                     <!-- item-->
-                                    @forelse ($notifikasis as $notifikasi)
-                                        <a href="{{ url($notifikasi->link) }}" class="dropdown-item notify-item">
+                                    @forelse ($notifications as $notification)
+                                        <a href="#" class="dropdown-item notify-item">
                                             <div class="notify-icon bg-primary">
-                                                <i class="mdi mdi-cash-plus"></i>
+                                                <i class="mdi mdi-bell"></i>
                                             </div>
                                             <p class="notify-details">
-                                                {{ $notifikasi->pesan }}
+                                                {{ $notification->message }}
                                                 <small class="text-muted">
-                                                    {{ $notifikasi->created_at->format('H:i') }}
-                                                    WIB •
-                                                    {{ $notifikasi->created_at->translatedFormat('d M Y') }}
+                                                    {{ $notification->created_at->format('H:i') }} WIB •
+                                                    {{ $notification->created_at->translatedFormat('d M Y') }}
                                                 </small>
                                             </p>
                                         </a>
@@ -149,16 +166,27 @@
                                         class="rounded-circle">
                                 </span>
                                 <span>
-                                    <span class="account-user-name">{{ auth()->user()->nama }}</span>
+                                    <span class="account-user-name">
+                                        {{ auth()->user()->nickname ?: auth()->user()->name }}
+                                    </span>
+
                                     <span class="account-position">
-                                        @if (auth()->user()->role == 'anggota')
-                                            @if (auth()->user()->spesial == 'normal')
-                                                Anggota
-                                            @else
-                                                {{ ucfirst(auth()->user()->spesial) }}
-                                            @endif
-                                        @else
-                                            {{ ucfirst(auth()->user()->role) }}
+                                        @if (auth()->user()->role == 'developer')
+                                            Developer
+                                        @elseif (auth()->user()->role == 'admin')
+                                            Administrator
+                                        @elseif (auth()->user()->role == 'member')
+                                            Anggota
+                                        @elseif (auth()->user()->role == 'analyst_manager')
+                                            Analyst Manager
+                                        @elseif (auth()->user()->role == 'treasurer')
+                                            Bendahara
+                                        @elseif (auth()->user()->role == 'chairman')
+                                            Ketua
+                                        @elseif (auth()->user()->role == 'secretary')
+                                            Sekretaris
+                                        @elseif (auth()->user()->role == 'supervisor')
+                                            Pengawas
                                         @endif
                                     </span>
                                 </span>
@@ -166,8 +194,12 @@
                             <div
                                 class="dropdown-menu dropdown-menu-end dropdown-menu-animated topbar-dropdown-menu profile-dropdown rounded-0">
                                 <!-- item-->
-                                <a href="{{ url(auth()->user()->role . '/profile') }}"
+                                {{-- <a href="{{ url(auth()->user()->role . '/profile') }}"
                                     class="dropdown-item notify-item">
+                                    <i class="mdi mdi-account-circle me-1"></i>
+                                    <span>Profile Saya</span>
+                                </a> --}}
+                                <a href="#" class="dropdown-item notify-item">
                                     <i class="mdi mdi-account-circle me-1"></i>
                                     <span>Profile Saya</span>
                                 </a>

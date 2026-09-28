@@ -237,7 +237,10 @@
                                 <div class="col-md-6 mb-2">
                                     <strong>File Bukti Agunan</strong>
                                     <br>
-                                    <a href="{{ asset('storage/uploads/' . $pinjaman->pinjaman_agunan->bukti_file) }}"
+                                    <a href="{{ route('files.pinjaman', [
+                                        'id' => $pinjaman->id,
+                                        'field' => 'bukti_file',
+                                    ]) }}"
                                         class="btn btn-sm btn-outline-secondary rounded-0 mt-1" target="_blank">
                                         Lihat Bukti
                                     </a>
@@ -279,7 +282,10 @@
                             <div class="col-md-6 mb-2">
                                 <strong>File Slip Gaji</strong>
                                 <br>
-                                <a href="{{ asset('storage/uploads/' . $pinjaman->slip_gaji) }}"
+                                <a href="{{ route('files.pinjaman', [
+                                    'id' => $pinjaman->id,
+                                    'field' => 'slip_gaji',
+                                ]) }}"
                                     class="btn btn-sm btn-outline-secondary rounded-0 mt-1" target="_blank">
                                     Lihat Slip
                                 </a>
@@ -346,7 +352,7 @@
                                 <strong>File KTP</strong>
                                 <br>
                                 @if ($user_detail->file_ktp ?? null)
-                                    <a href="{{ asset('storage/uploads/' . $user_detail->file_ktp) }}"
+                                    <a href="{{ route('files.user-detail', ['field' => 'file_ktp']) }}"
                                         class="btn btn-sm btn-outline-secondary rounded-0 mt-1" target="_blank">
                                         Lihat File KTP
                                     </a>

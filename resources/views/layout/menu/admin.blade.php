@@ -1,34 +1,22 @@
-<li class="side-nav-title side-nav-item">Menu Utama</li>
-<li class="side-nav-item {{ request()->is('admin') ? 'menuitem-active' : '' }}">
-    <a href="{{ url('admin') }}" class="side-nav-link {{ request()->is('admin') ? 'active' : '' }}">
-        <i class="uil-home-alt"></i>
+<li class="side-nav-title">MENU UTAMA</li>
+
+<li class="side-nav-item">
+    <a href="{{ route('admin.home') }}" class="side-nav-link">
+        <i class="uil-dashboard"></i>
         <span>Dashboard</span>
     </a>
 </li>
-<li class="side-nav-item {{ request()->is('admin/anggota*') ? 'menuitem-active' : '' }}">
-    <a href="{{ url('admin/anggota') }}" class="side-nav-link {{ request()->is('admin/anggota*') ? 'active' : '' }}">
+
+<li class="side-nav-item">
+    <a href="{{ route('admin.users.index') }}" class="side-nav-link">
         <i class="uil-users-alt"></i>
-        <span>Data Anggota</span>
+        <span>Pengguna</span>
     </a>
 </li>
-<li class="side-nav-item {{ request()->is('admin/simpanan*') ? 'menuitem-active' : '' }}">
-    <a href="{{ url('admin/simpanan') }}" class="side-nav-link {{ request()->is('admin/simpanan*') ? 'active' : '' }}">
-        <i class="uil-money-bill"></i>
-        <span>Data Simpanan</span>
-    </a>
-</li>
-<li class="side-nav-item {{ request()->is('admin/pinjaman*') ? 'menuitem-active' : '' }}">
-    <a href="{{ url('admin/pinjaman') }}"
-        class="side-nav-link {{ request()->is('admin/pinjaman*') ? 'active' : '' }}">
-        <i class="uil-money-withdraw"></i>
-        <span>Data Pinjaman</span>
-    </a>
-</li>
-<li class="side-nav-title side-nav-item">Lainnya</li>
-<li class="side-nav-item {{ request()->is('admin/pengaturan*') ? 'menuitem-active' : '' }}">
-    <a href="{{ url('admin/pengaturan') }}"
-        class="side-nav-link {{ request()->is('admin/pengaturan*') ? 'active' : '' }}">
-        <i class="uil-cog"></i>
-        <span>Pengaturan Pinjaman</span>
+
+<li class="side-nav-item">
+    <a href="{{ route('admin.accounts.index') }}" class="side-nav-link">
+        <i class="uil-wallet"></i>
+        <span>Rekening</span>
     </a>
 </li>

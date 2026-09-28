@@ -119,7 +119,6 @@ class HomeController extends Controller
             'gender.required' => 'Jenis Kelamin harus dipilih!',
             'telp.required' => 'No. Hp / WhatsApp harus diisi!',
             'telp.unique' => 'No. Hp / WhatsApp sudah digunakan!',
-            'gender.required' => 'Jenis Kelamin harus dipilih!',
             'detail_no_ktp.required' => 'No. KTP harus diisi!',
             'detail_no_ktp.unique' => 'No. KTP sudah digunakan!',
             'detail_masa_berlaku_ktp.required' => 'Masa Berlaku KTP harus diisi!',
@@ -309,6 +308,7 @@ class HomeController extends Controller
     public function print($id)
     {
         $pinjaman = Pinjaman::where('id', $id)
+            ->where('user_id', auth()->id())
             ->select(
                 'id',
                 'user_id',
@@ -334,7 +334,7 @@ class HomeController extends Controller
                     'bukti_kepemilikan',
                 );
             })
-            ->first();
+            ->firstOrFail();
 
         $user = User::where('id', $pinjaman->user_id)
             ->select(

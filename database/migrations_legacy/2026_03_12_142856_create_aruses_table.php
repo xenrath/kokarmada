@@ -12,7 +12,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('rekening_id')->constrained('rekenings')->onDelete('restrict');
             $table->string('pengadaan');
-            $table->int('jumlah');
+            $table->integer('jumlah');
             $table->text('keterangan');
             $table->enum('jenis', ['pemasukan', 'pengeluaran']);
             $table->timestamps();
