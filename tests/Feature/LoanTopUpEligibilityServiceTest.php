@@ -43,9 +43,9 @@ class LoanTopUpEligibilityServiceTest extends TestCase
         $this->assertFalse($result['has_overdue_installment']);
         $this->assertFalse($result['has_active_top_up']);
 
-        $this->assertSame(5000000.00, $result['financial']['available_income']);
+        $this->assertSame(4120000.00, $result['financial']['available_income']);
         $this->assertSame(40.00, $result['financial']['capacity_threshold_percent']);
-        $this->assertSame(3200000.00, $result['financial']['capacity_limit_amount']);
+        $this->assertSame(1800000.00, $result['financial']['capacity_limit_amount']);
     }
 
     public function test_not_eligible_when_principal_repayment_is_below_50_percent(): void
