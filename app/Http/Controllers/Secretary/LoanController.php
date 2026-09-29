@@ -26,6 +26,7 @@ class LoanController extends Controller
                 'documents',
                 'collaterals',
             ])
+            ->where('status', 'approved')
             ->where(function ($query) {
                 $query->whereHas('documents', function ($documentQuery) {
                     $documentQuery
@@ -51,6 +52,11 @@ class LoanController extends Controller
     public function show(Loan $loan)
     {
         $this->authorizeRole();
+
+        abort_unless(
+            $loan->status === 'approved',
+            404
+        );
 
         $loan->load([
             'user.memberProfile',
@@ -219,6 +225,11 @@ class LoanController extends Controller
     {
         $this->authorizeRole();
 
+        abort_unless(
+            $loan->status === 'approved',
+            404
+        );
+
         abort_unless($collateral->loan_id === $loan->id, 404);
 
         abort_unless(
@@ -264,6 +275,11 @@ class LoanController extends Controller
     public function rejectCollateral(Request $request, Loan $loan, LoanCollateral $collateral)
     {
         $this->authorizeRole();
+
+        abort_unless(
+            $loan->status === 'approved',
+            404
+        );
 
         abort_unless($collateral->loan_id === $loan->id, 404);
 
