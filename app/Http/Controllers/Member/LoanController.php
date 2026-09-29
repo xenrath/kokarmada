@@ -10,6 +10,7 @@ use App\Models\LoanProcess;
 use App\Models\Notification;
 use App\Models\Setting;
 use App\Models\User;
+use App\Services\LoanTopUpEligibilityService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
@@ -35,7 +36,10 @@ class LoanController extends Controller
         ));
     }
 
-    public function show(Loan $loan): View
+    public function show(
+        Loan $loan,
+        LoanTopUpEligibilityService $eligibilityService
+    ): View
     {
         $user = auth()->user();
 
@@ -56,9 +60,22 @@ class LoanController extends Controller
             },
         ]);
 
+        $topUpEligibility = null;
+
+        if ($loan->status === 'disbursed') {
+            $evaluatedEligibility = $eligibilityService->evaluate($user);
+
+            if (
+                $evaluatedEligibility['loan']
+                && $evaluatedEligibility['loan']->id === $loan->id
+            ) {
+                $topUpEligibility = $evaluatedEligibility;
+            }
+        }
+
         return view(
             'member.loans.show',
-            compact('loan')
+            compact('loan', 'topUpEligibility')
         );
     }
 
