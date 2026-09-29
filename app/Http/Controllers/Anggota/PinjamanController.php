@@ -98,13 +98,13 @@ class PinjamanController extends Controller
         $validator_jenis_agunan_lainnya = 'nullable';
         $validator_bukti_agunan = 'nullable';
         $validator_bukti_kepemilikan = 'nullable';
-        $validator_bukti_file = 'nullable';
+        $validator_bukti_file = 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048';
 
         if ($nominal > 25000000) {
             $validator_jenis_agunan = 'required';
             $validator_bukti_agunan = 'required';
             $validator_bukti_kepemilikan = 'required';
-            $validator_bukti_file = 'required';
+            $validator_bukti_file = 'required|file|mimes:pdf,jpg,jpeg,png|max:2048';
 
             if ($request->input('jenis_agunan') === 'lainnya') {
                 $validator_jenis_agunan_lainnya = 'required';
@@ -131,7 +131,7 @@ class PinjamanController extends Controller
             'lama_kerja' => 'required',
             'pendapatan_kotor' => 'required',
             'pendapatan_bersih' => 'required',
-            'slip_gaji' => 'required',
+            'slip_gaji' => 'required|file|mimes:pdf,jpg,jpeg,png|max:2048',
         ], [
             'nominal.required' => 'Nominal Pengajuan harus diisi!',
             'tujuan.required' => 'Tujuan Pengajuan harus diisi!',
@@ -177,10 +177,13 @@ class PinjamanController extends Controller
             $bunga = Pengaturan::where('id', 1)->value('bunga_pinjaman');
             $total = $nominal + ($nominal * ($bunga / 100) * $request->input('jangka_waktu'));
 
-            $waktu = Carbon::now()->format('ymdhis');
+            $waktu = now()->format('YmdHis');
 
-            $slip_gaji_path = 'slip_gaji/' . $urutan . '-' . $waktu . '.' .
-                $request->file('slip_gaji')->getClientOriginalExtension();
+            $slip_gaji_filename = $urutan . '-' . $waktu . '-' .
+                bin2hex(random_bytes(8)) . '.' .
+                $request->file('slip_gaji')->extension();
+
+            $slip_gaji_path = 'private/uploads/pinjaman/slip-gaji/' . $slip_gaji_filename;
 
             $bukti_file_path = null;
 
@@ -225,8 +228,11 @@ class PinjamanController extends Controller
             // ===============================
             // UPLOAD FILE
             // ===============================
-            $request->file('slip_gaji')
-                ->storeAs('public/uploads/', $slip_gaji_path);
+            $request->file('slip_gaji')->storeAs(
+                'private/uploads/pinjaman/slip-gaji',
+                $slip_gaji_filename,
+                'local'
+            );
 
             if ($bukti_file_path) {
                 $request->file('bukti_file')
@@ -257,6 +263,7 @@ class PinjamanController extends Controller
     public function show($id)
     {
         $pinjaman = Pinjaman::where('id', $id)
+            ->where('user_id', auth()->id())
             ->select(
                 'id',
                 'user_id',
@@ -282,7 +289,7 @@ class PinjamanController extends Controller
             ->with('user:id,nama')
             ->with('pinjaman_user:pinjaman_id,telp')
             ->with('pinjaman_agunan:pinjaman_id,jenis_agunan,jenis_agunan_lainnya,bukti_agunan,bukti_kepemilikan,bukti_file')
-            ->first();
+            ->firstOrFail();
 
         $user = User::where('id', $pinjaman->user_id)
             ->select(

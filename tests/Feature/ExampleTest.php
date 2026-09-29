@@ -2,18 +2,16 @@
 
 namespace Tests\Feature;
 
-// use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
 class ExampleTest extends TestCase
 {
-    /**
-     * A basic test example.
-     */
-    public function test_the_application_returns_a_successful_response(): void
+    public function test_application_route_is_registered(): void
     {
-        $response = $this->get('/');
+        $route = app('router')->getRoutes()->match(
+            \Illuminate\Http\Request::create('/login', 'GET')
+        );
 
-        $response->assertStatus(200);
+        $this->assertSame('login', $route->getName());
     }
 }

@@ -48,16 +48,16 @@
                     <form action="{{ url('login') }}" method="POST" id="form-submit">
                         @csrf
                         <div class="mb-2">
-                            <label for="telp"
+                            <label for="phone"
                                 class="form-label d-flex flex-column flex-md-row align-items-md-center">
                                 Nomor Telepon
                                 <small class="text-muted ms-md-2">
                                     (08xxxxxxxxxxx)
                                 </small>
                             </label>
-                            <input class="form-control rounded-0 @error('telp') is-invalid @enderror" type="telp"
-                                id="telp" name="telp" value="{{ old('telp') }}" autofocus>
-                            @error('telp')
+                            <input class="form-control rounded-0 @error('phone') is-invalid @enderror" type="tel"
+                                id="phone" name="phone" value="{{ old('phone') }}" autofocus>
+                            @error('phone')
                                 <div class="invalid-feedback">
                                     {{ $message }}
                                 </div>
