@@ -132,7 +132,7 @@ class LoanTopUpEligibilityService
                     ['paid', 'cancelled_by_topup'],
                     true
                 )
-                    && $installment->due_date->isBefore(
+                    && Carbon::parse($installment->due_date)->isBefore(
                         Carbon::today()
                     );
             });
