@@ -332,6 +332,19 @@ class LoanController extends Controller
 
             $amount = $loan->approved_amount;
 
+            if ((float) $amount > 25000000) {
+                $hasVerifiedCollateral = $loan->collaterals()
+                    ->where('status', 'verified')
+                    ->exists();
+
+                if (! $hasVerifiedCollateral) {
+                    abort(
+                        422,
+                        'Pinjaman di atas Rp25.000.000 wajib memiliki minimal satu agunan yang telah diverifikasi.'
+                    );
+                }
+            }
+
             LoanDisbursement::create([
                 'loan_id' => $loan->id,
                 'treasurer_id' => auth()->id(),
