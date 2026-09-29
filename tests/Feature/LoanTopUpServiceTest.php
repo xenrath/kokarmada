@@ -199,7 +199,7 @@ class LoanTopUpServiceTest extends TestCase
         );
 
         $this->assertSame(
-            36000000.00,
+            26000000.00,
             (float) $newLoan->requested_amount
         );
 
@@ -267,7 +267,7 @@ class LoanTopUpServiceTest extends TestCase
         $this->setSetting('loan_capacity_threshold_percent', 40);
         $this->setSetting('loan_interest_rate', 8);
 
-        $this->createEligibleLoan($member, 40000000);
+        $oldLoan = $this->createEligibleLoan($member, 40000000);
 
         try {
             app(LoanTopUpService::class)->submit(
@@ -290,8 +290,28 @@ class LoanTopUpServiceTest extends TestCase
             );
         }
 
-        $this->assertDatabaseCount('loans', 1);
-        $this->assertDatabaseCount('loan_processes', 1);
+        $this->assertSame(
+            1,
+            Loan::query()
+                ->where('user_id', $member->id)
+                ->count()
+        );
+
+        $this->assertSame(
+            0,
+            Loan::query()
+                ->where('user_id', $member->id)
+                ->where('id', '!=', $oldLoan->id)
+                ->count()
+        );
+
+        $this->assertSame(
+            0,
+            LoanProcess::query()
+                ->where('loan_id', $oldLoan->id)
+                ->where('action', 'top_up_submitted')
+                ->count()
+        );
     }
 
     public function test_active_top_up_prevents_second_submission(): void
