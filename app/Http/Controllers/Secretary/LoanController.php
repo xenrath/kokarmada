@@ -208,6 +208,100 @@ class LoanController extends Controller
         );
     }
 
+    public function verifyCollateral(Request $request, Loan $loan, LoanCollateral $collateral)
+    {
+        $this->authorizeRole();
+
+        abort_unless($collateral->loan_id === $loan->id, 404);
+
+        abort_unless(
+            $collateral->status === 'pending',
+            422,
+            'Agunan ini tidak berada dalam status menunggu verifikasi.'
+        );
+
+        $validated = $request->validate([
+            'notes' => ['nullable', 'string', 'max:2000'],
+        ]);
+
+        DB::transaction(function () use ($loan, $collateral, $validated) {
+            $collateral->update([
+                'status' => 'verified',
+                'verified_by' => auth()->id(),
+                'verified_at' => now(),
+                'verification_notes' => $validated['notes'] ?? null,
+            ]);
+
+            LoanProcess::create([
+                'loan_id' => $loan->id,
+                'user_id' => auth()->id(),
+                'role' => 'secretary',
+                'action' => 'collateral_verified',
+                'notes' => 'Agunan ' . $collateral->id . ' telah diverifikasi.',
+            ]);
+
+            Activity::create([
+                'user_id' => auth()->id(),
+                'action' => 'loan_collateral_verified',
+                'subject_type' => Loan::class,
+                'subject_id' => $loan->id,
+                'description' => 'Agunan pinjaman ' . $loan->code . ' telah diverifikasi oleh Sekretaris.',
+                'ip_address' => request()->ip(),
+                'user_agent' => request()->userAgent(),
+            ]);
+        });
+
+        return back()->with('success', 'Agunan berhasil diverifikasi.');
+    }
+
+    public function rejectCollateral(Request $request, Loan $loan, LoanCollateral $collateral)
+    {
+        $this->authorizeRole();
+
+        abort_unless($collateral->loan_id === $loan->id, 404);
+
+        abort_unless(
+            $collateral->status === 'pending',
+            422,
+            'Agunan ini tidak berada dalam status menunggu verifikasi.'
+        );
+
+        $validated = $request->validate([
+            'notes' => ['required', 'string', 'max:2000'],
+        ], [
+            'notes.required' => 'Catatan penolakan agunan wajib diisi.',
+        ]);
+
+        DB::transaction(function () use ($loan, $collateral, $validated) {
+            $collateral->update([
+                'status' => 'rejected',
+                'verified_by' => auth()->id(),
+                'verified_at' => now(),
+                'verification_notes' => $validated['notes'],
+            ]);
+
+            LoanProcess::create([
+                'loan_id' => $loan->id,
+                'user_id' => auth()->id(),
+                'role' => 'secretary',
+                'action' => 'collateral_rejected',
+                'notes' => 'Agunan ' . $collateral->id . ': ' . $validated['notes'],
+            ]);
+
+            Activity::create([
+                'user_id' => auth()->id(),
+                'action' => 'loan_collateral_rejected',
+                'subject_type' => Loan::class,
+                'subject_id' => $loan->id,
+                'description' => 'Agunan pinjaman ' . $loan->code . ' perlu diperbaiki.',
+                'ip_address' => request()->ip(),
+                'user_agent' => request()->userAgent(),
+            ]);
+        });
+
+        return back()->with('success', 'Agunan ditandai perlu diperbaiki.');
+    }
+
     public function rejectDocument(
         Request $request,
         Loan $loan,
