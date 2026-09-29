@@ -188,7 +188,7 @@ class LoanTopUpServiceTest extends TestCase
         $this->setSetting('loan_capacity_threshold_percent', 40);
         $this->setSetting('loan_interest_rate', 8);
 
-        $oldLoan = $this->createEligibleLoan($member, 30000000);
+        $oldLoan = $this->createEligibleLoan($member, 40000000);
 
         $newLoan = app(LoanTopUpService::class)->submit(
             $member,
@@ -222,7 +222,7 @@ class LoanTopUpServiceTest extends TestCase
         $this->setSetting('loan_capacity_threshold_percent', 40);
         $this->setSetting('loan_interest_rate', 8);
 
-        $this->createEligibleLoan($member, 30000000);
+        $this->createEligibleLoan($member, 40000000);
 
         $this->expectExceptionMessage(
             'Pengajuan Top Up di atas Rp25.000.000 wajib memiliki data agunan.'
@@ -267,7 +267,7 @@ class LoanTopUpServiceTest extends TestCase
         $this->setSetting('loan_capacity_threshold_percent', 40);
         $this->setSetting('loan_interest_rate', 8);
 
-        $this->createEligibleLoan($member, 20000000);
+        $this->createEligibleLoan($member, 40000000);
 
         try {
             app(LoanTopUpService::class)->submit(
