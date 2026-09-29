@@ -1269,21 +1269,29 @@ class LoanController extends Controller
                         ),
 
                     'net_monthly_income' =>
-                        $this->parseMoney(
-                            $request->input(
-                                'net_monthly_income'
+                        $request->has('net_monthly_income')
+                            ? $this->parseMoney(
+                                $request->input(
+                                    'net_monthly_income'
+                                )
                             )
-                        ),
+                            : null,
 
                     'other_monthly_income' =>
-                        $otherMonthlyIncome,
+                        $request->has('other_monthly_income')
+                            ? $otherMonthlyIncome
+                            : null,
 
                     'declared_external_monthly_obligations' =>
-                        $this->parseMoney(
-                            $request->input(
-                                'declared_external_monthly_obligations'
+                        $request->has(
+                            'declared_external_monthly_obligations'
+                        )
+                            ? $this->parseMoney(
+                                $request->input(
+                                    'declared_external_monthly_obligations'
+                                )
                             )
-                        ),
+                            : null,
 
                     'declared_external_obligations_note' =>
                         $request->input(
