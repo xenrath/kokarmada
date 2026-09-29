@@ -2,112 +2,47 @@
 
 namespace Tests\Feature\AnalystManager;
 
+use App\Models\Activity;
 use App\Models\Loan;
-use App\Models\LoanAnalysis;
 use App\Models\LoanProcess;
 use App\Models\User;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\Hash;
 use Tests\TestCase;
 
-class LoanAnalysisTest extends TestCase
+class LoanAnalysisStartTest extends TestCase
 {
     use DatabaseTransactions;
 
-    public function test_analyst_manager_can_complete_loan_analysis(): void
+    public function test_analyst_manager_can_start_loan_analysis(): void
     {
         $member = $this->createUser(
             'member',
-            'Member Analysis Test'
+            'Member Start Analysis Test'
         );
 
         $analyst = $this->createUser(
             'analyst_manager',
-            'Analyst Analysis Test'
+            'Analyst Start Analysis Test'
         );
 
         $loan = $this->createLoan($member);
-
-        $this->actingAs($analyst);
-
-        $startResponse = $this->post(
-            route(
-                'analyst-manager.loans.analysis.start',
-                $loan
-            )
-        );
-
-        $startResponse->assertRedirect();
-
-        $loan->refresh();
-
-        $this->assertSame(
-            'under_analysis',
-            $loan->status
-        );
 
         $this->actingAs($analyst);
 
         $response = $this->post(
             route(
-                'analyst-manager.loans.analysis',
-                $loan
-            ),
-            [
-                'recommended_amount' => 1600000,
-                'notes' => 'Hasil analisis kemampuan pembayaran anggota.',
-            ]
-        );
-
-        $response->assertRedirect();
-
-        $loan->refresh();
-
-        $this->assertSame(
-            'waiting_treasurer_review',
-            $loan->status
-        );
-
-        $this->assertDatabaseHas('loan_analyses', [
-            'loan_id' => $loan->id,
-            'analyst_id' => $analyst->id,
-            'recommended_amount' => 1600000,
-            'notes' => 'Hasil analisis kemampuan pembayaran anggota.',
-        ]);
-
-        $this->assertDatabaseHas('loan_processes', [
-            'loan_id' => $loan->id,
-            'user_id' => $analyst->id,
-            'role' => 'analyst_manager',
-            'action' => 'analysis_completed',
-            'notes' => 'Hasil analisis kemampuan pembayaran anggota.',
-        ]);
-    }
-
-    public function test_completed_analysis_cannot_be_submitted_again(): void
-    {
-        $member = $this->createUser(
-            'member',
-            'Member Analysis Duplicate Test'
-        );
-
-        $analyst = $this->createUser(
-            'analyst_manager',
-            'Analyst Analysis Duplicate Test'
-        );
-
-        $loan = $this->createLoan($member);
-
-        $this->actingAs($analyst);
-
-        $startResponse = $this->post(
-            route(
                 'analyst-manager.loans.analysis.start',
                 $loan
             )
         );
 
-        $startResponse->assertRedirect();
+        $response->assertRedirect(
+            route(
+                'analyst-manager.loans.show',
+                $loan
+            )
+        );
 
         $loan->refresh();
 
@@ -116,15 +51,47 @@ class LoanAnalysisTest extends TestCase
             $loan->status
         );
 
+        $this->assertDatabaseHas(
+            'loan_processes',
+            [
+                'loan_id' => $loan->id,
+                'user_id' => $analyst->id,
+                'role' => 'analyst_manager',
+                'action' => 'analysis_started',
+            ]
+        );
+
+        $this->assertDatabaseHas(
+            'activities',
+            [
+                'user_id' => $analyst->id,
+                'action' => 'loan_analysis_started',
+                'subject_id' => $loan->id,
+            ]
+        );
+    }
+
+    public function test_analysis_cannot_be_started_twice(): void
+    {
+        $member = $this->createUser(
+            'member',
+            'Member Duplicate Start Test'
+        );
+
+        $analyst = $this->createUser(
+            'analyst_manager',
+            'Analyst Duplicate Start Test'
+        );
+
+        $loan = $this->createLoan($member);
+
+        $this->actingAs($analyst);
+
         $firstResponse = $this->post(
             route(
-                'analyst-manager.loans.analysis',
+                'analyst-manager.loans.analysis.start',
                 $loan
-            ),
-            [
-                'recommended_amount' => 1600000,
-                'notes' => 'Analisis pertama.',
-            ]
+            )
         );
 
         $firstResponse->assertRedirect();
@@ -132,50 +99,39 @@ class LoanAnalysisTest extends TestCase
         $loan->refresh();
 
         $this->assertSame(
-            'waiting_treasurer_review',
+            'under_analysis',
             $loan->status
         );
 
-        $analysis = LoanAnalysis::query()
-            ->where('loan_id', $loan->id)
-            ->firstOrFail();
-
         $secondResponse = $this->post(
             route(
-                'analyst-manager.loans.analysis',
+                'analyst-manager.loans.analysis.start',
                 $loan
-            ),
-            [
-                'recommended_amount' => 1200000,
-                'notes' => 'Percobaan analisis kedua.',
-            ]
+            )
         );
 
         $secondResponse->assertRedirect();
 
-        $analysis->refresh();
         $loan->refresh();
 
         $this->assertSame(
-            'waiting_treasurer_review',
+            'under_analysis',
             $loan->status
-        );
-
-        $this->assertSame(
-            1600000.00,
-            (float) $analysis->recommended_amount
-        );
-
-        $this->assertSame(
-            'Analisis pertama.',
-            $analysis->notes
         );
 
         $this->assertSame(
             1,
             LoanProcess::query()
                 ->where('loan_id', $loan->id)
-                ->where('action', 'analysis_completed')
+                ->where('action', 'analysis_started')
+                ->count()
+        );
+
+        $this->assertSame(
+            1,
+            Activity::query()
+                ->where('subject_id', $loan->id)
+                ->where('action', 'loan_analysis_started')
                 ->count()
         );
     }
@@ -186,25 +142,13 @@ class LoanAnalysisTest extends TestCase
     ): User {
         return User::create([
             'name' => $name,
-            'nickname' => strtolower(
-                str_replace(
-                    ' ',
-                    '_',
-                    $name
-                )
-            ) . '_' . uniqid(),
-
+            'nickname' => 'test_' . uniqid(),
             'phone' => '08' . random_int(
                 1000000000,
                 9999999999
             ),
-
             'gender' => 'L',
-
-            'password' => Hash::make(
-                'password'
-            ),
-
+            'password' => Hash::make('password'),
             'role' => $role,
             'status' => 'active',
         ]);
@@ -218,7 +162,7 @@ class LoanAnalysisTest extends TestCase
         )) + 1;
 
         return Loan::create([
-            'code' => 'KOPKARMADA/TEST-ANALYSIS/' .
+            'code' => 'KOPKARMADA/TEST-START-ANALYSIS/' .
                 now()->format('YmdHis') .
                 '/' .
                 $sequenceNumber,
@@ -232,7 +176,7 @@ class LoanAnalysisTest extends TestCase
             'purpose_category' => 'consumer',
             'business_type' => null,
             'business_type_other' => null,
-            'purpose_description' => 'Pengujian analisis pinjaman.',
+            'purpose_description' => 'Pengujian mulai analisis.',
 
             'term_months' => 12,
             'repayment_type' => 'monthly',

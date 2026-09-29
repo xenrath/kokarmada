@@ -49,11 +49,68 @@ class LoanController extends Controller
         return view('analyst-manager.loans.show', compact('loan'));
     }
 
+    public function startAnalysis(Loan $loan)
+    {
+        $this->authorizeRole();
+
+        if ($loan->status !== 'submitted') {
+            return back()->with(
+                'error',
+                'Pengajuan ini tidak dapat memulai analisis pada tahap sekarang.'
+            );
+        }
+
+        DB::transaction(function () use ($loan) {
+            $user = auth()->user();
+
+            $loan = Loan::query()
+                ->whereKey($loan->id)
+                ->lockForUpdate()
+                ->firstOrFail();
+
+            if ($loan->status !== 'submitted') {
+                abort(
+                    422,
+                    'Pengajuan ini tidak dapat memulai analisis pada tahap sekarang.'
+                );
+            }
+
+            $loan->update([
+                'status' => 'under_analysis',
+            ]);
+
+            LoanProcess::create([
+                'loan_id' => $loan->id,
+                'user_id' => $user->id,
+                'role' => 'analyst_manager',
+                'action' => 'analysis_started',
+                'notes' => 'Analyst Manager mulai melakukan analisis.',
+            ]);
+
+            Activity::create([
+                'user_id' => $user->id,
+                'action' => 'loan_analysis_started',
+                'subject_type' => Loan::class,
+                'subject_id' => $loan->id,
+                'description' => 'Analisis pinjaman ' . $loan->code . ' telah dimulai.',
+                'ip_address' => request()->ip(),
+                'user_agent' => request()->userAgent(),
+            ]);
+        });
+
+        return redirect()
+            ->route('analyst-manager.loans.show', $loan)
+            ->with(
+                'success',
+                'Analisis pinjaman telah dimulai.'
+            );
+    }
+
     public function analyze(Request $request, Loan $loan)
     {
         $this->authorizeRole();
 
-        if (! in_array($loan->status, ['submitted', 'under_analysis'])) {
+        if ($loan->status !== 'under_analysis') {
             return back()->with('error', 'Pengajuan ini tidak dapat dianalisis pada tahap sekarang.');
         }
 
@@ -85,10 +142,10 @@ class LoanController extends Controller
                 ->lockForUpdate()
                 ->firstOrFail();
 
-            if (! in_array($loan->status, ['submitted', 'under_analysis'], true)) {
+            if ($loan->status !== 'under_analysis') {
                 abort(
                     422,
-                    'Pengajuan ini tidak dapat dianalisis pada tahap sekarang.'
+                    'Pengajuan ini belum berada dalam tahap analisis.'
                 );
             }
 

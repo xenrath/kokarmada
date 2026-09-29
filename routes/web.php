@@ -232,6 +232,16 @@ Route::middleware(['auth', 'active'])
             \App\Http\Controllers\AnalystManager\LoanController::class,
             'downloadGeneratedDocument',
         ])->name('loans.documents.download');
+
+        Route::post('/loans/{loan}/analysis/start', [
+            \App\Http\Controllers\AnalystManager\LoanController::class,
+            'startAnalysis',
+        ])->name('loans.analysis.start');
+
+        Route::post('/loans/{loan}/analysis', [
+            \App\Http\Controllers\AnalystManager\LoanController::class,
+            'analyze',
+        ])->name('loans.analysis');
     });
 
 Route::middleware(['auth', 'active'])

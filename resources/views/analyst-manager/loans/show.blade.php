@@ -140,6 +140,7 @@
                         <div class="row">
 
                             <div class="col-md-6 mb-3">
+
                                 <small class="text-muted d-block">
                                     Nama
                                 </small>
@@ -147,9 +148,11 @@
                                 <div>
                                     {{ $loan->user->name }}
                                 </div>
+
                             </div>
 
                             <div class="col-md-6 mb-3">
+
                                 <small class="text-muted d-block">
                                     No. Anggota
                                 </small>
@@ -157,9 +160,11 @@
                                 <div>
                                     {{ $loan->user->memberProfile?->member_number ?? '-' }}
                                 </div>
+
                             </div>
 
                             <div class="col-md-6 mb-3">
+
                                 <small class="text-muted d-block">
                                     No. Telepon
                                 </small>
@@ -167,9 +172,11 @@
                                 <div>
                                     {{ $loan->user->phone }}
                                 </div>
+
                             </div>
 
                             <div class="col-md-6 mb-3">
+
                                 <small class="text-muted d-block">
                                     Unit Kerja
                                 </small>
@@ -177,9 +184,11 @@
                                 <div>
                                     {{ $loan->work_unit }}
                                 </div>
+
                             </div>
 
                             <div class="col-md-6">
+
                                 <small class="text-muted d-block">
                                     Jabatan
                                 </small>
@@ -187,9 +196,11 @@
                                 <div>
                                     {{ $loan->position }}
                                 </div>
+
                             </div>
 
                             <div class="col-md-6">
+
                                 <small class="text-muted d-block">
                                     Lama Bekerja
                                 </small>
@@ -197,6 +208,7 @@
                                 <div>
                                     {{ $loan->employment_duration_years }} tahun
                                 </div>
+
                             </div>
 
                         </div>
@@ -210,9 +222,11 @@
                 <div class="card rounded-0">
 
                     <div class="card-body">
+
                         <h4 class="header-title">
                             Data Pinjaman
                         </h4>
+
                     </div>
 
                     <div class="card-body border-top">
@@ -411,6 +425,7 @@
                                     <div class="row">
 
                                         <div class="col-md-4 mb-3">
+
                                             <small class="text-muted d-block">
                                                 Jenis
                                             </small>
@@ -418,9 +433,11 @@
                                             <div>
                                                 {{ $collateral->type }}
                                             </div>
+
                                         </div>
 
                                         <div class="col-md-4 mb-3">
+
                                             <small class="text-muted d-block">
                                                 Status Kepemilikan
                                             </small>
@@ -428,9 +445,11 @@
                                             <div>
                                                 {{ $collateral->ownership_status }}
                                             </div>
+
                                         </div>
 
                                         <div class="col-md-4 mb-3">
+
                                             <small class="text-muted d-block">
                                                 Bukti Kepemilikan
                                             </small>
@@ -438,6 +457,7 @@
                                             <div>
                                                 {{ $collateral->ownership_proof ?: '-' }}
                                             </div>
+
                                         </div>
 
                                     </div>
@@ -479,6 +499,14 @@
                             <span class="text-muted">
                                 Rekomendasi Analyst Manager
                             </span>
+                        @elseif ($loan->status === 'submitted')
+                            <span class="text-muted">
+                                Analisis belum dimulai
+                            </span>
+                        @elseif ($loan->status === 'under_analysis')
+                            <span class="text-muted">
+                                Analisis sedang dikerjakan
+                            </span>
                         @else
                             <span class="text-muted">
                                 Belum ada analisis
@@ -489,8 +517,37 @@
 
                     <div class="card-body border-top">
 
-                        @if (in_array($loan->status, ['submitted', 'under_analysis']))
+                        {{-- =================================================
+                             STATUS: SUBMITTED
+                        ================================================== --}}
+                        @if ($loan->status === 'submitted')
 
+                            <div class="mb-3">
+
+                                <p class="text-muted mb-3">
+                                    Pengajuan ini belum masuk tahap analisis.
+                                    Mulai analisis terlebih dahulu untuk dapat
+                                    memberikan rekomendasi.
+                                </p>
+
+                                <form action="{{ route('analyst-manager.loans.analysis.start', $loan) }}" method="POST">
+
+                                    @csrf
+
+                                    <button type="submit" class="btn btn-primary rounded-0">
+                                        <i class="mdi mdi-play-circle-outline me-1"></i>
+                                        Mulai Analisis
+                                    </button>
+
+                                </form>
+
+                            </div>
+
+
+                            {{-- =================================================
+                             STATUS: UNDER ANALYSIS
+                        ================================================== --}}
+                        @elseif ($loan->status === 'under_analysis')
                             <form action="{{ route('analyst-manager.loans.analysis', $loan) }}" method="POST">
 
                                 @csrf
@@ -532,11 +589,16 @@
                                 </div>
 
                                 <button type="submit" class="btn btn-primary rounded-0">
-                                    <i class="mdi mdi-content-save-outline me-1"></i>
-                                    Simpan
+                                    <i class="mdi mdi-check-circle-outline me-1"></i>
+                                    Selesaikan Analisis
                                 </button>
 
                             </form>
+
+
+                            {{-- =================================================
+                             STATUS LAIN
+                        ================================================== --}}
                         @else
                             @if ($loan->analysis)
 
@@ -650,6 +712,7 @@
 
                         </div>
 
+
                         <div class="border-top pt-3">
 
                             <small class="text-muted d-block">
@@ -753,6 +816,8 @@
 
                                         @if ($process->action === 'submitted')
                                             Pengajuan Dibuat
+                                        @elseif ($process->action === 'analysis_started')
+                                            Analisis Dimulai
                                         @elseif ($process->action === 'analysis_completed')
                                             Analisis Selesai
                                         @elseif ($process->action === 'review_completed')
@@ -770,7 +835,9 @@
                                     </h5>
 
                                     <small class="text-muted">
+
                                         {{ $process->created_at ? \Carbon\Carbon::parse($process->created_at)->translatedFormat('d F Y H:i') : '-' }}
+
                                     </small>
 
                                 </div>
