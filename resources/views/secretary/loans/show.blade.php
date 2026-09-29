@@ -1,6 +1,6 @@
 @extends('layout.app')
 
-@section('title', 'Validasi Dokumen')
+@section('title', 'Validasi Dokumen & Agunan')
 
 @section('content')
 
@@ -14,7 +14,7 @@
             </a>
 
             <h4 class="page-title mb-0">
-                Validasi Dokumen
+                Validasi Dokumen & Agunan
             </h4>
 
         </div>
@@ -116,6 +116,192 @@
             </div>
 
         </div>
+
+
+        {{-- Agunan --}}
+        @if ($loan->collaterals->isNotEmpty())
+            <div class="card rounded-0 mb-3">
+                <div class="card-body">
+                    <h4 class="header-title mb-1">
+                        Agunan
+                    </h4>
+                    <p class="text-muted mb-0">
+                        Agunan wajib diverifikasi oleh Sekretaris untuk pinjaman
+                        dengan nominal disetujui di atas Rp25.000.000.
+                    </p>
+                </div>
+
+                <div class="card-body border-top">
+                    @foreach ($loan->collaterals as $collateral)
+                        <div class="border p-3 rounded-0 {{ !$loop->last ? 'mb-3' : '' }}">
+                            <div class="d-flex justify-content-between align-items-start mb-3">
+                                <div>
+                                    <h5 class="mb-1">
+                                        {{ $collateral->type }}
+                                    </h5>
+                                    <p class="text-muted mb-0">
+                                        {{ $collateral->description ?: 'Tidak ada deskripsi.' }}
+                                    </p>
+                                </div>
+
+                                @if ($collateral->status === 'verified')
+                                    <span class="badge bg-success rounded-0">
+                                        Terverifikasi
+                                    </span>
+                                @elseif ($collateral->status === 'rejected')
+                                    <span class="badge bg-danger rounded-0">
+                                        Perlu Diperbaiki
+                                    </span>
+                                @else
+                                    <span class="badge bg-warning rounded-0">
+                                        Menunggu Validasi
+                                    </span>
+                                @endif
+                            </div>
+
+                            <div class="row g-3 mb-3">
+                                <div class="col-md-4">
+                                    <div class="text-muted mb-1">Kepemilikan</div>
+                                    <div class="fw-semibold">
+                                        {{ $collateral->ownership_status }}
+                                    </div>
+                                </div>
+
+                                <div class="col-md-4">
+                                    <div class="text-muted mb-1">Bukti Kepemilikan</div>
+                                    <div class="fw-semibold">
+                                        {{ $collateral->ownership_proof }}
+                                    </div>
+                                </div>
+
+                                <div class="col-md-4">
+                                    <div class="text-muted mb-1">File Bukti Agunan</div>
+                                    @if ($collateral->proof_file)
+                                        <span class="text-success">
+                                            <i class="mdi mdi-file-check-outline me-1"></i>
+                                            Tersedia
+                                        </span>
+                                    @else
+                                        <span class="text-danger">
+                                            Tidak tersedia
+                                        </span>
+                                    @endif
+                                </div>
+                            </div>
+
+                            @if ($collateral->status === 'verified')
+                                <div class="border-top pt-3">
+                                    <p class="text-success mb-0">
+                                        <i class="mdi mdi-check-circle-outline me-1"></i>
+                                        Diverifikasi oleh
+                                        {{ $collateral->verifier->name ?? 'Sekretaris' }}
+                                        @if ($collateral->verified_at)
+                                            pada {{ $collateral->verified_at->format('d/m/Y H:i') }}
+                                        @endif
+                                    </p>
+
+                                    @if ($collateral->verification_notes)
+                                        <p class="text-muted mb-0 mt-2">
+                                            Catatan: {{ $collateral->verification_notes }}
+                                        </p>
+                                    @endif
+                                </div>
+                            @elseif ($collateral->status === 'rejected')
+                                <div class="border-top pt-3">
+                                    <p class="text-danger mb-0">
+                                        <i class="mdi mdi-alert-circle-outline me-1"></i>
+                                        Agunan perlu diperbaiki.
+                                    </p>
+
+                                    @if ($collateral->verification_notes)
+                                        <p class="text-muted mb-0 mt-2">
+                                            Catatan: {{ $collateral->verification_notes }}
+                                        </p>
+                                    @endif
+                                </div>
+                            @elseif ($collateral->status === 'pending')
+                                <div class="border-top pt-3">
+                                    <div class="d-flex flex-wrap gap-2">
+                                        <form
+                                            action="{{ route('secretary.loans.collaterals.verify', [$loan, $collateral]) }}"
+                                            method="POST">
+                                            @csrf
+                                            <button type="submit" class="btn btn-success rounded-0">
+                                                <i class="mdi mdi-check me-1"></i>
+                                                Verifikasi Agunan
+                                            </button>
+                                        </form>
+
+                                        <button type="button"
+                                            class="btn btn-danger rounded-0"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#rejectCollateralModal{{ $collateral->id }}">
+                                            <i class="mdi mdi-close me-1"></i>
+                                            Perlu Diperbaiki
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <div class="modal fade"
+                                    id="rejectCollateralModal{{ $collateral->id }}"
+                                    tabindex="-1"
+                                    aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content rounded-0">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title">
+                                                    Agunan Perlu Diperbaiki
+                                                </h5>
+                                                <button type="button"
+                                                    class="btn-close"
+                                                    data-bs-dismiss="modal"
+                                                    aria-label="Close"></button>
+                                            </div>
+
+                                            <form
+                                                action="{{ route('secretary.loans.collaterals.reject', [$loan, $collateral]) }}"
+                                                method="POST">
+                                                @csrf
+
+                                                <div class="modal-body">
+                                                    <p class="text-muted">
+                                                        Berikan catatan yang jelas agar
+                                                        agunan dapat diperbaiki atau diganti.
+                                                    </p>
+
+                                                    <label class="form-label">
+                                                        Catatan Perbaikan
+                                                    </label>
+
+                                                    <textarea
+                                                        name="notes"
+                                                        rows="4"
+                                                        class="form-control rounded-0"
+                                                        required></textarea>
+                                                </div>
+
+                                                <div class="modal-footer">
+                                                    <button type="button"
+                                                        class="btn btn-light rounded-0"
+                                                        data-bs-dismiss="modal">
+                                                        Batal
+                                                    </button>
+
+                                                    <button type="submit"
+                                                        class="btn btn-danger rounded-0">
+                                                        Tandai Perlu Diperbaiki
+                                                    </button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            @endif
+                        </div>
+                    @endforeach
+                </div>
+            </div>
+        @endif
 
 
         {{-- Dokumen --}}
