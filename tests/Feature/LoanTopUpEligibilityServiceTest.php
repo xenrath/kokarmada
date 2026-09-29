@@ -38,7 +38,7 @@ class LoanTopUpEligibilityServiceTest extends TestCase
         $this->assertSame(1500000.00, $result['principal_paid']);
         $this->assertSame(1500000.00, $result['outstanding_principal']);
         $this->assertSame(50.00, $result['principal_repayment_percent']);
-        $this->assertSame(1500000.00, $result['old_monthly_installment']);
+        $this->assertSame(280000.00, $result['old_monthly_installment']);
         $this->assertSame(3500000.00, $result['maximum_additional_amount']);
         $this->assertFalse($result['has_overdue_installment']);
         $this->assertFalse($result['has_active_top_up']);
