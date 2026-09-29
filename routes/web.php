@@ -8,12 +8,6 @@ Route::get('login', [\App\Http\Controllers\AuthController::class, 'showLoginForm
 Route::post('login', [\App\Http\Controllers\AuthController::class, 'authenticate'])->name('login.authenticate');
 Route::post('logout', [\App\Http\Controllers\AuthController::class, 'logout'])->middleware('auth');
 
-Route::middleware(['auth', 'active'])->group(function () {
-    Route::get('files/user-detail/{user}/{field}', [\App\Http\Controllers\FileController::class, 'userDetail'])->whereNumber('user')->name('files.user-detail');
-
-    Route::get('files/pinjaman/{pinjaman}/{field}', [\App\Http\Controllers\FileController::class, 'pinjaman'])->whereNumber('pinjaman')->name('files.pinjaman');
-});
-
 // Route::middleware(['auth', 'active', 'admin'])->prefix('admin')->group(function () {
 //     Route::get('/', [\App\Http\Controllers\Admin\HomeController::class, 'index']);
 //     Route::get('anggota-set', [\App\Http\Controllers\Admin\HomeController::class, 'anggota_set']);
@@ -149,7 +143,7 @@ Route::middleware(['auth', 'active', 'admin'])->prefix('admin')->group(function 
         });
 });
 
-Route::middleware(['auth', 'active'])
+Route::middleware(['auth', 'active', 'member'])
     ->prefix('member')
     ->name('member.')
     ->group(function () {

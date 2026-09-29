@@ -72,5 +72,6 @@ class Kernel extends HttpKernel
         'petugas' => \App\Http\Middleware\Petugas::class,
         'anggota' => \App\Http\Middleware\Anggota::class,
         'active' => \App\Http\Middleware\ActiveUser::class,
+        'member' => \App\Http\Middleware\Member::class,
     ];
 }
