@@ -98,6 +98,35 @@ class LoanCollateralVerificationTest extends TestCase
         );
     }
 
+    public function test_secretary_can_see_pending_collateral_on_loan_detail(): void
+    {
+        $member = $this->createUser('member');
+        $secretary = $this->createUser('secretary');
+
+        $loan = $this->createLoan($member, 30000000);
+
+        LoanCollateral::create([
+            'loan_id' => $loan->id,
+            'type' => 'bpkb',
+            'description' => 'BPKB kendaraan untuk pengujian.',
+            'ownership_status' => 'self',
+            'ownership_proof' => 'bpkb',
+            'proof_file' => 'private/test/collateral.pdf',
+            'status' => 'pending',
+        ]);
+
+        $this->actingAs($secretary);
+
+        $response = $this->get(
+            route('secretary.loans.show', $loan)
+        );
+
+        $response->assertOk();
+        $response->assertSee('Agunan');
+        $response->assertSee('Verifikasi Agunan');
+        $response->assertSee('Perlu Diperbaiki');
+    }
+
     private function createUser(string $role): User
     {
         return User::create([
