@@ -262,17 +262,22 @@ class LoanTopUpServiceTest extends TestCase
         $member = $this->createUser('member');
         $this->configureSettings();
 
-        $this->createEligibleLoan($member);
+        $this->setSetting('top_up_minimum_amount', 500000);
+        $this->setSetting('loan_maximum_amount', 40000000);
+        $this->setSetting('loan_capacity_threshold_percent', 40);
+        $this->setSetting('loan_interest_rate', 8);
+
+        $this->createEligibleLoan($member, 20000000);
 
         try {
             app(LoanTopUpService::class)->submit(
                 $member,
                 $this->baseSubmission([
-                    'top_up_amount' => 1000000,
+                    'top_up_amount' => 6000000,
                     'collateral' => [
                         'type' => 'bpkb',
                         'ownership_status' => 'self',
-                        'ownership_proof' => 'invalid',
+                        'ownership_proof' => 'bpkb',
                         'proof_file' => null,
                     ],
                 ])
