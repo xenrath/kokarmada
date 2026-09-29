@@ -63,7 +63,13 @@ class LoanCollateralRequirementTest extends TestCase
         $loan->refresh();
 
         $this->assertSame('approved', $loan->status);
-        $this->assertDatabaseCount('loan_disbursements', 0);
+        $this->assertSame(
+            0,
+            \App\Models\LoanDisbursement::query()
+                ->where('loan_id', $loan->id)
+                ->count()
+        );
+
         $this->assertDatabaseMissing('cash_flows', [
             'loan_id' => $loan->id,
             'category' => 'loan_disbursement',
