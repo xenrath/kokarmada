@@ -23,15 +23,20 @@ class LoanController extends Controller
             ->with([
                 'user.memberProfile',
                 'documents',
+                'collaterals',
             ])
-            ->whereHas('documents', function ($query) {
-                $query
-                    ->whereIn('document_type', [
-                        'approval_letter',
-                        'credit_agreement',
-                    ])
-                    ->whereNotNull('file_path')
-                    ->where('status', 'pending');
+            ->where(function ($query) {
+                $query->whereHas('documents', function ($documentQuery) {
+                    $documentQuery
+                        ->whereIn('document_type', [
+                            'approval_letter',
+                            'credit_agreement',
+                        ])
+                        ->whereNotNull('file_path')
+                        ->where('status', 'pending');
+                })->orWhereHas('collaterals', function ($collateralQuery) {
+                    $collateralQuery->where('status', 'pending');
+                });
             })
             ->latest('updated_at')
             ->get();
