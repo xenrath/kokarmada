@@ -42,9 +42,19 @@ class LoanTopUpSubmissionTest extends TestCase
             ])
         );
 
-        $response->assertRedirect(
-            route('member.loans.index')
-        );
+        if (
+            $response->getTargetUrl() !== route('member.loans.index')
+        ) {
+            $this->fail(
+                'Top Up HTTP submission did not succeed. Redirect: '
+                . $response->getTargetUrl()
+                . '; session: '
+                . json_encode(
+                    $response->getSession()->all(),
+                    JSON_UNESCAPED_UNICODE
+                )
+            );
+        }
 
         $newLoan = Loan::query()
             ->where('user_id', $member->id)
