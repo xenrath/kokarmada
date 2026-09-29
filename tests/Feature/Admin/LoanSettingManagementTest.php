@@ -39,7 +39,7 @@ class LoanSettingManagementTest extends TestCase
             route('admin.loan-settings.edit')
         );
 
-        $response->assertForbidden();
+        $response->assertRedirect('/');
     }
 
     public function test_admin_can_save_loan_settings(): void
