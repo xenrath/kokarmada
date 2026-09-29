@@ -25,6 +25,8 @@ class LoanTopUpSubmissionTest extends TestCase
     {
         Storage::fake('local');
 
+        $this->configureSettings();
+
         $member = $this->createMember();
         $analystManager = $this->createUser('analyst_manager');
         $oldLoan = $this->createEligibleLoan($member);
@@ -170,6 +172,8 @@ class LoanTopUpSubmissionTest extends TestCase
 
     public function test_other_income_requires_proof_when_above_zero(): void
     {
+        $this->configureSettings();
+
         $member = $this->createMember();
         $oldLoan = $this->createEligibleLoan($member);
 
@@ -199,6 +203,8 @@ class LoanTopUpSubmissionTest extends TestCase
     public function test_external_obligations_proof_is_optional(): void
     {
         Storage::fake('local');
+
+        $this->configureSettings();
 
         $member = $this->createMember();
         $this->createUser('analyst_manager');
@@ -412,10 +418,8 @@ class LoanTopUpSubmissionTest extends TestCase
 
         MemberProfile::create([
             'user_id' => $member->id,
-            'member_number' => 'MP-' . substr(
-                uniqid(),
-                0,
-                10
+            'member_number' => 'MP-' . bin2hex(
+                random_bytes(8)
             ),
         ]);
 
@@ -440,6 +444,14 @@ class LoanTopUpSubmissionTest extends TestCase
             'role' => $role,
             'status' => 'active',
         ]);
+    }
+
+    private function configureSettings(): void
+    {
+        $this->setSetting('top_up_minimum_amount', 500000);
+        $this->setSetting('loan_maximum_amount', 5000000);
+        $this->setSetting('loan_capacity_threshold_percent', 40);
+        $this->setSetting('loan_interest_rate', 8);
     }
 
     private function setSetting(string $key, float $value): void
