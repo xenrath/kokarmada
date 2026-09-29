@@ -182,6 +182,9 @@ Route::middleware(['auth', 'active'])
                 Route::post('/', [\App\Http\Controllers\Member\LoanController::class, 'store'])
                     ->name('store');
 
+                Route::post('/{loan}/top-up', [\App\Http\Controllers\Member\LoanController::class, 'storeTopUp'])
+                    ->name('top-up.store');
+
                 Route::get('/{loan}', [\App\Http\Controllers\Member\LoanController::class, 'show'])
                     ->name('show');
             });
