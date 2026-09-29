@@ -284,22 +284,48 @@
                             Rekening Sumber Dana
                         </label>
 
-                        <select id="account_id" name="account_id" class="form-select rounded-0" form="disbursementForm">
+                        <select id="account_id" name="account_id" class="form-select rounded-0" form="disbursementForm"
+                            required>
 
                             <option value="">
                                 Pilih Rekening
                             </option>
 
                             @foreach ($accounts as $account)
-                                <option value="{{ $account->id }}">
+                                <option value="{{ $account->id }}" @disabled(!$account->can_disburse)>
                                     {{ $account->name }}
+
                                     @if ($account->bank_name)
                                         - {{ $account->bank_name }}
+                                    @endif
+
+                                    - Saldo Rp {{ number_format($account->available_balance, 0, ',', '.') }}
+
+                                    @if (!$account->can_disburse)
+                                        - Saldo Tidak Mencukupi
                                     @endif
                                 </option>
                             @endforeach
 
                         </select>
+
+                        <div class="form-text">
+                            Nominal pencairan:
+                            <strong>
+                                Rp {{ number_format($disbursementAmount, 0, ',', '.') }}
+                            </strong>
+                        </div>
+
+                        @if ($accounts->where('can_disburse', true)->isEmpty())
+                            <div class="alert alert-danger rounded-0 mt-3 mb-0">
+                                Tidak ada rekening yang memiliki saldo cukup untuk mencairkan pinjaman ini.
+                            </div>
+                        @else
+                            <div class="alert alert-info rounded-0 mt-3 mb-0">
+                                Rekening dengan saldo tidak mencukupi tetap ditampilkan sebagai informasi,
+                                tetapi tidak dapat dipilih.
+                            </div>
+                        @endif
 
                     </div>
 

@@ -48,6 +48,8 @@
                                 <th>Bank</th>
                                 <th>Nomor Rekening</th>
                                 <th>Atas Nama</th>
+                                <th>Saldo Awal</th>
+                                <th>Saldo Saat Ini</th>
                                 <th>Status</th>
                                 <th class="text-end">Aksi</th>
                             </tr>
@@ -77,6 +79,28 @@
                                     </td>
 
                                     <td>
+                                        @if ($account->needsOpeningBalanceInitialization())
+                                            <span class="text-warning">
+                                                Belum ditetapkan
+                                            </span>
+                                        @else
+                                            Rp {{ number_format((float) $account->opening_balance, 0, ',', '.') }}
+                                        @endif
+                                    </td>
+
+                                    <td>
+                                        @if ($account->needsOpeningBalanceInitialization())
+                                            <span class="text-warning">
+                                                Belum diinisialisasi
+                                            </span>
+                                        @else
+                                            <strong>
+                                                Rp {{ number_format($account->calculateBalance(), 0, ',', '.') }}
+                                            </strong>
+                                        @endif
+                                    </td>
+
+                                    <td>
 
                                         @if ($account->is_active)
                                             <span class="badge bg-success rounded-0">
@@ -91,6 +115,14 @@
                                     </td>
 
                                     <td class="text-end">
+
+                                        @if ($account->needsOpeningBalanceInitialization())
+                                            <a href="{{ route('admin.accounts.initialize-opening-balance.form', $account) }}"
+                                                class="btn btn-warning btn-sm rounded-0">
+                                                <i class="mdi mdi-cash-plus"></i>
+                                                Tetapkan Saldo Awal
+                                            </a>
+                                        @endif
 
                                         <a href="{{ route('admin.accounts.edit', $account) }}"
                                             class="btn btn-light btn-sm rounded-0">
@@ -125,7 +157,7 @@
                             @empty
 
                                 <tr>
-                                    <td colspan="6" class="text-center text-muted py-4">
+                                    <td colspan="8" class="text-center text-muted py-4">
                                         Belum ada rekening.
                                     </td>
                                 </tr>

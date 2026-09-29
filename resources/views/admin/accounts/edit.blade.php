@@ -36,6 +36,10 @@
                     @csrf
                     @method('PUT')
 
+                    @php
+                        $hasCashFlows = $account->cashFlows()->exists();
+                    @endphp
+
                     <div class="row">
 
                         <div class="col-md-6 mb-3">
@@ -121,6 +125,35 @@
                                 value="{{ old('account_name', $account->account_name) }}">
 
                             @error('account_name')
+                                <div class="invalid-feedback">
+                                    {{ $message }}
+                                </div>
+                            @enderror
+
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+
+                            <label for="opening_balance" class="form-label">
+                                Saldo Awal
+                            </label>
+
+                            <input type="number" id="opening_balance" name="opening_balance"
+                                class="form-control rounded-0 @error('opening_balance') is-invalid @enderror"
+                                value="{{ old('opening_balance', $account->opening_balance) }}" min="0"
+                                step="0.01" @disabled($hasCashFlows)>
+
+                            @if ($hasCashFlows)
+                                <div class="form-text">
+                                    Saldo awal terkunci karena rekening sudah memiliki transaksi.
+                                </div>
+                            @else
+                                <div class="form-text">
+                                    Saldo awal masih dapat diubah selama belum ada transaksi.
+                                </div>
+                            @endif
+
+                            @error('opening_balance')
                                 <div class="invalid-feedback">
                                     {{ $message }}
                                 </div>

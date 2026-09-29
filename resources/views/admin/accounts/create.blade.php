@@ -127,6 +127,28 @@
 
                         </div>
 
+                        <div class="col-md-6 mb-3">
+
+                            <label for="opening_balance" class="form-label">
+                                Saldo Awal
+                            </label>
+
+                            <input type="number" id="opening_balance" name="opening_balance"
+                                class="form-control rounded-0 @error('opening_balance') is-invalid @enderror"
+                                value="{{ old('opening_balance', 0) }}" min="0" step="0.01">
+
+                            <div class="form-text">
+                                Default Rp0. Saldo awal dapat ditentukan saat rekening dibuat.
+                            </div>
+
+                            @error('opening_balance')
+                                <div class="invalid-feedback">
+                                    {{ $message }}
+                                </div>
+                            @enderror
+
+                        </div>
+
                     </div>
 
                     <div class="border-top pt-3 mt-2">

@@ -6,22 +6,22 @@ use App\Models\Account;
 use App\Models\CashFlow;
 use App\Models\Installment;
 use App\Models\Loan;
-use App\Models\LoanDisbursement;
 use App\Models\LoanDocument;
+use App\Models\LoanDisbursement;
 use App\Models\User;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\Hash;
 use Tests\TestCase;
 
-class LoanDisbursementDuplicateTest extends TestCase
+class LoanDisbursementInsufficientBalanceTest extends TestCase
 {
     use DatabaseTransactions;
 
-    public function test_treasurer_cannot_disburse_a_loan_more_than_once(): void
+    public function test_treasurer_cannot_disburse_when_account_balance_is_insufficient(): void
     {
         $member = User::create([
-            'name' => 'Member Duplicate Disbursement Test',
-            'nickname' => 'member_duplicate_disbursement_' . uniqid(),
+            'name' => 'Member Insufficient Balance Test',
+            'nickname' => 'member_insufficient_' . uniqid(),
             'phone' => '08' . random_int(1000000000, 9999999999),
             'gender' => 'L',
             'password' => Hash::make('password'),
@@ -30,8 +30,8 @@ class LoanDisbursementDuplicateTest extends TestCase
         ]);
 
         $analyst = User::create([
-            'name' => 'Analyst Duplicate Disbursement Test',
-            'nickname' => 'analyst_duplicate_disbursement_' . uniqid(),
+            'name' => 'Analyst Insufficient Balance Test',
+            'nickname' => 'analyst_insufficient_' . uniqid(),
             'phone' => '08' . random_int(1000000000, 9999999999),
             'gender' => 'L',
             'password' => Hash::make('password'),
@@ -40,8 +40,8 @@ class LoanDisbursementDuplicateTest extends TestCase
         ]);
 
         $secretary = User::create([
-            'name' => 'Secretary Duplicate Disbursement Test',
-            'nickname' => 'secretary_duplicate_disbursement_' . uniqid(),
+            'name' => 'Secretary Insufficient Balance Test',
+            'nickname' => 'secretary_insufficient_' . uniqid(),
             'phone' => '08' . random_int(1000000000, 9999999999),
             'gender' => 'P',
             'password' => Hash::make('password'),
@@ -50,8 +50,8 @@ class LoanDisbursementDuplicateTest extends TestCase
         ]);
 
         $treasurer = User::create([
-            'name' => 'Treasurer Duplicate Disbursement Test',
-            'nickname' => 'treasurer_duplicate_disbursement_' . uniqid(),
+            'name' => 'Treasurer Insufficient Balance Test',
+            'nickname' => 'treasurer_insufficient_' . uniqid(),
             'phone' => '08' . random_int(1000000000, 9999999999),
             'gender' => 'L',
             'password' => Hash::make('password'),
@@ -60,12 +60,12 @@ class LoanDisbursementDuplicateTest extends TestCase
         ]);
 
         $account = Account::create([
-            'name' => 'Rekening Duplicate Disbursement Test',
+            'name' => 'Rekening Insufficient Balance Test',
             'type' => 'bank',
             'bank_name' => 'Bank Test',
-            'account_number' => 'DUPLICATE-DISBURSEMENT-' . uniqid(),
-            'account_name' => 'KOPKARMADA DUPLICATE TEST',
-            'opening_balance' => 1800000,
+            'account_number' => 'INSUFFICIENT-' . uniqid(),
+            'account_name' => 'KOPKARMADA INSUFFICIENT TEST',
+            'opening_balance' => 1000000,
             'is_active' => true,
         ]);
 
@@ -80,7 +80,7 @@ class LoanDisbursementDuplicateTest extends TestCase
             'purpose_category' => 'consumer',
             'business_type' => null,
             'business_type_other' => null,
-            'purpose_description' => 'Pengujian duplicate disbursement.',
+            'purpose_description' => 'Pengujian saldo rekening tidak mencukupi.',
             'term_months' => 12,
             'repayment_type' => 'monthly',
             'monthly_installment' => 162000,
@@ -93,7 +93,7 @@ class LoanDisbursementDuplicateTest extends TestCase
             'salary_slip' => 'private/test/salary-slip/test.pdf',
             'interest_rate' => 8,
             'approved_amount' => 1800000,
-            'status' => 'disbursed',
+            'status' => 'approved',
         ]);
 
         LoanDocument::create([
@@ -120,54 +120,25 @@ class LoanDisbursementDuplicateTest extends TestCase
             'status' => 'verified',
         ]);
 
-        $disbursedAt = now();
-
-        LoanDisbursement::create([
-            'loan_id' => $loan->id,
-            'treasurer_id' => $treasurer->id,
-            'account_id' => $account->id,
-            'amount' => 1800000,
-            'disbursed_at' => $disbursedAt,
-            'notes' => 'Pencairan pertama.',
-        ]);
-
-        CashFlow::create([
-            'account_id' => $account->id,
-            'loan_id' => $loan->id,
-            'type' => 'out',
-            'category' => 'loan_disbursement',
-            'amount' => 1800000,
-            'occurred_at' => $disbursedAt,
-            'description' => 'Pencairan pinjaman pertama.',
-        ]);
-
-        for ($number = 1; $number <= 12; $number++) {
-            Installment::create([
-                'loan_id' => $loan->id,
-                'installment_number' => $number,
-                'due_date' => $disbursedAt->copy()->addMonthsNoOverflow($number),
-                'principal_amount' => 150000,
-                'interest_amount' => 12000,
-                'penalty_amount' => 0,
-                'total_amount' => 162000,
-                'status' => 'pending',
-            ]);
-        }
+        $this->assertSame(
+            1000000.00,
+            $account->calculateBalance()
+        );
 
         $this->assertSame(
-            1,
+            0,
             LoanDisbursement::where('loan_id', $loan->id)->count()
         );
 
         $this->assertSame(
-            1,
+            0,
             CashFlow::where('loan_id', $loan->id)
                 ->where('category', 'loan_disbursement')
                 ->count()
         );
 
         $this->assertSame(
-            12,
+            0,
             Installment::where('loan_id', $loan->id)->count()
         );
 
@@ -178,7 +149,7 @@ class LoanDisbursementDuplicateTest extends TestCase
             [
                 'account_id' => $account->id,
                 'disbursed_at' => now()->format('Y-m-d H:i:s'),
-                'notes' => 'Percobaan pencairan kedua.',
+                'notes' => 'Percobaan pencairan melebihi saldo rekening.',
             ]
         );
 
@@ -192,34 +163,33 @@ class LoanDisbursementDuplicateTest extends TestCase
         );
 
         $loan->refresh();
+        $account->refresh();
 
         $this->assertSame(
-            'disbursed',
+            'approved',
             $loan->status
         );
 
         $this->assertSame(
-            1,
+            0,
             LoanDisbursement::where('loan_id', $loan->id)->count()
         );
 
         $this->assertSame(
-            1,
+            0,
             CashFlow::where('loan_id', $loan->id)
                 ->where('category', 'loan_disbursement')
                 ->count()
         );
 
         $this->assertSame(
-            12,
+            0,
             Installment::where('loan_id', $loan->id)->count()
         );
 
-        $this->assertDatabaseHas('loan_disbursements', [
-            'loan_id' => $loan->id,
-            'treasurer_id' => $treasurer->id,
-            'account_id' => $account->id,
-            'amount' => 1800000,
-        ]);
+        $this->assertSame(
+            1000000.00,
+            $account->calculateBalance()
+        );
     }
 }

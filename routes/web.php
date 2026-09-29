@@ -28,59 +28,19 @@ Route::middleware(['auth', 'active'])->group(function () {
 //     Route::resource('pengaturan', \App\Http\Controllers\Admin\PengaturanController::class);
 // });
 
-Route::middleware(['auth', 'active', 'anggota'])->prefix('anggota')->group(function () {
-    Route::get('/', [\App\Http\Controllers\Anggota\HomeController::class, 'index']);
-    Route::get('profile', [\App\Http\Controllers\Anggota\HomeController::class, 'profile']);
-    Route::post('profile', [\App\Http\Controllers\Anggota\HomeController::class, 'profile_proses']);
-    Route::get('password', [\App\Http\Controllers\Anggota\HomeController::class, 'password']);
-    Route::post('password', [\App\Http\Controllers\Anggota\HomeController::class, 'password_proses']);
-    Route::get('notifikasi', [\App\Http\Controllers\Anggota\HomeController::class, 'notifikasi']);
-    Route::get('pinjaman/print/{id}', [\App\Http\Controllers\Anggota\HomeController::class, 'print']);
+Route::middleware(['auth', 'active', 'anggota'])
+    ->prefix('anggota')
+    ->group(function () {
+        Route::get('/', [\App\Http\Controllers\Anggota\HomeController::class, 'index']);
 
-    Route::resource('simpanan', \App\Http\Controllers\Anggota\SimpananController::class);
+        Route::get('profile', [\App\Http\Controllers\Anggota\HomeController::class, 'profile']);
+        Route::post('profile', [\App\Http\Controllers\Anggota\HomeController::class, 'profile_proses']);
 
-    Route::resource('pinjaman', \App\Http\Controllers\Anggota\PinjamanController::class);
+        Route::get('password', [\App\Http\Controllers\Anggota\HomeController::class, 'password']);
+        Route::post('password', [\App\Http\Controllers\Anggota\HomeController::class, 'password_proses']);
 
-    Route::middleware('ketua')->prefix('ketua')->group(function () {
-        Route::resource('simpanan', \App\Http\Controllers\Anggota\Ketua\SimpananController::class);
-
-        Route::get('pinjaman/print/{id}', [\App\Http\Controllers\Anggota\Ketua\PinjamanController::class, 'print']);
-        Route::resource('pinjaman', \App\Http\Controllers\Anggota\Ketua\PinjamanController::class);
+        Route::get('notifikasi', [\App\Http\Controllers\Anggota\HomeController::class, 'notifikasi']);
     });
-
-    Route::middleware('sekretaris')->prefix('sekretaris')->group(function () {
-        Route::resource('simpanan', \App\Http\Controllers\Anggota\Sekretaris\SimpananController::class);
-
-        Route::get('pinjaman/spk/{id}', [\App\Http\Controllers\Anggota\Sekretaris\PinjamanController::class, 'spk']);
-        Route::resource('pinjaman', \App\Http\Controllers\Anggota\Sekretaris\PinjamanController::class);
-    });
-
-    Route::middleware('bendahara')->prefix('bendahara')->group(function () {
-        Route::resource('simpanan', \App\Http\Controllers\Anggota\Bendahara\SimpananController::class);
-
-        Route::resource('pinjaman', \App\Http\Controllers\Anggota\Bendahara\PinjamanController::class);
-
-        Route::resource('keuangan-rekening', \App\Http\Controllers\Anggota\Bendahara\KeuanganRekeningController::class);
-
-        Route::get('keuangan-arus/pemasukan/create', [\App\Http\Controllers\Anggota\Bendahara\KeuanganArusController::class, 'create_pemasukan']);
-        Route::resource('keuangan-arus', \App\Http\Controllers\Anggota\Bendahara\KeuanganArusController::class);
-    });
-
-    Route::middleware('manajer')->prefix('manajer')->group(function () {
-        Route::resource('simpanan', \App\Http\Controllers\Anggota\Manajer\SimpananController::class);
-
-        Route::get('pinjaman/print/{id}', [\App\Http\Controllers\Anggota\Manajer\PinjamanController::class, 'print']);
-        Route::get('pinjaman/surat-persetujuan-kredit/{id}', [\App\Http\Controllers\Anggota\Manajer\PinjamanController::class, 'surat_persetujuan_kredit']);
-        Route::get('pinjaman/surat-perjanjian-kredit/{id}', [\App\Http\Controllers\Anggota\Manajer\PinjamanController::class, 'surat_perjanjian_kredit']);
-        Route::resource('pinjaman', \App\Http\Controllers\Anggota\Manajer\PinjamanController::class);
-    });
-
-    Route::middleware('petugas')->prefix('petugas')->group(function () {
-        Route::resource('simpanan', \App\Http\Controllers\Anggota\Petugas\SimpananController::class);
-        Route::resource('pinjaman', \App\Http\Controllers\Anggota\Petugas\PinjamanController::class);
-        Route::resource('pengadaan', \App\Http\Controllers\Anggota\Petugas\PengadaanController::class);
-    });
-});
 
 Route::middleware(['auth', 'active', 'admin'])->prefix('admin')->group(function () {
 
@@ -153,10 +113,20 @@ Route::middleware(['auth', 'active', 'admin'])->prefix('admin')->group(function 
                 'edit',
             ])->name('edit');
 
+            Route::get('/{account}/initialize-opening-balance', [
+                \App\Http\Controllers\Admin\AccountController::class,
+                'showInitializeOpeningBalance',
+            ])->name('initialize-opening-balance.form');
+
             Route::put('/{account}', [
                 \App\Http\Controllers\Admin\AccountController::class,
                 'update',
             ])->name('update');
+
+            Route::patch('/{account}/initialize-opening-balance', [
+                \App\Http\Controllers\Admin\AccountController::class,
+                'initializeOpeningBalance',
+            ])->name('initialize-opening-balance');
 
             Route::patch('/{account}/toggle-status', [
                 \App\Http\Controllers\Admin\AccountController::class,

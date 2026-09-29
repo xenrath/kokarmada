@@ -135,6 +135,7 @@ class LoanDisbursementTest extends TestCase
             'bank_name' => 'Bank Test',
             'account_number' => 'DISBURSEMENT-' . uniqid(),
             'account_name' => 'KOPKARMADA DISBURSEMENT TEST',
+            'opening_balance' => 1800000,
             'is_active' => true,
         ]);
 

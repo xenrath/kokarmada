@@ -54,8 +54,26 @@ class InstallmentController extends Controller
 
         $accounts = Account::query()
             ->where('is_active', true)
+            ->whereNotNull('opening_balance_initialized_at')
+            ->withSum([
+                'cashFlows as total_in' => function ($query) {
+                    $query->where('type', 'in');
+                },
+            ], 'amount')
+            ->withSum([
+                'cashFlows as total_out' => function ($query) {
+                    $query->where('type', 'out');
+                },
+            ], 'amount')
             ->orderBy('name')
             ->get();
+
+        foreach ($accounts as $account) {
+            $account->available_balance =
+                (float) $account->opening_balance
+                + (float) ($account->total_in ?? 0)
+                - (float) ($account->total_out ?? 0);
+        }
 
         return view(
             'treasurer.installments.show',
@@ -79,13 +97,15 @@ class InstallmentController extends Controller
 
         DB::transaction(function () use ($validated, $installment) {
 
-            $installment->load('loan');
+            $loan = Loan::query()
+                ->whereKey($installment->loan_id)
+                ->lockForUpdate()
+                ->firstOrFail();
 
-            $loan = $installment->loan;
-
-            if (!$loan) {
-                abort(422, 'Pinjaman untuk angsuran tidak ditemukan.');
-            }
+            $installment = Installment::query()
+                ->whereKey($installment->id)
+                ->lockForUpdate()
+                ->firstOrFail();
 
             if ($loan->status !== 'disbursed') {
                 abort(
@@ -93,8 +113,6 @@ class InstallmentController extends Controller
                     'Pinjaman tidak berada pada status disbursed. Status saat ini: ' . $loan->status
                 );
             }
-
-            $installment->refresh();
 
             if ($installment->status === 'paid') {
                 abort(422, 'Angsuran ini sudah dibayar.');

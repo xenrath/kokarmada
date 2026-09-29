@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Treasurer;
 
 use App\Http\Controllers\Controller;
+use App\Models\Account;
 use App\Models\Activity;
 use App\Models\Loan;
 use App\Models\LoanProcess;
@@ -200,14 +201,37 @@ class LoanController extends Controller
 
         abort_unless($requiredDocumentsVerified, 404);
 
-        $accounts = \App\Models\Account::query()
+        $accounts = Account::query()
             ->where('is_active', true)
+            ->whereNotNull('opening_balance_initialized_at')
+            ->withSum([
+                'cashFlows as total_in' => function ($query) {
+                    $query->where('type', 'in');
+                },
+            ], 'amount')
+            ->withSum([
+                'cashFlows as total_out' => function ($query) {
+                    $query->where('type', 'out');
+                },
+            ], 'amount')
             ->orderBy('name')
             ->get();
 
+        $disbursementAmount = (float) $loan->approved_amount;
+
+        foreach ($accounts as $account) {
+            $account->available_balance =
+                (float) $account->opening_balance
+                + (float) ($account->total_in ?? 0)
+                - (float) ($account->total_out ?? 0);
+
+            $account->can_disburse =
+                $account->available_balance >= $disbursementAmount;
+        }
+
         return view(
             'treasurer.disbursements.show',
-            compact('loan', 'accounts')
+            compact('loan', 'accounts', 'disbursementAmount')
         );
     }
 
@@ -245,7 +269,10 @@ class LoanController extends Controller
             $validated,
             $installmentService
         ) {
-            $loan->refresh();
+            $loan = Loan::query()
+                ->whereKey($loan->id)
+                ->lockForUpdate()
+                ->firstOrFail();
 
             if ($loan->status !== 'approved') {
                 abort(

@@ -229,6 +229,9 @@
                                                                                 @if ($account->bank_name)
                                                                                     - {{ $account->bank_name }}
                                                                                 @endif
+
+                                                                                - Saldo Rp
+                                                                                {{ number_format($account->available_balance, 0, ',', '.') }}
                                                                             </option>
                                                                         @endforeach
 
