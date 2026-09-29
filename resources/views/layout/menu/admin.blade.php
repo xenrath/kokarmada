@@ -20,3 +20,10 @@
         <span>Rekening</span>
     </a>
 </li>
+
+<li class="side-nav-item">
+    <a href="{{ route('admin.loan-settings.edit') }}" class="side-nav-link">
+        <i class="uil-setting"></i>
+        <span>Pengaturan Pinjaman</span>
+    </a>
+</li>
