@@ -370,4 +370,14 @@ Route::middleware(['auth', 'active'])
             \App\Http\Controllers\Secretary\LoanController::class,
             'rejectDocument',
         ])->name('loans.documents.reject');
+
+        Route::post('/loans/{loan}/collaterals/{collateral}/verify', [
+            \App\Http\Controllers\Secretary\LoanController::class,
+            'verifyCollateral',
+        ])->name('loans.collaterals.verify');
+
+        Route::post('/loans/{loan}/collaterals/{collateral}/reject', [
+            \App\Http\Controllers\Secretary\LoanController::class,
+            'rejectCollateral',
+        ])->name('loans.collaterals.reject');
     });
