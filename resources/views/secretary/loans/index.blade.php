@@ -140,7 +140,7 @@
                                             <span class="badge bg-warning rounded-0">
                                                 Menunggu Validasi
                                             </span>
-                                        else
+                                        @else
                                             <span class="badge bg-success rounded-0">
                                                 Siap Dilanjutkan
                                             </span>
