@@ -88,6 +88,18 @@ class LoanController extends Controller
         DB::transaction(function () use ($loan, $validated) {
             $user = auth()->user();
 
+            $loan = Loan::query()
+                ->whereKey($loan->id)
+                ->lockForUpdate()
+                ->firstOrFail();
+
+            if ($loan->status !== 'waiting_treasurer_review') {
+                abort(
+                    422,
+                    'Pengajuan ini tidak dapat direview pada tahap sekarang.'
+                );
+            }
+
             LoanTreasurerReview::updateOrCreate(
                 [
                     'loan_id' => $loan->id,

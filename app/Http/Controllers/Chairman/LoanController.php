@@ -82,6 +82,18 @@ class LoanController extends Controller
         DB::transaction(function () use ($loan, $validated) {
             $user = auth()->user();
 
+            $loan = Loan::query()
+                ->whereKey($loan->id)
+                ->lockForUpdate()
+                ->firstOrFail();
+
+            if ($loan->status !== 'waiting_chairman_approval') {
+                abort(
+                    422,
+                    'Pengajuan ini tidak dapat diproses pada tahap sekarang.'
+                );
+            }
+
             $approvedAmount = (float) $validated['approved_amount'];
 
             /*

@@ -80,6 +80,18 @@ class LoanController extends Controller
         DB::transaction(function () use ($loan, $validated) {
             $user = auth()->user();
 
+            $loan = Loan::query()
+                ->whereKey($loan->id)
+                ->lockForUpdate()
+                ->firstOrFail();
+
+            if (! in_array($loan->status, ['submitted', 'under_analysis'], true)) {
+                abort(
+                    422,
+                    'Pengajuan ini tidak dapat dianalisis pada tahap sekarang.'
+                );
+            }
+
             LoanAnalysis::updateOrCreate(
                 ['loan_id' => $loan->id],
                 [
