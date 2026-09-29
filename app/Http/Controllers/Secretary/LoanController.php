@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Secretary;
 use App\Http\Controllers\Controller;
 use App\Models\Activity;
 use App\Models\Loan;
+use App\Models\LoanCollateral;
 use App\Models\LoanDocument;
 use App\Models\LoanProcess;
 use App\Models\Notification;
