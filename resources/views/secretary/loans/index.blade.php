@@ -1,6 +1,6 @@
 @extends('layout.app')
 
-@section('title', 'Validasi Dokumen')
+@section('title', 'Validasi Dokumen & Agunan')
 
 @section('content')
 
@@ -14,7 +14,7 @@
             </a>
 
             <h4 class="page-title mb-0">
-                Validasi Dokumen
+                Validasi Dokumen & Agunan
             </h4>
 
         </div>
@@ -26,12 +26,12 @@
             <div class="card-body">
 
                 <h4 class="header-title mb-1">
-                    Dokumen Menunggu Validasi
+                    Dokumen & Agunan Menunggu Validasi
                 </h4>
 
                 <p class="text-muted mb-0">
-                    Berikut pengajuan pinjaman yang dokumen bertanda
-                    tangannya telah diunggah oleh Manajer Analis.
+                    Periksa dokumen bertanda tangan dan agunan yang
+                    menunggu verifikasi sebelum pinjaman dilanjutkan.
                 </p>
 
             </div>
@@ -58,6 +58,7 @@
                                 <th>Anggota</th>
                                 <th>Nominal Disetujui</th>
                                 <th>Dokumen</th>
+                                <th>Agunan</th>
                                 <th>Status</th>
                                 <th class="text-end">Aksi</th>
                             </tr>
@@ -76,6 +77,14 @@
                                         ->where('status', 'pending')
                                         ->whereNotNull('file_path')
                                         ->count();
+
+                                    $pendingCollateralCount = $loan->collaterals
+                                        ->where('status', 'pending')
+                                        ->count();
+
+                                    $hasPendingVerification =
+                                        $pendingCount > 0 ||
+                                        $pendingCollateralCount > 0;
                                 @endphp
 
                                 <tr>
@@ -100,8 +109,7 @@
                                     <td class="align-middle">
 
                                         <span class="badge bg-warning rounded-0">
-                                            {{ $pendingCount }}
-                                            dokumen
+                                            {{ $pendingCount }} dokumen
                                         </span>
 
                                     </td>
@@ -109,9 +117,34 @@
 
                                     <td class="align-middle">
 
-                                        <span class="badge bg-secondary rounded-0">
-                                            Menunggu Validasi
-                                        </span>
+                                        @if ($pendingCollateralCount > 0)
+                                            <span class="badge bg-warning rounded-0">
+                                                {{ $pendingCollateralCount }} agunan
+                                            </span>
+                                        @elseif ($loan->collaterals->isNotEmpty())
+                                            <span class="badge bg-success rounded-0">
+                                                Sudah Diverifikasi
+                                            </span>
+                                        @else
+                                            <span class="text-muted">
+                                                Tidak ada
+                                            </span>
+                                        @endif
+
+                                    </td>
+
+
+                                    <td class="align-middle">
+
+                                        @if ($hasPendingVerification)
+                                            <span class="badge bg-warning rounded-0">
+                                                Menunggu Validasi
+                                            </span>
+                                        else
+                                            <span class="badge bg-success rounded-0">
+                                                Siap Dilanjutkan
+                                            </span>
+                                        @endif
 
                                     </td>
 
@@ -132,7 +165,7 @@
 
                                 <tr>
 
-                                    <td colspan="6" class="text-center py-5">
+                                    <td colspan="7" class="text-center py-5">
 
                                         <i class="mdi mdi-file-check-outline font-36 text-muted"></i>
 
