@@ -89,6 +89,20 @@ Route::middleware(['auth', 'active', 'admin'])->prefix('admin')->group(function 
             ])->name('reset-password');
         });
 
+    Route::prefix('loan-settings')
+        ->name('admin.loan-settings.')
+        ->group(function () {
+            Route::get('/', [
+                \App\Http\Controllers\Admin\LoanSettingController::class,
+                'edit',
+            ])->name('edit');
+
+            Route::put('/', [
+                \App\Http\Controllers\Admin\LoanSettingController::class,
+                'update',
+            ])->name('update');
+        });
+
     Route::prefix('accounts')
         ->name('admin.accounts.')
         ->group(function () {
