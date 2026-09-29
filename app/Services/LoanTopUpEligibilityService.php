@@ -201,6 +201,8 @@ class LoanTopUpEligibilityService
         }
 
         $result['eligible'] = true;
+        $result['reason_code'] = 'eligible';
+        $result['reason'] = 'Pinjaman memenuhi syarat dasar untuk Top Up.';
 
         return $result;
     }
