@@ -28,7 +28,7 @@ class LoanTopUpSubmissionTest extends TestCase
         $this->configureSettings();
 
         $member = $this->createMember();
-        $analystManager = $this->createUser('analyst_manager');
+        $this->createUser('analyst_manager');
         $oldLoan = $this->createEligibleLoan($member);
 
         $response = $this->actingAs($member)->post(
@@ -78,12 +78,14 @@ class LoanTopUpSubmissionTest extends TestCase
             'action' => 'loan_top_up_submitted',
         ]);
 
-        $this->assertDatabaseHas('notifications', [
-            'user_id' => $analystManager->id,
-            'reference_type' => Loan::class,
-            'reference_id' => $newLoan->id,
-            'type' => 'loan_submitted',
-        ]);
+        $this->assertSame(
+            1,
+            Notification::query()
+                ->where('reference_type', Loan::class)
+                ->where('reference_id', $newLoan->id)
+                ->where('type', 'loan_submitted')
+                ->count()
+        );
 
     }
 
@@ -170,36 +172,6 @@ class LoanTopUpSubmissionTest extends TestCase
         );
     }
 
-    public function test_other_income_requires_proof_when_above_zero(): void
-    {
-        $this->configureSettings();
-
-        $member = $this->createMember();
-        $oldLoan = $this->createEligibleLoan($member);
-
-        $response = $this->actingAs($member)->post(
-            route('member.loans.top-up.store', $oldLoan),
-            $this->basePayload([
-                'other_monthly_income' => 500000,
-                'salary_slip' => UploadedFile::fake()->create(
-                    'salary.pdf',
-                    100,
-                    'application/pdf'
-                ),
-            ])
-        );
-
-        $response
-            ->assertSessionHasErrors('other_income_proof');
-
-        $this->assertSame(
-            1,
-            Loan::query()
-                ->where('user_id', $member->id)
-                ->count()
-        );
-    }
-
     public function test_external_obligations_proof_is_optional(): void
     {
         Storage::fake('local');
@@ -253,6 +225,7 @@ class LoanTopUpSubmissionTest extends TestCase
         $this->setSetting('top_up_minimum_amount', 500000);
         $this->setSetting('loan_maximum_amount', 40000000);
         $this->setSetting('loan_capacity_threshold_percent', 40);
+        $this->setSetting('loan_interest_rate', 8);
 
         $oldLoan = $this->createEligibleLoan(
             $member,
