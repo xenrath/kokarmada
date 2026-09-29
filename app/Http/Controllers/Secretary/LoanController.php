@@ -58,6 +58,7 @@ class LoanController extends Controller
             'treasurerReview.treasurer',
             'documents.uploader',
             'documents.verifier',
+            'collaterals.verifier',
         ]);
 
         return view(
