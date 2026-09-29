@@ -59,11 +59,6 @@ class LoanTopUpSubmissionTest extends TestCase
             (float) $newLoan->requested_amount
         );
 
-        $this->assertSame(
-            'private',
-            'private'
-        );
-
         Storage::disk('local')->assertExists(
             $newLoan->salary_slip
         );
@@ -88,9 +83,6 @@ class LoanTopUpSubmissionTest extends TestCase
             'type' => 'loan_submitted',
         ]);
 
-        Storage::disk('local')->assertMissing(
-            'private/top-up/not-a-real-path.pdf'
-        );
     }
 
     public function test_guest_cannot_submit_top_up(): void
