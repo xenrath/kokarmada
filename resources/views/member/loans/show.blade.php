@@ -163,6 +163,194 @@
         </div>
 
 
+        {{-- KELAYAKAN TOP UP --}}
+        @if ($topUpEligibility)
+            <div class="card rounded-0 mb-3">
+
+                <div class="card-body">
+                    <h4 class="header-title mb-1">
+                        Status Kelayakan Top Up
+                    </h4>
+
+                    <p class="text-muted mb-0">
+                        Status berikut dihitung berdasarkan pinjaman aktif terbaru,
+                        riwayat pembayaran pokok, tunggakan, dan pengaturan koperasi.
+                    </p>
+                </div>
+
+                <div class="card-body border-top">
+
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <div>
+                            <div class="text-muted mb-1">
+                                Hasil Kelayakan
+                            </div>
+
+                            @if ($topUpEligibility['eligible'])
+                                <span class="badge bg-success rounded-0">
+                                    Memenuhi Syarat
+                                </span>
+                            @else
+                                <span class="badge bg-warning rounded-0">
+                                    Belum Memenuhi Syarat
+                                </span>
+                            @endif
+                        </div>
+
+                        <div class="text-end">
+                            <div class="text-muted mb-1">
+                                Persentase Pokok Terbayar
+                            </div>
+
+                            <div class="fw-semibold">
+                                {{ number_format($topUpEligibility['principal_repayment_percent'], 2, ',', '.') }}%
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row g-3">
+
+                        <div class="col-md-4">
+                            <div class="text-muted mb-1">
+                                Pokok Sudah Dibayar
+                            </div>
+
+                            <div class="fw-semibold">
+                                Rp{{ number_format($topUpEligibility['principal_paid'], 0, ',', '.') }}
+                            </div>
+                        </div>
+
+                        <div class="col-md-4">
+                            <div class="text-muted mb-1">
+                                Sisa Pokok
+                            </div>
+
+                            <div class="fw-semibold">
+                                Rp{{ number_format($topUpEligibility['outstanding_principal'], 0, ',', '.') }}
+                            </div>
+                        </div>
+
+                        <div class="col-md-4">
+                            <div class="text-muted mb-1">
+                                Angsuran Lama
+                            </div>
+
+                            <div class="fw-semibold">
+                                Rp{{ number_format($topUpEligibility['old_monthly_installment'], 0, ',', '.') }}
+                                / bulan
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="text-muted mb-1">
+                                Minimum Tambahan Top Up
+                            </div>
+
+                            <div class="fw-semibold">
+                                @if ($topUpEligibility['minimum_additional_amount'] !== null)
+                                    Rp{{ number_format($topUpEligibility['minimum_additional_amount'], 0, ',', '.') }}
+                                @else
+                                    Belum dikonfigurasi
+                                @endif
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="text-muted mb-1">
+                                Maksimum Tambahan Top Up
+                            </div>
+
+                            <div class="fw-semibold">
+                                @if ($topUpEligibility['maximum_additional_amount'] !== null)
+                                    Rp{{ number_format($topUpEligibility['maximum_additional_amount'], 0, ',', '.') }}
+                                @else
+                                    Belum tersedia
+                                @endif
+                            </div>
+                        </div>
+
+                    </div>
+
+                    @if ($topUpEligibility['financial'])
+                        <div class="border-top mt-4 pt-3">
+
+                            <h5 class="mb-3">
+                                Informasi Kapasitas Keuangan
+                            </h5>
+
+                            <div class="row g-3">
+
+                                <div class="col-md-3">
+                                    <div class="text-muted mb-1">
+                                        Pendapatan Bersih
+                                    </div>
+
+                                    <div class="fw-semibold">
+                                        Rp{{ number_format($topUpEligibility['financial']['net_monthly_income'], 0, ',', '.') }}
+                                    </div>
+                                </div>
+
+                                <div class="col-md-3">
+                                    <div class="text-muted mb-1">
+                                        Pendapatan Lain
+                                    </div>
+
+                                    <div class="fw-semibold">
+                                        Rp{{ number_format($topUpEligibility['financial']['other_monthly_income'], 0, ',', '.') }}
+                                    </div>
+                                </div>
+
+                                <div class="col-md-3">
+                                    <div class="text-muted mb-1">
+                                        Kewajiban Eksternal
+                                    </div>
+
+                                    <div class="fw-semibold">
+                                        Rp{{ number_format($topUpEligibility['financial']['external_monthly_obligations'], 0, ',', '.') }}
+                                    </div>
+                                </div>
+
+                                <div class="col-md-3">
+                                    <div class="text-muted mb-1">
+                                        Sisa Pendapatan Setelah Angsuran Lama
+                                    </div>
+
+                                    <div class="fw-semibold">
+                                        Rp{{ number_format($topUpEligibility['financial']['available_income'], 0, ',', '.') }}
+                                    </div>
+                                </div>
+
+                            </div>
+
+                            @if ($topUpEligibility['financial']['capacity_threshold_percent'] !== null)
+                                <div class="alert alert-info rounded-0 mt-3 mb-0">
+                                    Ambang kapasitas indikator:
+                                    <strong>
+                                        {{ number_format($topUpEligibility['financial']['capacity_threshold_percent'], 2, ',', '.') }}%
+                                    </strong>
+                                    dengan nilai indikator
+                                    <strong>
+                                        Rp{{ number_format($topUpEligibility['financial']['capacity_limit_amount'], 0, ',', '.') }}
+                                    </strong>.
+                                    Nilai ini digunakan sebagai bahan analisis dan bukan keputusan otomatis.
+                                </div>
+                            @endif
+
+                        </div>
+                    @endif
+
+                    <div class="border-top mt-4 pt-3">
+                        <p class="{{ $topUpEligibility['eligible'] ? 'text-success' : 'text-muted' }} mb-0">
+                            <i class="mdi mdi-information-outline me-1"></i>
+                            {{ $topUpEligibility['reason'] }}
+                        </p>
+                    </div>
+
+                </div>
+            </div>
+        @endif
+
+
         {{-- JADWAL ANGSURAN --}}
         @if ($loan->status === 'disbursed' && $loan->installments->isNotEmpty())
 
