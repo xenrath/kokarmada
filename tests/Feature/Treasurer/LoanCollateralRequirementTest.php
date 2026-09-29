@@ -138,7 +138,7 @@ class LoanCollateralRequirementTest extends TestCase
     {
         return User::create([
             'name' => ucfirst($role) . ' Collateral Disbursement Test',
-            'nickname' => $role . '_collateral_disbursement_' . uniqid(),
+            'nickname' => 'cd_' . substr(uniqid(), 0, 12),
             'phone' => '08' . random_int(1000000000, 9999999999),
             'gender' => 'L',
             'password' => Hash::make('password'),
