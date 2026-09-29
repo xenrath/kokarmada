@@ -11,6 +11,7 @@ use App\Models\Notification;
 use App\Models\Setting;
 use App\Models\User;
 use App\Services\LoanTopUpEligibilityService;
+use App\Services\LoanTopUpService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
@@ -853,6 +854,496 @@ class LoanController extends Controller
                 ->with(
                     'error',
                     'Pengajuan pinjaman gagal diproses. Silakan coba lagi.'
+                );
+        }
+    }
+
+    public function storeTopUp(
+        Request $request,
+        Loan $loan,
+        LoanTopUpEligibilityService $eligibilityService,
+        LoanTopUpService $topUpService
+    ): RedirectResponse {
+        $user = auth()->user();
+
+        abort_unless(
+            $user->isMember() && $user->isActive(),
+            403
+        );
+
+        abort_if(
+            ! $user->memberProfile,
+            422,
+            'Data diri Anda belum lengkap.'
+        );
+
+        abort_unless(
+            $loan->user_id === $user->id,
+            404
+        );
+
+        $topUpAmount = $this->parseMoney(
+            $request->input('top_up_amount')
+        );
+
+        $validator = Validator::make(
+            $request->all(),
+            [
+                'top_up_amount' => [
+                    'required',
+                ],
+
+                'purpose_category' => [
+                    'nullable',
+                    'in:business,consumer',
+                ],
+
+                'business_type' => [
+                    'nullable',
+                    'in:trade,agriculture,service,other',
+                ],
+
+                'business_type_other' => [
+                    'nullable',
+                    'string',
+                    'max:150',
+                ],
+
+                'purpose_description' => [
+                    'nullable',
+                    'string',
+                    'max:5000',
+                ],
+
+                'term_months' => [
+                    'required',
+                    'integer',
+                    'in:12,24,36,48,60',
+                ],
+
+                'work_unit' => [
+                    'nullable',
+                    'string',
+                    'max:150',
+                ],
+
+                'position' => [
+                    'nullable',
+                    'string',
+                    'max:150',
+                ],
+
+                'employment_duration_years' => [
+                    'nullable',
+                    'integer',
+                    'min:0',
+                    'max:100',
+                ],
+
+                'net_monthly_income' => [
+                    'nullable',
+                ],
+
+                'other_monthly_income' => [
+                    'nullable',
+                ],
+
+                'other_income_proof' => [
+                    'nullable',
+                    'file',
+                    'mimes:pdf,jpg,jpeg,png',
+                    'max:2048',
+                ],
+
+                'declared_external_monthly_obligations' => [
+                    'nullable',
+                ],
+
+                'declared_external_obligations_note' => [
+                    'nullable',
+                    'string',
+                    'max:1000',
+                ],
+
+                'declared_external_obligations_proof' => [
+                    'nullable',
+                    'file',
+                    'mimes:pdf,jpg,jpeg,png',
+                    'max:2048',
+                ],
+
+                'salary_slip' => [
+                    'required',
+                    'file',
+                    'mimes:pdf,jpg,jpeg,png',
+                    'max:2048',
+                ],
+
+                'collateral_type' => [
+                    'nullable',
+                    'string',
+                    'max:50',
+                ],
+
+                'collateral_description' => [
+                    'nullable',
+                    'string',
+                    'max:1000',
+                ],
+
+                'ownership_status' => [
+                    'nullable',
+                    'in:self,spouse,parent,other',
+                ],
+
+                'ownership_proof' => [
+                    'nullable',
+                    'in:shm,hgb,hgu,hak_pakai,bpkb',
+                ],
+
+                'collateral_proof_file' => [
+                    'nullable',
+                    'file',
+                    'mimes:pdf,jpg,jpeg,png',
+                    'max:2048',
+                ],
+            ],
+            [
+                'top_up_amount.required' =>
+                    'Nominal tambahan Top Up harus diisi.',
+
+                'salary_slip.required' =>
+                    'Slip gaji terbaru wajib diupload.',
+
+                'salary_slip.mimes' =>
+                    'Slip gaji harus berupa PDF, JPG, JPEG, atau PNG.',
+
+                'salary_slip.max' =>
+                    'Ukuran slip gaji maksimal 2 MB.',
+
+                'other_income_proof.mimes' =>
+                    'Bukti pendapatan harus berupa PDF, JPG, JPEG, atau PNG.',
+
+                'other_income_proof.max' =>
+                    'Ukuran bukti pendapatan maksimal 2 MB.',
+
+                'declared_external_obligations_proof.mimes' =>
+                    'Bukti kewajiban eksternal harus berupa PDF, JPG, JPEG, atau PNG.',
+
+                'declared_external_obligations_proof.max' =>
+                    'Ukuran bukti kewajiban eksternal maksimal 2 MB.',
+
+                'collateral_proof_file.mimes' =>
+                    'File bukti agunan harus berupa PDF, JPG, JPEG, atau PNG.',
+
+                'collateral_proof_file.max' =>
+                    'Ukuran file bukti agunan maksimal 2 MB.',
+            ]
+        );
+
+        if ($validator->fails()) {
+            return back()
+                ->withInput()
+                ->withErrors($validator)
+                ->with(
+                    'error',
+                    'Gagal mengajukan Top Up.'
+                );
+        }
+
+        $eligibility = $eligibilityService->evaluate($user);
+
+        if (
+            ! $eligibility['eligible']
+            || ! $eligibility['loan']
+            || $eligibility['loan']->id !== $loan->id
+        ) {
+            return back()
+                ->withInput()
+                ->withErrors([
+                    'top_up_amount' =>
+                        $eligibility['reason']
+                        ?? 'Pinjaman belum memenuhi syarat Top Up.',
+                ])
+                ->with(
+                    'error',
+                    'Pengajuan Top Up belum dapat diproses.'
+                );
+        }
+
+        $minimumAdditionalAmount =
+            (float) $eligibility['minimum_additional_amount'];
+
+        $maximumLoanAmount =
+            (float) $eligibility['maximum_loan_amount'];
+
+        $requestedAmount =
+            (float) $eligibility['outstanding_principal']
+            + $topUpAmount;
+
+        if ($topUpAmount <= 0) {
+            $validator->errors()->add(
+                'top_up_amount',
+                'Nominal tambahan Top Up harus lebih dari Rp0.'
+            );
+        }
+
+        if (
+            $topUpAmount > 0
+            && $topUpAmount < $minimumAdditionalAmount
+        ) {
+            $validator->errors()->add(
+                'top_up_amount',
+                'Nominal tambahan Top Up belum mencapai minimum yang ditetapkan.'
+            );
+        }
+
+        if (
+            $topUpAmount > 0
+            && $requestedAmount > $maximumLoanAmount
+        ) {
+            $validator->errors()->add(
+                'top_up_amount',
+                'Total kontrak baru melebihi batas maksimum pinjaman.'
+            );
+        }
+
+        $otherMonthlyIncome = $this->parseMoney(
+            $request->input('other_monthly_income')
+        );
+
+        if (
+            $otherMonthlyIncome > 0
+            && ! $request->hasFile('other_income_proof')
+        ) {
+            $validator->errors()->add(
+                'other_income_proof',
+                'Bukti pendapatan di luar gaji wajib diupload jika terdapat pendapatan tambahan.'
+            );
+        }
+
+        if ($requestedAmount > 25000000) {
+            foreach ([
+                'collateral_type' => 'Jenis agunan harus dipilih.',
+                'ownership_status' => 'Status kepemilikan harus dipilih.',
+                'ownership_proof' => 'Bukti kepemilikan harus dipilih.',
+            ] as $field => $message) {
+                if (blank($request->input($field))) {
+                    $validator->errors()->add(
+                        $field,
+                        $message
+                    );
+                }
+            }
+
+            if (! $request->hasFile('collateral_proof_file')) {
+                $validator->errors()->add(
+                    'collateral_proof_file',
+                    'File bukti agunan wajib diupload.'
+                );
+            }
+        }
+
+        if ($validator->fails()) {
+            return back()
+                ->withInput()
+                ->withErrors($validator)
+                ->with(
+                    'error',
+                    'Gagal mengajukan Top Up.'
+                );
+        }
+
+        $storedPaths = [];
+        $storageToken =
+            now()->format('YmdHis')
+            . '-'
+            . bin2hex(random_bytes(8));
+
+        try {
+            $basePath =
+                'private/top-up/'
+                . $user->id
+                . '/'
+                . $storageToken;
+
+            $salarySlipPath = $request
+                ->file('salary_slip')
+                ->store(
+                    $basePath . '/salary-slip',
+                    'local'
+                );
+
+            $storedPaths[] = $salarySlipPath;
+
+            $otherIncomeProofPath = null;
+
+            if ($request->hasFile('other_income_proof')) {
+                $otherIncomeProofPath = $request
+                    ->file('other_income_proof')
+                    ->store(
+                        $basePath . '/other-income',
+                        'local'
+                    );
+
+                $storedPaths[] = $otherIncomeProofPath;
+            }
+
+            $externalObligationsProofPath = null;
+
+            if (
+                $request->hasFile(
+                    'declared_external_obligations_proof'
+                )
+            ) {
+                $externalObligationsProofPath = $request
+                    ->file(
+                        'declared_external_obligations_proof'
+                    )
+                    ->store(
+                        $basePath . '/external-obligations',
+                        'local'
+                    );
+
+                $storedPaths[] =
+                    $externalObligationsProofPath;
+            }
+
+            $collateralProofPath = null;
+
+            if ($requestedAmount > 25000000) {
+                $collateralProofPath = $request
+                    ->file('collateral_proof_file')
+                    ->store(
+                        $basePath . '/collateral',
+                        'local'
+                    );
+
+                $storedPaths[] = $collateralProofPath;
+            }
+
+            $newLoan = $topUpService->submit(
+                $user,
+                [
+                    'top_up_amount' =>
+                        $topUpAmount,
+
+                    'term_months' =>
+                        (int) $request->input(
+                            'term_months'
+                        ),
+
+                    'purpose_category' =>
+                        $request->input(
+                            'purpose_category'
+                        ),
+
+                    'business_type' =>
+                        $request->input(
+                            'business_type'
+                        ),
+
+                    'business_type_other' =>
+                        $request->input(
+                            'business_type_other'
+                        ),
+
+                    'purpose_description' =>
+                        $request->input(
+                            'purpose_description'
+                        ),
+
+                    'work_unit' =>
+                        $request->input(
+                            'work_unit'
+                        ),
+
+                    'position' =>
+                        $request->input(
+                            'position'
+                        ),
+
+                    'employment_duration_years' =>
+                        $request->input(
+                            'employment_duration_years'
+                        ),
+
+                    'net_monthly_income' =>
+                        $this->parseMoney(
+                            $request->input(
+                                'net_monthly_income'
+                            )
+                        ),
+
+                    'other_monthly_income' =>
+                        $otherMonthlyIncome,
+
+                    'declared_external_monthly_obligations' =>
+                        $this->parseMoney(
+                            $request->input(
+                                'declared_external_monthly_obligations'
+                            )
+                        ),
+
+                    'declared_external_obligations_note' =>
+                        $request->input(
+                            'declared_external_obligations_note'
+                        ),
+
+                    'declared_external_obligations_proof' =>
+                        $externalObligationsProofPath,
+
+                    'other_income_proof' =>
+                        $otherIncomeProofPath,
+
+                    'salary_slip' =>
+                        $salarySlipPath,
+
+                    'collateral' =>
+                        $requestedAmount > 25000000
+                            ? [
+                                'type' =>
+                                    $request->input(
+                                        'collateral_type'
+                                    ),
+                                'description' =>
+                                    $request->input(
+                                        'collateral_description'
+                                    ),
+                                'ownership_status' =>
+                                    $request->input(
+                                        'ownership_status'
+                                    ),
+                                'ownership_proof' =>
+                                    $request->input(
+                                        'ownership_proof'
+                                    ),
+                                'proof_file' =>
+                                    $collateralProofPath,
+                            ]
+                            : null,
+                ]
+            );
+
+            return redirect()
+                ->route('member.loans.index')
+                ->with(
+                    'success',
+                    'Pengajuan Top Up berhasil dibuat dengan kode '
+                    . $newLoan->code
+                );
+        } catch (Throwable $e) {
+            foreach ($storedPaths as $path) {
+                Storage::disk('local')->delete($path);
+            }
+
+            report($e);
+
+            return back()
+                ->withInput()
+                ->with(
+                    'error',
+                    'Pengajuan Top Up gagal diproses. Silakan coba lagi.'
                 );
         }
     }
