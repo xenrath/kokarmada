@@ -40,8 +40,7 @@ class LoanController extends Controller
     public function show(
         Loan $loan,
         LoanTopUpEligibilityService $eligibilityService
-    ): View
-    {
+    ): View {
         $user = auth()->user();
 
         abort_unless(
@@ -111,7 +110,7 @@ class LoanController extends Controller
         );
 
         // =========================================================
-        // NORMALISASI ANGKA
+        // NORMALISASI DATA
         // =========================================================
 
         $requestedAmount = $this->parseMoney(
@@ -129,7 +128,9 @@ class LoanController extends Controller
         $termMonths = (int) $request->input('term_months');
 
         $purposeCategory = $request->input('purpose_category');
+
         $businessType = $request->input('business_type');
+
         $businessTypeOther = trim(
             (string) $request->input('business_type_other')
         );
@@ -153,120 +154,119 @@ class LoanController extends Controller
         );
 
         // =========================================================
-        // VALIDASI
+        // VALIDASI REQUEST
         // =========================================================
-
-        $rules = [
-            'requested_amount' => [
-                'required',
-            ],
-
-            'purpose_category' => [
-                'required',
-                'in:business,consumer',
-            ],
-
-            'business_type' => [
-                'nullable',
-                'in:trade,agriculture,service,other',
-            ],
-
-            'business_type_other' => [
-                'nullable',
-                'string',
-                'max:150',
-            ],
-
-            'purpose_description' => [
-                'required',
-                'string',
-                'max:5000',
-            ],
-
-            'term_months' => [
-                'required',
-                'integer',
-            ],
-
-            'repayment_type' => [
-                'required',
-                'in:monthly,lump_sum',
-            ],
-
-            'work_unit' => [
-                'required',
-                'string',
-                'max:150',
-            ],
-
-            'position' => [
-                'required',
-                'string',
-                'max:150',
-            ],
-
-            'employment_duration_years' => [
-                'required',
-                'integer',
-                'min:0',
-                'max:100',
-            ],
-
-            'other_monthly_income' => [
-                'nullable',
-            ],
-
-            'other_income_proof' => [
-                'nullable',
-                'file',
-                'mimes:pdf,jpg,jpeg,png',
-                'max:2048',
-            ],
-
-            'net_monthly_income' => [
-                'nullable',
-            ],
-
-            'salary_slip' => [
-                'required',
-                'file',
-                'mimes:pdf,jpg,jpeg,png',
-                'max:2048',
-            ],
-
-            'collateral_type' => [
-                'nullable',
-                'string',
-                'max:50',
-            ],
-
-            'collateral_description' => [
-                'nullable',
-                'string',
-                'max:1000',
-            ],
-
-            'ownership_status' => [
-                'nullable',
-                'in:self,spouse,parent,other',
-            ],
-
-            'ownership_proof' => [
-                'nullable',
-                'in:shm,hgb,hgu,hak_pakai,bpkb',
-            ],
-
-            'collateral_proof_file' => [
-                'nullable',
-                'file',
-                'mimes:pdf,jpg,jpeg,png',
-                'max:2048',
-            ],
-        ];
 
         $validator = Validator::make(
             $request->all(),
-            $rules,
+            [
+                'requested_amount' => [
+                    'required',
+                ],
+
+                'purpose_category' => [
+                    'required',
+                    'in:business,consumer',
+                ],
+
+                'business_type' => [
+                    'nullable',
+                    'in:trade,agriculture,service,other',
+                ],
+
+                'business_type_other' => [
+                    'nullable',
+                    'string',
+                    'max:150',
+                ],
+
+                'purpose_description' => [
+                    'required',
+                    'string',
+                    'max:5000',
+                ],
+
+                'term_months' => [
+                    'required',
+                    'integer',
+                ],
+
+                'repayment_type' => [
+                    'required',
+                    'in:monthly,lump_sum',
+                ],
+
+                'work_unit' => [
+                    'required',
+                    'string',
+                    'max:150',
+                ],
+
+                'position' => [
+                    'required',
+                    'string',
+                    'max:150',
+                ],
+
+                'employment_duration_years' => [
+                    'required',
+                    'integer',
+                    'min:0',
+                    'max:100',
+                ],
+
+                'other_monthly_income' => [
+                    'nullable',
+                ],
+
+                // Bukti pendapatan lain bersifat OPSIONAL.
+                'other_income_proof' => [
+                    'nullable',
+                    'file',
+                    'mimes:pdf,jpg,jpeg,png',
+                    'max:2048',
+                ],
+
+                'net_monthly_income' => [
+                    'nullable',
+                ],
+
+                'salary_slip' => [
+                    'required',
+                    'file',
+                    'mimes:pdf,jpg,jpeg,png',
+                    'max:2048',
+                ],
+
+                'collateral_type' => [
+                    'nullable',
+                    'string',
+                    'max:50',
+                ],
+
+                'collateral_description' => [
+                    'nullable',
+                    'string',
+                    'max:1000',
+                ],
+
+                'ownership_status' => [
+                    'nullable',
+                    'in:self,spouse,parent,other',
+                ],
+
+                'ownership_proof' => [
+                    'nullable',
+                    'in:shm,hgb,hgu,hak_pakai,bpkb',
+                ],
+
+                'collateral_proof_file' => [
+                    'nullable',
+                    'file',
+                    'mimes:pdf,jpg,jpeg,png',
+                    'max:2048',
+                ],
+            ],
             [
                 'requested_amount.required' =>
                 'Nominal pengajuan harus diisi.',
@@ -327,189 +327,6 @@ class LoanController extends Controller
             ]
         );
 
-        $validator->after(function ($validator) use (
-            $request,
-            $requestedAmount,
-            $purposeCategory,
-            $businessType,
-            $businessTypeOther,
-            $purposeDescription,
-            $termMonths,
-            $repaymentType,
-            $workUnit,
-            $position,
-            $employmentDurationYears,
-            $otherMonthlyIncome,
-            $netMonthlyIncome
-        ) {
-            // ---------------------------------------------------------
-            // NOMINAL
-            // ---------------------------------------------------------
-
-            if ($requestedAmount <= 0) {
-                $validator->errors()->add(
-                    'requested_amount',
-                    'Nominal pengajuan harus lebih dari Rp0.'
-                );
-            }
-
-            // ---------------------------------------------------------
-            // TUJUAN
-            // ---------------------------------------------------------
-
-            if ($purposeCategory === 'business') {
-                if (! in_array(
-                    $businessType,
-                    ['trade', 'agriculture', 'service', 'other'],
-                    true
-                )) {
-                    $validator->errors()->add(
-                        'business_type',
-                        'Jenis usaha harus dipilih.'
-                    );
-                }
-
-                if (
-                    $businessType === 'other' &&
-                    $businessTypeOther === ''
-                ) {
-                    $validator->errors()->add(
-                        'business_type_other',
-                        'Jenis usaha lainnya harus diisi.'
-                    );
-                }
-            }
-
-            if ($purposeCategory === 'consumer') {
-                if ($businessType !== null && $businessType !== '') {
-                    $validator->errors()->add(
-                        'business_type',
-                        'Jenis usaha tidak diperlukan untuk pinjaman konsumtif.'
-                    );
-                }
-            }
-
-            if ($purposeDescription === '') {
-                $validator->errors()->add(
-                    'purpose_description',
-                    'Tujuan pengajuan kredit harus diisi.'
-                );
-            }
-
-            // ---------------------------------------------------------
-            // JANGKA WAKTU
-            // ---------------------------------------------------------
-
-            if ($repaymentType === 'monthly') {
-                if (! in_array(
-                    $termMonths,
-                    [12, 24, 36, 48, 60],
-                    true
-                )) {
-                    $validator->errors()->add(
-                        'term_months',
-                        'Jangka waktu angsuran bulanan harus 12, 24, 36, 48, atau 60 bulan.'
-                    );
-                }
-            }
-
-            if ($repaymentType === 'lump_sum') {
-                if ($termMonths < 1 || $termMonths > 6) {
-                    $validator->errors()->add(
-                        'term_months',
-                        'Jangka waktu sekaligus harus antara 1 sampai 6 bulan.'
-                    );
-                }
-            }
-
-            // ---------------------------------------------------------
-            // PEKERJAAN
-            // ---------------------------------------------------------
-
-            if ($workUnit === '') {
-                $validator->errors()->add(
-                    'work_unit',
-                    'Unit kerja harus diisi.'
-                );
-            }
-
-            if ($position === '') {
-                $validator->errors()->add(
-                    'position',
-                    'Jabatan harus diisi.'
-                );
-            }
-
-            if ($employmentDurationYears === null) {
-                $validator->errors()->add(
-                    'employment_duration_years',
-                    'Lama bekerja harus diisi.'
-                );
-            }
-
-            // ---------------------------------------------------------
-            // PENDAPATAN
-            // ---------------------------------------------------------
-
-            if ($otherMonthlyIncome < 0) {
-                $validator->errors()->add(
-                    'other_monthly_income',
-                    'Pendapatan di luar gaji tidak boleh negatif.'
-                );
-            }
-
-            if ($netMonthlyIncome < 0) {
-                $validator->errors()->add(
-                    'net_monthly_income',
-                    'Pendapatan bersih tidak boleh negatif.'
-                );
-            }
-
-            if (
-                $otherMonthlyIncome > 0 &&
-                ! $request->hasFile('other_income_proof')
-            ) {
-                $validator->errors()->add(
-                    'other_income_proof',
-                    'Bukti pendapatan di luar gaji wajib diupload.'
-                );
-            }
-
-            // ---------------------------------------------------------
-            // AGUNAN
-            // ---------------------------------------------------------
-
-            if ($requestedAmount > 25000000) {
-                if (blank($request->input('collateral_type'))) {
-                    $validator->errors()->add(
-                        'collateral_type',
-                        'Jenis agunan harus dipilih.'
-                    );
-                }
-
-                if (blank($request->input('ownership_status'))) {
-                    $validator->errors()->add(
-                        'ownership_status',
-                        'Status kepemilikan harus dipilih.'
-                    );
-                }
-
-                if (blank($request->input('ownership_proof'))) {
-                    $validator->errors()->add(
-                        'ownership_proof',
-                        'Bukti kepemilikan harus dipilih.'
-                    );
-                }
-
-                if (! $request->hasFile('collateral_proof_file')) {
-                    $validator->errors()->add(
-                        'collateral_proof_file',
-                        'File bukti agunan wajib diupload.'
-                    );
-                }
-            }
-        });
-
         if ($validator->fails()) {
             return back()
                 ->withInput()
@@ -521,27 +338,178 @@ class LoanController extends Controller
         }
 
         // =========================================================
+        // VALIDASI BISNIS
+        // =========================================================
+
+        $businessErrors = [];
+
+        // ---------------------------------------------------------
+        // NOMINAL
+        // ---------------------------------------------------------
+
+        if ($requestedAmount <= 0) {
+            $businessErrors['requested_amount'][] =
+                'Nominal pengajuan harus lebih dari Rp0.';
+        }
+
+        // ---------------------------------------------------------
+        // TUJUAN
+        // ---------------------------------------------------------
+
+        if ($purposeCategory === 'business') {
+            if (! in_array(
+                $businessType,
+                ['trade', 'agriculture', 'service', 'other'],
+                true
+            )) {
+                $businessErrors['business_type'][] =
+                    'Jenis usaha harus dipilih.';
+            }
+
+            if (
+                $businessType === 'other' &&
+                $businessTypeOther === ''
+            ) {
+                $businessErrors['business_type_other'][] =
+                    'Jenis usaha lainnya harus diisi.';
+            }
+        }
+
+        if (
+            $purposeCategory === 'consumer'
+            && $businessType !== null
+            && $businessType !== ''
+        ) {
+            $businessErrors['business_type'][] =
+                'Jenis usaha tidak diperlukan untuk pinjaman konsumtif.';
+        }
+
+        if ($purposeDescription === '') {
+            $businessErrors['purpose_description'][] =
+                'Tujuan pengajuan kredit harus diisi.';
+        }
+
+        // ---------------------------------------------------------
+        // JANGKA WAKTU
+        // ---------------------------------------------------------
+
+        if ($repaymentType === 'monthly') {
+            if (! in_array(
+                $termMonths,
+                [12, 24, 36, 48, 60],
+                true
+            )) {
+                $businessErrors['term_months'][] =
+                    'Jangka waktu angsuran bulanan harus 12, 24, 36, 48, atau 60 bulan.';
+            }
+        }
+
+        if ($repaymentType === 'lump_sum') {
+            if ($termMonths < 1 || $termMonths > 6) {
+                $businessErrors['term_months'][] =
+                    'Jangka waktu sekaligus harus antara 1 sampai 6 bulan.';
+            }
+        }
+
+        // ---------------------------------------------------------
+        // PEKERJAAN
+        // ---------------------------------------------------------
+
+        if ($workUnit === '') {
+            $businessErrors['work_unit'][] =
+                'Unit kerja harus diisi.';
+        }
+
+        if ($position === '') {
+            $businessErrors['position'][] =
+                'Jabatan harus diisi.';
+        }
+
+        if ($employmentDurationYears === null) {
+            $businessErrors['employment_duration_years'][] =
+                'Lama bekerja harus diisi.';
+        }
+
+        // ---------------------------------------------------------
+        // PENDAPATAN
+        // ---------------------------------------------------------
+
+        if ($otherMonthlyIncome < 0) {
+            $businessErrors['other_monthly_income'][] =
+                'Pendapatan di luar gaji tidak boleh negatif.';
+        }
+
+        if ($netMonthlyIncome < 0) {
+            $businessErrors['net_monthly_income'][] =
+                'Pendapatan bersih tidak boleh negatif.';
+        }
+
+        // Catatan:
+        // other_income_proof TIDAK diwajibkan.
+        // Jika file ada, akan disimpan.
+        // Jika tidak ada, tetap valid.
+
+        // ---------------------------------------------------------
+        // AGUNAN
+        // ---------------------------------------------------------
+
+        if ($requestedAmount > 25000000) {
+            if (blank($request->input('collateral_type'))) {
+                $businessErrors['collateral_type'][] =
+                    'Jenis agunan harus dipilih.';
+            }
+
+            if (blank($request->input('ownership_status'))) {
+                $businessErrors['ownership_status'][] =
+                    'Status kepemilikan harus dipilih.';
+            }
+
+            if (blank($request->input('ownership_proof'))) {
+                $businessErrors['ownership_proof'][] =
+                    'Bukti kepemilikan harus dipilih.';
+            }
+
+            if (! $request->hasFile('collateral_proof_file')) {
+                $businessErrors['collateral_proof_file'][] =
+                    'File bukti agunan wajib diupload.';
+            }
+        }
+
+        // ---------------------------------------------------------
+        // JIKA BUSINESS VALIDATION GAGAL
+        // ---------------------------------------------------------
+
+        if ($businessErrors !== []) {
+            return back()
+                ->withInput()
+                ->withErrors($businessErrors)
+                ->with(
+                    'error',
+                    'Gagal mengajukan pinjaman.'
+                );
+        }
+
+        // =========================================================
         // SNAPSHOT SUKU BUNGA
         // =========================================================
 
         $interestRate = (float) (
-            Setting::where('key', 'loan_interest_rate')
+            Setting::query()
+            ->where('key', 'loan_interest_rate')
             ->value('value') ?? 0
         );
 
         // =========================================================
         // ANGSURAN FINAL
         // =========================================================
-        //
+
         // Angsuran final belum dihitung pada tahap pengajuan.
-        // Nominal final baru ditentukan oleh Chairman.
-        // Perhitungan monthly_installment dilakukan saat approval
-        // berdasarkan approved_amount dan interest_rate snapshot.
+        // Nominal final ditentukan saat approval Chairman.
 
         $monthlyInstallment = null;
 
         // =========================================================
-        // FILE PATH TRACKING
+        // FILE TRACKING
         // =========================================================
 
         $salarySlipPath = null;
@@ -574,7 +542,8 @@ class LoanController extends Controller
                 // NOMOR URUT
                 // =====================================================
 
-                $lastSequence = Loan::lockForUpdate()
+                $lastSequence = Loan::query()
+                    ->lockForUpdate()
                     ->max('sequence_number');
 
                 $sequenceNumber = $lastSequence
@@ -585,9 +554,9 @@ class LoanController extends Controller
                     $sequenceNumber
                 );
 
-                // =====================================================
-                // SLIP GAJI
-                // =====================================================
+            // =====================================================
+            // SLIP GAJI
+            // =====================================================
 
                 /** @var UploadedFile $salarySlip */
                 $salarySlip = $request->file('salary_slip');
@@ -612,13 +581,10 @@ class LoanController extends Controller
                 );
 
                 // =====================================================
-                // BUKTI PENDAPATAN DI LUAR GAJI
+                // BUKTI PENDAPATAN LAIN
                 // =====================================================
 
-                if (
-                    $otherMonthlyIncome > 0 &&
-                    $request->hasFile('other_income_proof')
-                ) {
+                if ($request->hasFile('other_income_proof')) {
                     /** @var UploadedFile $otherIncomeProof */
                     $otherIncomeProof = $request->file(
                         'other_income_proof'
@@ -654,16 +620,20 @@ class LoanController extends Controller
                     'user_id' => $user->id,
                     'submitted_at' => now(),
 
+                    'loan_type' => 'regular',
+
                     'requested_amount' => $requestedAmount,
 
                     'purpose_category' => $purposeCategory,
-                    'business_type' => $purposeCategory === 'business'
+
+                    'business_type' =>
+                    $purposeCategory === 'business'
                         ? $businessType
                         : null,
 
                     'business_type_other' =>
-                    $purposeCategory === 'business' &&
-                        $businessType === 'other'
+                    $purposeCategory === 'business'
+                        && $businessType === 'other'
                         ? $businessTypeOther
                         : null,
 
@@ -671,12 +641,18 @@ class LoanController extends Controller
                     $purposeDescription,
 
                     'term_months' => $termMonths,
+
                     'repayment_type' => $repaymentType,
+
                     'monthly_installment' =>
                     $monthlyInstallment,
 
-                    'work_unit' => $workUnit,
-                    'position' => $position,
+                    'work_unit' =>
+                    $workUnit,
+
+                    'position' =>
+                    $position,
+
                     'employment_duration_years' =>
                     $employmentDurationYears,
 
@@ -689,16 +665,17 @@ class LoanController extends Controller
                     'net_monthly_income' =>
                     $netMonthlyIncome,
 
-                    'salary_slip' => $salarySlipPath,
+                    'salary_slip' =>
+                    $salarySlipPath,
 
-                    // Snapshot bunga saat pengajuan.
-                    'interest_rate' => $interestRate,
+                    'interest_rate' =>
+                    $interestRate,
 
-                    // Belum disetujui Chairman.
-                    'approved_amount' => null,
+                    'approved_amount' =>
+                    null,
 
-                    // Status awal.
-                    'status' => 'submitted',
+                    'status' =>
+                    'submitted',
                 ]);
 
                 // =====================================================
@@ -731,7 +708,8 @@ class LoanController extends Controller
                     );
 
                     LoanCollateral::create([
-                        'loan_id' => $loan->id,
+                        'loan_id' =>
+                        $loan->id,
 
                         'type' =>
                         $request->input(
@@ -755,18 +733,29 @@ class LoanController extends Controller
 
                         'proof_file' =>
                         $collateralProofPath,
+
+                        'status' =>
+                        'pending',
                     ]);
                 }
 
                 // =====================================================
-                // LOAN PROCESS / AUDIT TRAIL
+                // LOAN PROCESS
                 // =====================================================
 
                 LoanProcess::create([
-                    'loan_id' => $loan->id,
-                    'user_id' => $user->id,
-                    'role' => 'member',
-                    'action' => 'submitted',
+                    'loan_id' =>
+                    $loan->id,
+
+                    'user_id' =>
+                    $user->id,
+
+                    'role' =>
+                    'member',
+
+                    'action' =>
+                    'submitted',
+
                     'notes' =>
                     'Anggota mengajukan pinjaman.',
                 ]);
@@ -776,19 +765,31 @@ class LoanController extends Controller
                 // =====================================================
 
                 Activity::create([
-                    'user_id' => $user->id,
-                    'action' => 'loan_submitted',
-                    'subject_type' => Loan::class,
-                    'subject_id' => $loan->id,
+                    'user_id' =>
+                    $user->id,
+
+                    'action' =>
+                    'loan_submitted',
+
+                    'subject_type' =>
+                    Loan::class,
+
+                    'subject_id' =>
+                    $loan->id,
+
                     'description' =>
                     'Mengajukan pinjaman ' .
                         $loan->code,
-                    'ip_address' => request()->ip(),
-                    'user_agent' => request()->userAgent(),
+
+                    'ip_address' =>
+                    request()->ip(),
+
+                    'user_agent' =>
+                    request()->userAgent(),
                 ]);
 
                 // =====================================================
-                // NOTIFIKASI ANALYST MANAGER
+                // NOTIFIKASI
                 // =====================================================
 
                 $analystManager = User::query()
@@ -831,10 +832,6 @@ class LoanController extends Controller
                         $loan->code
                 );
         } catch (Throwable $e) {
-            // =========================================================
-            // CLEANUP FILE JIKA TRANSAKSI GAGAL
-            // =========================================================
-
             foreach (
                 [
                     $salarySlipPath,
@@ -866,6 +863,10 @@ class LoanController extends Controller
     ): RedirectResponse {
         $user = auth()->user();
 
+        // =========================================================
+        // OTORISASI
+        // =========================================================
+
         abort_unless(
             $user->isMember() && $user->isActive(),
             403
@@ -882,9 +883,17 @@ class LoanController extends Controller
             404
         );
 
+        // =========================================================
+        // NORMALISASI NOMINAL
+        // =========================================================
+
         $topUpAmount = $this->parseMoney(
             $request->input('top_up_amount')
         );
+
+        // =========================================================
+        // VALIDASI REQUEST DASAR
+        // =========================================================
 
         $validator = Validator::make(
             $request->all(),
@@ -948,6 +957,7 @@ class LoanController extends Controller
                     'nullable',
                 ],
 
+                // Bukti pendapatan lain bersifat OPSIONAL.
                 'other_income_proof' => [
                     'nullable',
                     'file',
@@ -972,12 +982,17 @@ class LoanController extends Controller
                     'max:2048',
                 ],
 
+                // Top Up wajib menggunakan slip gaji terbaru.
                 'salary_slip' => [
                     'required',
                     'file',
                     'mimes:pdf,jpg,jpeg,png',
                     'max:2048',
                 ],
+
+                // =====================================================
+                // AGUNAN
+                // =====================================================
 
                 'collateral_type' => [
                     'nullable',
@@ -1010,34 +1025,43 @@ class LoanController extends Controller
             ],
             [
                 'top_up_amount.required' =>
-                    'Nominal tambahan Top Up harus diisi.',
+                'Nominal tambahan Top Up harus diisi.',
+
+                'term_months.required' =>
+                'Jangka waktu Top Up harus dipilih.',
+
+                'term_months.integer' =>
+                'Jangka waktu Top Up tidak valid.',
+
+                'term_months.in' =>
+                'Jangka waktu Top Up harus 12, 24, 36, 48, atau 60 bulan.',
 
                 'salary_slip.required' =>
-                    'Slip gaji terbaru wajib diupload.',
+                'Slip gaji terbaru wajib diupload.',
 
                 'salary_slip.mimes' =>
-                    'Slip gaji harus berupa PDF, JPG, JPEG, atau PNG.',
+                'Slip gaji harus berupa PDF, JPG, JPEG, atau PNG.',
 
                 'salary_slip.max' =>
-                    'Ukuran slip gaji maksimal 2 MB.',
+                'Ukuran slip gaji maksimal 2 MB.',
 
                 'other_income_proof.mimes' =>
-                    'Bukti pendapatan harus berupa PDF, JPG, JPEG, atau PNG.',
+                'Bukti pendapatan harus berupa PDF, JPG, JPEG, atau PNG.',
 
                 'other_income_proof.max' =>
-                    'Ukuran bukti pendapatan maksimal 2 MB.',
+                'Ukuran bukti pendapatan maksimal 2 MB.',
 
                 'declared_external_obligations_proof.mimes' =>
-                    'Bukti kewajiban eksternal harus berupa PDF, JPG, JPEG, atau PNG.',
+                'Bukti kewajiban eksternal harus berupa PDF, JPG, JPEG, atau PNG.',
 
                 'declared_external_obligations_proof.max' =>
-                    'Ukuran bukti kewajiban eksternal maksimal 2 MB.',
+                'Ukuran bukti kewajiban eksternal maksimal 2 MB.',
 
                 'collateral_proof_file.mimes' =>
-                    'File bukti agunan harus berupa PDF, JPG, JPEG, atau PNG.',
+                'File bukti agunan harus berupa PDF, JPG, JPEG, atau PNG.',
 
                 'collateral_proof_file.max' =>
-                    'Ukuran file bukti agunan maksimal 2 MB.',
+                'Ukuran file bukti agunan maksimal 2 MB.',
             ]
         );
 
@@ -1051,6 +1075,10 @@ class LoanController extends Controller
                 );
         }
 
+        // =========================================================
+        // CEK KELAYAKAN TOP UP
+        // =========================================================
+
         $eligibility = $eligibilityService->evaluate($user);
 
         if (
@@ -1062,7 +1090,7 @@ class LoanController extends Controller
                 ->withInput()
                 ->withErrors([
                     'top_up_amount' =>
-                        $eligibility['reason']
+                    $eligibility['reason']
                         ?? 'Pinjaman belum memenuhi syarat Top Up.',
                 ])
                 ->with(
@@ -1071,90 +1099,278 @@ class LoanController extends Controller
                 );
         }
 
+        // =========================================================
+        // DATA KELAYAKAN
+        // =========================================================
+
         $minimumAdditionalAmount =
             (float) $eligibility['minimum_additional_amount'];
 
         $maximumLoanAmount =
             (float) $eligibility['maximum_loan_amount'];
 
+        $outstandingPrincipal =
+            (float) $eligibility['outstanding_principal'];
+
+        /*
+     * Total kontrak baru:
+     *
+     * outstanding pokok lama
+     * +
+     * tambahan Top Up
+     */
         $requestedAmount =
-            (float) $eligibility['outstanding_principal']
+            $outstandingPrincipal
             + $topUpAmount;
 
+        // =========================================================
+        // NORMALISASI DATA KEUANGAN
+        // =========================================================
+
+        $otherMonthlyIncome = $this->parseMoney(
+            $request->input('other_monthly_income')
+        );
+
+        $netMonthlyIncome = $this->parseMoney(
+            $request->input('net_monthly_income')
+        );
+
+        $externalMonthlyObligations = $this->parseMoney(
+            $request->input(
+                'declared_external_monthly_obligations'
+            )
+        );
+
+        // =========================================================
+        // VALIDASI BISNIS TOP UP
+        // =========================================================
+
+        $businessErrors = [];
+
+        // ---------------------------------------------------------
+        // NOMINAL TAMBAHAN
+        // ---------------------------------------------------------
+
         if ($topUpAmount <= 0) {
-            $validator->errors()->add(
-                'top_up_amount',
-                'Nominal tambahan Top Up harus lebih dari Rp0.'
-            );
+            $businessErrors['top_up_amount'][] =
+                'Nominal tambahan Top Up harus lebih dari Rp0.';
         }
 
         if (
             $topUpAmount > 0
             && $topUpAmount < $minimumAdditionalAmount
         ) {
-            $validator->errors()->add(
-                'top_up_amount',
-                'Nominal tambahan Top Up belum mencapai minimum yang ditetapkan.'
-            );
+            $businessErrors['top_up_amount'][] =
+                'Nominal tambahan Top Up belum mencapai minimum yang ditetapkan.';
         }
+
+        // ---------------------------------------------------------
+        // BATAS MAKSIMUM TOTAL KONTRAK
+        // ---------------------------------------------------------
 
         if (
             $topUpAmount > 0
             && $requestedAmount > $maximumLoanAmount
         ) {
-            $validator->errors()->add(
-                'top_up_amount',
-                'Total kontrak baru melebihi batas maksimum pinjaman.'
-            );
+            $businessErrors['top_up_amount'][] =
+                'Total kontrak baru melebihi batas maksimum pinjaman.';
         }
 
-        $otherMonthlyIncome = $this->parseMoney(
-            $request->input('other_monthly_income')
+        // ---------------------------------------------------------
+        // DATA KEUANGAN
+        // ---------------------------------------------------------
+
+        if ($netMonthlyIncome < 0) {
+            $businessErrors['net_monthly_income'][] =
+                'Pendapatan bersih tidak boleh negatif.';
+        }
+
+        if ($otherMonthlyIncome < 0) {
+            $businessErrors['other_monthly_income'][] =
+                'Pendapatan di luar gaji tidak boleh negatif.';
+        }
+
+        if ($externalMonthlyObligations < 0) {
+            $businessErrors['declared_external_monthly_obligations'][] =
+                'Kewajiban bulanan di luar koperasi tidak boleh negatif.';
+        }
+
+        // IMPORTANT:
+        // other_income_proof TIDAK diwajibkan.
+        // Bukti hanya diproses jika memang diupload.
+
+        // ---------------------------------------------------------
+        // TUJUAN PINJAMAN
+        // ---------------------------------------------------------
+
+        $purposeCategory = $request->input(
+            'purpose_category'
+        );
+
+        $businessType = $request->input(
+            'business_type'
+        );
+
+        $businessTypeOther = trim(
+            (string) $request->input(
+                'business_type_other'
+            )
+        );
+
+        $purposeDescription = trim(
+            (string) $request->input(
+                'purpose_description'
+            )
         );
 
         if (
-            $otherMonthlyIncome > 0
-            && ! $request->hasFile('other_income_proof')
+            $purposeCategory === 'business'
+            && ! in_array(
+                $businessType,
+                ['trade', 'agriculture', 'service', 'other'],
+                true
+            )
         ) {
-            $validator->errors()->add(
-                'other_income_proof',
-                'Bukti pendapatan di luar gaji wajib diupload jika terdapat pendapatan tambahan.'
-            );
+            $businessErrors['business_type'][] =
+                'Jenis usaha harus dipilih.';
         }
 
+        if (
+            $purposeCategory === 'business'
+            && $businessType === 'other'
+            && $businessTypeOther === ''
+        ) {
+            $businessErrors['business_type_other'][] =
+                'Jenis usaha lainnya harus diisi.';
+        }
+
+        if (
+            $purposeCategory === 'consumer'
+            && $businessType !== null
+            && $businessType !== ''
+        ) {
+            $businessErrors['business_type'][] =
+                'Jenis usaha tidak diperlukan untuk pinjaman konsumtif.';
+        }
+
+        /*
+     * Purpose description boleh kosong pada boundary request
+     * karena service dapat menggunakan data pinjaman lama.
+     */
+
+        // ---------------------------------------------------------
+        // PEKERJAAN
+        // ---------------------------------------------------------
+
+        $workUnit = trim(
+            (string) $request->input('work_unit')
+        );
+
+        $position = trim(
+            (string) $request->input('position')
+        );
+
+        $employmentDurationYears =
+            $request->input(
+                'employment_duration_years'
+            );
+
+        if (
+            $workUnit !== ''
+            && mb_strlen($workUnit) > 150
+        ) {
+            $businessErrors['work_unit'][] =
+                'Unit kerja maksimal 150 karakter.';
+        }
+
+        if (
+            $position !== ''
+            && mb_strlen($position) > 150
+        ) {
+            $businessErrors['position'][] =
+                'Jabatan maksimal 150 karakter.';
+        }
+
+        if (
+            $employmentDurationYears !== null
+            && (int) $employmentDurationYears < 0
+        ) {
+            $businessErrors['employment_duration_years'][] =
+                'Lama bekerja tidak boleh negatif.';
+        }
+
+        // ---------------------------------------------------------
+        // AGUNAN
+        // ---------------------------------------------------------
+
         if ($requestedAmount > 25000000) {
-            foreach ([
-                'collateral_type' => 'Jenis agunan harus dipilih.',
-                'ownership_status' => 'Status kepemilikan harus dipilih.',
-                'ownership_proof' => 'Bukti kepemilikan harus dipilih.',
-            ] as $field => $message) {
-                if (blank($request->input($field))) {
-                    $validator->errors()->add(
-                        $field,
-                        $message
-                    );
-                }
+            if (blank($request->input('collateral_type'))) {
+                $businessErrors['collateral_type'][] =
+                    'Jenis agunan harus dipilih.';
+            }
+
+            if (blank($request->input('ownership_status'))) {
+                $businessErrors['ownership_status'][] =
+                    'Status kepemilikan harus dipilih.';
+            }
+
+            if (blank($request->input('ownership_proof'))) {
+                $businessErrors['ownership_proof'][] =
+                    'Bukti kepemilikan harus dipilih.';
             }
 
             if (! $request->hasFile('collateral_proof_file')) {
-                $validator->errors()->add(
-                    'collateral_proof_file',
-                    'File bukti agunan wajib diupload.'
-                );
+                $businessErrors['collateral_proof_file'][] =
+                    'File bukti agunan wajib diupload.';
             }
         }
 
-        if ($validator->fails()) {
+        // =========================================================
+        // JIKA BUSINESS VALIDATION GAGAL
+        // =========================================================
+
+        if ($businessErrors !== []) {
             return back()
                 ->withInput()
-                ->withErrors($validator)
+                ->withErrors($businessErrors)
                 ->with(
                     'error',
                     'Gagal mengajukan Top Up.'
                 );
         }
 
+        // =========================================================
+        // CEK SUKU BUNGA
+        // =========================================================
+
+        $interestRateValue = Setting::query()
+            ->where('key', 'loan_interest_rate')
+            ->value('value');
+
+        if (
+            $interestRateValue === null
+            || trim((string) $interestRateValue) === ''
+            || ! is_numeric($interestRateValue)
+            || (float) $interestRateValue < 0
+        ) {
+            return back()
+                ->withInput()
+                ->withErrors([
+                    'top_up_amount' =>
+                    'Pengaturan suku bunga pinjaman belum dikonfigurasi dengan benar.',
+                ])
+                ->with(
+                    'error',
+                    'Pengajuan Top Up belum dapat diproses.'
+                );
+        }
+
+        // =========================================================
+        // STORAGE
+        // =========================================================
+
         $storedPaths = [];
+
         $storageToken =
             now()->format('YmdHis')
             . '-'
@@ -1167,6 +1383,10 @@ class LoanController extends Controller
                 . '/'
                 . $storageToken;
 
+            // =====================================================
+            // SLIP GAJI
+            // =====================================================
+
             $salarySlipPath = $request
                 ->file('salary_slip')
                 ->store(
@@ -1174,7 +1394,12 @@ class LoanController extends Controller
                     'local'
                 );
 
-            $storedPaths[] = $salarySlipPath;
+            $storedPaths[] =
+                $salarySlipPath;
+
+            // =====================================================
+            // BUKTI PENDAPATAN LAIN
+            // =====================================================
 
             $otherIncomeProofPath = null;
 
@@ -1186,8 +1411,13 @@ class LoanController extends Controller
                         'local'
                     );
 
-                $storedPaths[] = $otherIncomeProofPath;
+                $storedPaths[] =
+                    $otherIncomeProofPath;
             }
+
+            // =====================================================
+            // BUKTI KEWAJIBAN EKSTERNAL
+            // =====================================================
 
             $externalObligationsProofPath = null;
 
@@ -1196,7 +1426,8 @@ class LoanController extends Controller
                     'declared_external_obligations_proof'
                 )
             ) {
-                $externalObligationsProofPath = $request
+                $externalObligationsProofPath =
+                    $request
                     ->file(
                         'declared_external_obligations_proof'
                     )
@@ -1209,6 +1440,10 @@ class LoanController extends Controller
                     $externalObligationsProofPath;
             }
 
+            // =====================================================
+            // BUKTI AGUNAN
+            // =====================================================
+
             $collateralProofPath = null;
 
             if ($requestedAmount > 25000000) {
@@ -1219,130 +1454,156 @@ class LoanController extends Controller
                         'local'
                     );
 
-                $storedPaths[] = $collateralProofPath;
+                $storedPaths[] =
+                    $collateralProofPath;
             }
+
+            // =====================================================
+            // SUBMIT TOP UP
+            // =====================================================
 
             $newLoan = $topUpService->submit(
                 $user,
                 [
                     'top_up_amount' =>
-                        $topUpAmount,
+                    $topUpAmount,
 
                     'term_months' =>
-                        (int) $request->input(
-                            'term_months'
-                        ),
+                    (int) $request->input(
+                        'term_months'
+                    ),
 
                     'purpose_category' =>
-                        $request->input(
-                            'purpose_category'
-                        ),
+                    $request->input(
+                        'purpose_category'
+                    ),
 
                     'business_type' =>
-                        $request->input(
-                            'business_type'
-                        ),
+                    $request->input(
+                        'business_type'
+                    ),
 
                     'business_type_other' =>
-                        $request->input(
-                            'business_type_other'
-                        ),
+                    $request->input(
+                        'business_type_other'
+                    ),
 
                     'purpose_description' =>
-                        $request->input(
-                            'purpose_description'
-                        ),
+                    $request->input(
+                        'purpose_description'
+                    ),
 
                     'work_unit' =>
-                        $request->input(
-                            'work_unit'
-                        ),
+                    $request->input(
+                        'work_unit'
+                    ),
 
                     'position' =>
-                        $request->input(
-                            'position'
-                        ),
+                    $request->input(
+                        'position'
+                    ),
 
                     'employment_duration_years' =>
-                        $request->input(
-                            'employment_duration_years'
-                        ),
+                    $request->input(
+                        'employment_duration_years'
+                    ),
+
+                    /*
+                 * Hanya override data lama jika field
+                 * memang dikirim oleh anggota.
+                 */
 
                     'net_monthly_income' =>
-                        $request->has('net_monthly_income')
-                            ? $this->parseMoney(
-                                $request->input(
-                                    'net_monthly_income'
-                                )
-                            )
-                            : null,
+                    $request->has(
+                        'net_monthly_income'
+                    )
+                        ? $netMonthlyIncome
+                        : null,
 
                     'other_monthly_income' =>
-                        $request->has('other_monthly_income')
-                            ? $otherMonthlyIncome
-                            : null,
+                    $request->has(
+                        'other_monthly_income'
+                    )
+                        ? $otherMonthlyIncome
+                        : null,
 
                     'declared_external_monthly_obligations' =>
-                        $request->has(
-                            'declared_external_monthly_obligations'
-                        )
-                            ? $this->parseMoney(
-                                $request->input(
-                                    'declared_external_monthly_obligations'
-                                )
-                            )
-                            : null,
+                    $request->has(
+                        'declared_external_monthly_obligations'
+                    )
+                        ? $externalMonthlyObligations
+                        : null,
 
                     'declared_external_obligations_note' =>
-                        $request->input(
-                            'declared_external_obligations_note'
-                        ),
+                    $request->input(
+                        'declared_external_obligations_note'
+                    ),
 
                     'declared_external_obligations_proof' =>
-                        $externalObligationsProofPath,
+                    $externalObligationsProofPath,
 
                     'other_income_proof' =>
-                        $otherIncomeProofPath,
+                    $otherIncomeProofPath,
 
                     'salary_slip' =>
-                        $salarySlipPath,
+                    $salarySlipPath,
+
+                    // =================================================
+                    // AGUNAN
+                    // =================================================
 
                     'collateral' =>
-                        $requestedAmount > 25000000
-                            ? [
-                                'type' =>
-                                    $request->input(
-                                        'collateral_type'
-                                    ),
-                                'description' =>
-                                    $request->input(
-                                        'collateral_description'
-                                    ),
-                                'ownership_status' =>
-                                    $request->input(
-                                        'ownership_status'
-                                    ),
-                                'ownership_proof' =>
-                                    $request->input(
-                                        'ownership_proof'
-                                    ),
-                                'proof_file' =>
-                                    $collateralProofPath,
-                            ]
-                            : null,
+                    $requestedAmount > 25000000
+                        ? [
+                            'type' =>
+                            $request->input(
+                                'collateral_type'
+                            ),
+
+                            'description' =>
+                            $request->input(
+                                'collateral_description'
+                            ),
+
+                            'ownership_status' =>
+                            $request->input(
+                                'ownership_status'
+                            ),
+
+                            'ownership_proof' =>
+                            $request->input(
+                                'ownership_proof'
+                            ),
+
+                            'proof_file' =>
+                            $collateralProofPath,
+                        ]
+                        : null,
                 ]
             );
+
+            // =========================================================
+            // BERHASIL
+            // =========================================================
 
             return redirect()
                 ->route('member.loans.index')
                 ->with(
                     'success',
                     'Pengajuan Top Up berhasil dibuat dengan kode '
-                    . $newLoan->code
+                        . $newLoan->code
                 );
         } catch (Throwable $e) {
+            // =========================================================
+            // CLEANUP FILE
+            // =========================================================
+
             foreach ($storedPaths as $path) {
-                Storage::disk('local')->delete($path);
+                if ($path) {
+                    Storage::disk('local')->delete(
+                        $path
+                    );
+                }
             }
 
             report($e);

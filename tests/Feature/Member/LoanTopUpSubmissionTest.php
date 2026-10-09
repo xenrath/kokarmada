@@ -47,12 +47,12 @@ class LoanTopUpSubmissionTest extends TestCase
         ) {
             $this->fail(
                 'Top Up HTTP submission did not succeed. Redirect: '
-                . $response->getTargetUrl()
-                . '; session: '
-                . json_encode(
-                    $response->getSession()->all(),
-                    JSON_UNESCAPED_UNICODE
-                )
+                    . $response->getTargetUrl()
+                    . '; session: '
+                    . json_encode(
+                        $response->getSession()->all(),
+                        JSON_UNESCAPED_UNICODE
+                    )
             );
         }
 
@@ -96,7 +96,6 @@ class LoanTopUpSubmissionTest extends TestCase
                 ->where('type', 'loan_submitted')
                 ->count()
         );
-
     }
 
     public function test_guest_cannot_submit_top_up(): void
@@ -197,7 +196,7 @@ class LoanTopUpSubmissionTest extends TestCase
             $this->basePayload([
                 'declared_external_monthly_obligations' => 250000,
                 'declared_external_obligations_note' =>
-                    'Pinjaman bank di luar koperasi.',
+                'Pinjaman bank di luar koperasi.',
                 'salary_slip' => UploadedFile::fake()->create(
                     'salary.pdf',
                     100,
@@ -303,11 +302,11 @@ class LoanTopUpSubmissionTest extends TestCase
                 'ownership_status' => 'self',
                 'ownership_proof' => 'bpkb',
                 'collateral_proof_file' =>
-                    UploadedFile::fake()->create(
-                        'bpkb.pdf',
-                        100,
-                        'application/pdf'
-                    ),
+                UploadedFile::fake()->create(
+                    'bpkb.pdf',
+                    100,
+                    'application/pdf'
+                ),
             ])
         );
 
@@ -521,5 +520,46 @@ class LoanTopUpSubmissionTest extends TestCase
         ]);
 
         return $loan;
+    }
+
+    public function test_other_income_proof_is_optional_when_other_income_is_declared(): void
+    {
+        Storage::fake('local');
+
+        $this->configureSettings();
+
+        $member = $this->createMember();
+        $this->createUser('analyst_manager');
+        $oldLoan = $this->createEligibleLoan($member);
+
+        $response = $this->actingAs($member)->post(
+            route('member.loans.top-up.store', $oldLoan),
+            $this->basePayload([
+                'other_monthly_income' => 750000,
+                'salary_slip' => UploadedFile::fake()->create(
+                    'salary.pdf',
+                    100,
+                    'application/pdf'
+                ),
+            ])
+        );
+
+        $response->assertRedirect(
+            route('member.loans.index')
+        );
+
+        $newLoan = Loan::query()
+            ->where('user_id', $member->id)
+            ->where('loan_type', 'top_up')
+            ->firstOrFail();
+
+        $this->assertSame(
+            750000.00,
+            (float) $newLoan->other_monthly_income
+        );
+
+        $this->assertNull(
+            $newLoan->other_income_proof
+        );
     }
 }
